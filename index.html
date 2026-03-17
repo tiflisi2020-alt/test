@@ -2524,7 +2524,6 @@ function printMenu() {
 
 // Init
 loadOverrides();
-const today = new Date().toISOString().split('T')[0];
 document.addEventListener('DOMContentLoaded', () => {
   if (g('r-date')) g('r-date').min = today;
   renderCats(); renderMenu(); renderOrder();
