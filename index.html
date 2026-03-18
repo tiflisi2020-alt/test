@@ -306,7 +306,7 @@ const waiters = [
 ];
 
 function cellClass(val) {
-  if (!val || val === 'OFF') return 'off';
+  if (!val || val === 'OFF' || val === '—') return 'off';
   if (val === '09:00') return 'morning';
   if (val === '14:00') return 'afternoon';
   if (val === '3') return 'special';
@@ -315,6 +315,7 @@ function cellClass(val) {
 function cellLabel(val) {
   if (!val || val === 'OFF') return 'OFF';
   if (val === '3') return '15:00';
+  if (val === '—') return 'OFF';
   return val;
 }
 
