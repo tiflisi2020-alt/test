@@ -569,10 +569,13 @@ function renderCards(){
   vw.innerHTML='';
   WAITERS.forEach(w=>{
     let m=0,a=0,e=0;
-    w.shifts.forEach(s=>{if(s==='09:00')m++;else if(s==='14:00')a++;else if(s==='15:00')e++;});
+    FCOLS.forEach(c=>{
+      const s=getShift(w.name,c.y,c.m,c.d);
+      if(s==='09:00')m++;else if(s==='14:00')a++;else if(s==='15:00')e++;
+    });
     const bdgs=[m?`<span class="bdg m">09×${m}</span>`:'',a?`<span class="bdg a">14×${a}</span>`:'',e?`<span class="bdg e">15×${e}</span>`:''  ].join('');
     const chips=FCOLS.map((c,i)=>{
-      const s=w.shifts[i];
+      const s=getShift(w.name,c.y,c.m,c.d);
       const p=getPos(w.name,c.y,c.m,c.d);
       return `<div class="chip ${scls(s)} ${iW(c.wd)?'wknd':''}">
         <span class="cd">${KD[c.wd]}</span><span class="cn">${c.d}</span>
@@ -598,15 +601,16 @@ function renderCards(){
 function renderDayView(){
   const vd=document.getElementById('vd'); vd.innerHTML='';
   FCOLS.forEach((c,i)=>{
-    const workers=WAITERS.filter(w=>w.shifts[i]!=='OFF');
+    const workers=WAITERS.filter(w=>getShift(w.name,c.y,c.m,c.d)!=='OFF');
     const rows=workers.map(w=>{
+      const s=getShift(w.name,c.y,c.m,c.d);
       const p=getPos(w.name,c.y,c.m,c.d);
       const n=getNote(w.name,c.y,c.m,c.d);
       return `<div class="drow">
         <div class="drif"><div class="drn">${w.name}</div><div class="drp">${w.phone}</div></div>
         <div class="drr">
           ${p?`<span class="pc ${p}">${POS_FULL[p]}</span>`:''}
-          <span class="drs ${scls(w.shifts[i])}">${lbl(w.shifts[i])}</span>
+          <span class="drs ${scls(s)}">${lbl(s)}</span>
         </div>
       </div>${n?`<div class="dnote" style="padding:4px 13px 8px;font-size:.63rem;color:var(--mu);font-style:italic">💬 ${n}</div>`:''}`;
     }).join('');
@@ -639,8 +643,9 @@ function renderTable(){
     const td0=document.createElement('td');
     td0.innerHTML=`<div class="tn">${w.name}</div><div class="tph">${w.phone}</div>`;
     tr.appendChild(td0);
-    w.shifts.forEach((s,i)=>{
-      const p=getPos(w.name,FCOLS[i].y,FCOLS[i].m,FCOLS[i].d);
+    FCOLS.forEach((col,i)=>{
+      const s=getShift(w.name,col.y,col.m,col.d);
+      const p=getPos(w.name,col.y,col.m,col.d);
       const td=document.createElement('td');
       const d=document.createElement('div'); d.className='tc '+scls(s);
       d.innerHTML=lbl(s)+(p?`<span class="tp" style="background:var(--${p}-b);color:var(--${p}-c)">${POS_MAP[p]}</span>`:'');
@@ -654,7 +659,7 @@ function renderTable(){
   const sc0=document.createElement('div'); sc0.className='scl'; sc0.innerHTML='<span>სულ</span>';
   sd0.appendChild(sc0); sr.appendChild(sd0);
   FCOLS.forEach((c,i)=>{
-    const n=WAITERS.filter(w=>w.shifts[i]!=='OFF').length;
+    const n=WAITERS.filter(w=>getShift(w.name,c.y,c.m,c.d)!=='OFF').length;
     const td=document.createElement('td');
     const d=document.createElement('div'); d.className='scl';
     d.innerHTML=`<span class="sc">${n}</span><span>მიმტ.</span>`;
