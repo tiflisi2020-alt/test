@@ -444,9 +444,11 @@ function todayDk(){
 // get shift for a waiter on a date (DB overrides hardcoded)
 function getShift(name,y,m,d){
   const key=pk(name,dk(y,m,d));
-  if(DB[key]?.shift_time) return DB[key].shift_time;
+  // DB entry exists and has explicit shift_time
+  if(DB[key] && DB[key].shift_time && DB[key].shift_time!=='') return DB[key].shift_time;
+  // fallback to hardcoded FCOLS
   const i=FCOLS.findIndex(c=>c.y===y&&c.m===m&&c.d===d);
-  if(i>=0){ const w=WAITERS.find(w=>w.name===name); return w?w.shifts[i]:'OFF'; }
+  if(i>=0){ const w=WAITERS.find(ww=>ww.name===name); return w?w.shifts[i]:'OFF'; }
   return 'OFF';
 }
 function getPos(name,y,m,d){ return DB[pk(name,dk(y,m,d))]?.position||''; }
