@@ -3,2533 +3,375 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Restaurant Tiflis — მენიუ & რეზერვაცია</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=Jost:wght@300;400;500&display=swap" rel="stylesheet">
+<title>მიმტანების განრიგი — აპრილი</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Georgian:wght@300;400;600;700;900&display=swap" rel="stylesheet">
 <style>
-:root {
-  --cream: #f5f0e8;
-  --warm: #ede5d4;
-  --sand: #d4c4a8;
-  --terracotta: #b85c38;
-  --dark-terracotta: #8f3d1e;
-  --forest: #2a3d2e;
-  --dark: #1a1a16;
-  --mid: #4a4440;
-  --muted: #8a7e76;
-  --gold: #c9a84c;
-  --border: rgba(180,160,130,0.3);
-}
-
-* { box-sizing: border-box; margin: 0; padding: 0; }
-
-html { scroll-behavior: smooth; }
-
-body {
-  background: var(--cream);
-  color: var(--dark);
-  font-family: 'Jost', sans-serif;
-  font-weight: 300;
-  min-height: 100vh;
-  overflow-x: hidden;
-}
-
-/* ===== HERO ===== */
-.hero {
-  position: relative;
-  height: 100vh;
-  min-height: 600px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  overflow: hidden;
-  background: var(--forest);
-}
-
-.hero-bg {
-  position: absolute;
-  inset: 0;
-  background:
-    radial-gradient(ellipse 80% 60% at 50% 40%, rgba(201,168,76,0.12) 0%, transparent 70%),
-    radial-gradient(ellipse 50% 80% at 80% 80%, rgba(184,92,56,0.15) 0%, transparent 60%),
-    linear-gradient(160deg, #1a2b1d 0%, #2a3d2e 40%, #1e2e22 100%);
-  animation: bgPulse 8s ease-in-out infinite alternate;
-}
-
-@keyframes bgPulse {
-  0% { opacity: 1; }
-  100% { opacity: 0.88; }
-}
-
-.hero-pattern {
-  position: absolute;
-  inset: 0;
-  background-image:
-    repeating-linear-gradient(
-      45deg,
-      transparent,
-      transparent 60px,
-      rgba(201,168,76,0.04) 60px,
-      rgba(201,168,76,0.04) 61px
-    ),
-    repeating-linear-gradient(
-      -45deg,
-      transparent,
-      transparent 60px,
-      rgba(201,168,76,0.04) 60px,
-      rgba(201,168,76,0.04) 61px
-    );
-}
-
-.hero-content {
-  position: relative;
-  z-index: 2;
-  text-align: center;
-  padding: 2rem;
-}
-
-.hero-eyebrow {
-  font-family: 'Jost', sans-serif;
-  font-size: 0.7rem;
-  font-weight: 500;
-  letter-spacing: 0.35em;
-  text-transform: uppercase;
-  color: var(--gold);
-  margin-bottom: 1.5rem;
-  opacity: 0;
-  animation: fadeUp 0.8s 0.2s forwards;
-}
-
-.hero-title {
-  font-family: 'Cormorant Garamond', serif;
-  font-size: clamp(3.5rem, 8vw, 7rem);
-  font-weight: 300;
-  line-height: 1;
-  color: var(--cream);
-  margin-bottom: 0.5rem;
-  opacity: 0;
-  animation: fadeUp 0.8s 0.4s forwards;
-}
-
-.hero-title em {
-  font-style: italic;
-  color: var(--gold);
-}
-
-.hero-subtitle {
-  font-family: 'Jost', sans-serif;
-  font-size: 0.75rem;
-  letter-spacing: 0.25em;
-  text-transform: uppercase;
-  color: rgba(245,240,232,0.5);
-  margin-bottom: 3rem;
-  opacity: 0;
-  animation: fadeUp 0.8s 0.6s forwards;
-}
-
-.hero-divider {
-  width: 60px;
-  height: 1px;
-  background: linear-gradient(90deg, transparent, var(--gold), transparent);
-  margin: 0 auto 3rem;
-  opacity: 0;
-  animation: fadeUp 0.8s 0.7s forwards;
-}
-
-.hero-cta {
-  display: flex;
-  gap: 1rem;
-  justify-content: center;
-  flex-wrap: wrap;
-  opacity: 0;
-  animation: fadeUp 0.8s 0.9s forwards;
-}
-
-.btn-primary {
-  padding: 0.85rem 2.5rem;
-  background: var(--terracotta);
-  color: white;
-  border: none;
-  font-family: 'Jost', sans-serif;
-  font-size: 0.75rem;
-  font-weight: 500;
-  letter-spacing: 0.15em;
-  text-transform: uppercase;
-  cursor: pointer;
-  transition: all 0.3s;
-  text-decoration: none;
-  display: inline-block;
-}
-
-.btn-primary:hover {
-  background: var(--dark-terracotta);
-  transform: translateY(-2px);
-}
-
-.btn-outline {
-  padding: 0.85rem 2.5rem;
-  background: transparent;
-  color: var(--cream);
-  border: 1px solid rgba(245,240,232,0.3);
-  font-family: 'Jost', sans-serif;
-  font-size: 0.75rem;
-  font-weight: 400;
-  letter-spacing: 0.15em;
-  text-transform: uppercase;
-  cursor: pointer;
-  transition: all 0.3s;
-  text-decoration: none;
-  display: inline-block;
-}
-
-.btn-outline:hover {
-  border-color: var(--gold);
-  color: var(--gold);
-  transform: translateY(-2px);
-}
-
-.hero-scroll {
-  position: absolute;
-  bottom: 2.5rem;
-  left: 50%;
-  transform: translateX(-50%);
-  z-index: 2;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 0.5rem;
-  opacity: 0;
-  animation: fadeUp 0.8s 1.2s forwards;
-}
-
-.hero-scroll span {
-  font-size: 0.65rem;
-  letter-spacing: 0.2em;
-  color: rgba(245,240,232,0.4);
-  text-transform: uppercase;
-}
-
-.scroll-line {
-  width: 1px;
-  height: 40px;
-  background: linear-gradient(to bottom, var(--gold), transparent);
-  animation: scrollPulse 2s ease-in-out infinite;
-}
-
-@keyframes scrollPulse {
-  0%, 100% { opacity: 0.4; transform: scaleY(1); }
-  50% { opacity: 1; transform: scaleY(1.1); }
-}
-
-@keyframes fadeUp {
-  from { opacity: 0; transform: translateY(24px); }
-  to { opacity: 1; transform: translateY(0); }
-}
-
-/* ===== NAV ===== */
-nav {
-  position: fixed;
-  top: 0; left: 0; right: 0;
-  z-index: 100;
-  padding: 1.25rem 3rem;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  transition: all 0.4s;
-}
-
-nav.scrolled {
-  background: rgba(26,26,22,0.95);
-  backdrop-filter: blur(12px);
-  padding: 0.85rem 3rem;
-  border-bottom: 1px solid rgba(201,168,76,0.15);
-}
-
-.nav-logo {
-  font-family: 'Cormorant Garamond', serif;
-  font-size: 1.4rem;
-  font-weight: 400;
-  color: var(--cream);
-  letter-spacing: 0.05em;
-}
-
-.nav-logo span { color: var(--gold); font-style: italic; }
-
-.nav-links {
-  display: flex;
-  gap: 2.5rem;
-  list-style: none;
-}
-
-.nav-links a {
-  font-size: 0.7rem;
-  letter-spacing: 0.2em;
-  text-transform: uppercase;
-  color: rgba(245,240,232,0.6);
-  text-decoration: none;
-  transition: color 0.2s;
-}
-
-.nav-links a:hover { color: var(--gold); }
-
-.nav-reserve {
-  padding: 0.6rem 1.5rem;
-  border: 1px solid rgba(201,168,76,0.5);
-  color: var(--gold);
-  font-size: 0.65rem;
-  letter-spacing: 0.2em;
-  text-transform: uppercase;
-  cursor: pointer;
-  background: transparent;
-  font-family: 'Jost', sans-serif;
-  transition: all 0.3s;
-  text-decoration: none;
-}
-
-.nav-reserve:hover {
-  background: var(--gold);
-  color: var(--dark);
-}
-
-/* ===== SECTION LAYOUT ===== */
-section {
-  padding: 6rem 0;
-}
-
-.container {
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 0 2rem;
-}
-
-.section-label {
-  font-size: 0.65rem;
-  letter-spacing: 0.3em;
-  text-transform: uppercase;
-  color: var(--terracotta);
-  margin-bottom: 1rem;
-}
-
-.section-title {
-  font-family: 'Cormorant Garamond', serif;
-  font-size: clamp(2.2rem, 4vw, 3.5rem);
-  font-weight: 300;
-  line-height: 1.1;
-  color: var(--dark);
-  margin-bottom: 2rem;
-}
-
-.section-title em {
-  font-style: italic;
-  color: var(--terracotta);
-}
-
-/* ===== ABOUT STRIP ===== */
-.about-strip {
-  background: var(--dark);
-  padding: 3rem 0;
-}
-
-.about-strip .container {
-  display: grid;
-  grid-template-columns: repeat(3,1fr);
-  gap: 1px;
-  background: rgba(201,168,76,0.15);
-}
-
-.about-item {
-  background: var(--dark);
-  padding: 2.5rem 3rem;
-  text-align: center;
-  transition: background 0.3s;
-}
-
-.about-item:hover { background: #1e1e18; }
-
-.about-icon {
-  font-size: 1.6rem;
-  margin-bottom: 1rem;
-}
-
-.about-item h3 {
-  font-family: 'Cormorant Garamond', serif;
-  font-size: 1.4rem;
-  font-weight: 300;
-  color: var(--cream);
-  margin-bottom: 0.5rem;
-}
-
-.about-item p {
-  font-size: 0.78rem;
-  color: var(--muted);
-  letter-spacing: 0.03em;
-  line-height: 1.7;
-}
-
-/* ===== MENU SECTION ===== */
-#menu { background: var(--cream); }
-
-.lang-toggle {
-  display: flex;
-  gap: 0.25rem;
-  margin-bottom: 2.5rem;
-}
-
-.lang-btn {
-  padding: 0.4rem 1rem;
-  border: 1px solid var(--border);
-  background: transparent;
-  color: var(--muted);
-  font-family: 'Jost', sans-serif;
-  font-size: 0.7rem;
-  letter-spacing: 0.1em;
-  cursor: pointer;
-  transition: all 0.2s;
-}
-
-.lang-btn.active {
-  background: var(--dark);
-  color: var(--cream);
-  border-color: var(--dark);
-}
-
-.menu-layout {
-  display: grid;
-  grid-template-columns: 1fr 340px;
-  gap: 3rem;
-  align-items: start;
-}
-
-/* Category tabs */
-.cat-tabs {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.4rem;
-  margin-bottom: 2rem;
-}
-
-.cat-tab {
-  padding: 0.45rem 1rem;
-  border: 1px solid var(--border);
-  background: transparent;
-  color: var(--muted);
-  font-family: 'Jost', sans-serif;
-  font-size: 0.7rem;
-  letter-spacing: 0.06em;
-  cursor: pointer;
-  transition: all 0.2s;
-  white-space: nowrap;
-}
-
-.cat-tab.active {
-  background: var(--terracotta);
-  color: white;
-  border-color: var(--terracotta);
-}
-
-.cat-tab:hover:not(.active) {
-  border-color: var(--terracotta);
-  color: var(--terracotta);
-}
-
-/* Menu items */
-.menu-list {
-  display: flex;
-  flex-direction: column;
-  gap: 0;
-}
-
-.menu-item {
-  display: grid;
-  grid-template-columns: 1fr auto auto;
-  align-items: center;
-  gap: 1rem;
-  padding: 1rem 0;
-  border-bottom: 1px solid var(--border);
-  transition: background 0.15s;
-}
-
-.menu-item:first-child { border-top: 1px solid var(--border); }
-
-.menu-item-name {
-  font-family: 'Cormorant Garamond', serif;
-  font-size: 1.05rem;
-  font-weight: 400;
-  color: var(--dark);
-  line-height: 1.3;
-}
-
-.menu-item-price {
-  font-size: 0.85rem;
-  color: var(--muted);
-  white-space: nowrap;
-  min-width: 52px;
-  text-align: right;
-}
-
-.qty-ctrl {
-  display: flex;
-  align-items: center;
-  gap: 0.4rem;
-}
-
-.qty-btn {
-  width: 26px;
-  height: 26px;
-  border: 1px solid var(--border);
-  background: transparent;
-  color: var(--mid);
-  cursor: pointer;
-  font-size: 14px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: all 0.15s;
-  flex-shrink: 0;
-}
-
-.qty-btn:hover {
-  border-color: var(--terracotta);
-  color: var(--terracotta);
-}
-
-.qty-input {
-  width: 36px;
-  height: 26px;
-  border: 1px solid var(--border);
-  background: white;
-  color: var(--dark);
-  font-family: 'Jost', sans-serif;
-  font-size: 0.8rem;
-  text-align: center;
-  padding: 0;
-}
-
-.qty-input:focus { outline: none; border-color: var(--terracotta); }
-
-/* ===== ORDER PANEL ===== */
-.order-panel {
-  position: sticky;
-  top: 5rem;
-  background: var(--dark);
-  padding: 1.75rem;
-  color: var(--cream);
-}
-
-.order-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-bottom: 1.25rem;
-  padding-bottom: 1rem;
-  border-bottom: 1px solid rgba(201,168,76,0.2);
-}
-
-.order-header h3 {
-  font-family: 'Cormorant Garamond', serif;
-  font-size: 1.3rem;
-  font-weight: 300;
-  color: var(--gold);
-}
-
-.clear-btn {
-  font-size: 0.65rem;
-  color: rgba(245,240,232,0.35);
-  background: transparent;
-  border: none;
-  cursor: pointer;
-  font-family: 'Jost', sans-serif;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-  transition: color 0.2s;
-}
-
-.clear-btn:hover { color: var(--terracotta); }
-
-.order-items {
-  min-height: 80px;
-  max-height: 260px;
-  overflow-y: auto;
-  margin-bottom: 1rem;
-}
-
-.order-items::-webkit-scrollbar { width: 2px; }
-.order-items::-webkit-scrollbar-thumb { background: rgba(201,168,76,0.3); }
-
-.order-line {
-  display: grid;
-  grid-template-columns: 1fr auto auto auto;
-  align-items: center;
-  gap: 0.5rem;
-  padding: 0.6rem 0;
-  border-bottom: 1px solid rgba(255,255,255,0.06);
-}
-
-.order-line-name {
-  font-size: 0.78rem;
-  color: rgba(245,240,232,0.8);
-  line-height: 1.3;
-}
-
-.order-line-qty {
-  display: flex;
-  align-items: center;
-  gap: 0.3rem;
-}
-
-.order-line-price {
-  font-size: 0.75rem;
-  color: rgba(245,240,232,0.5);
-  text-align: right;
-  min-width: 46px;
-}
-
-.remove-btn {
-  width: 14px;
-  height: 14px;
-  border: none;
-  background: transparent;
-  color: rgba(245,240,232,0.25);
-  cursor: pointer;
-  font-size: 14px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: color 0.15s;
-}
-
-.remove-btn:hover { color: var(--terracotta); }
-
-.order-empty {
-  text-align: center;
-  padding: 2rem;
-  font-size: 0.78rem;
-  color: rgba(245,240,232,0.25);
-  font-style: italic;
-  font-family: 'Cormorant Garamond', serif;
-}
-
-.order-totals {
-  border-top: 1px solid rgba(201,168,76,0.2);
-  padding-top: 1rem;
-  margin-bottom: 1rem;
-}
-
-.order-row {
-  display: flex;
-  justify-content: space-between;
-  margin-bottom: 0.4rem;
-}
-
-.order-row-label {
-  font-size: 0.72rem;
-  color: rgba(245,240,232,0.4);
-}
-
-.order-row-value {
-  font-size: 0.72rem;
-  color: rgba(245,240,232,0.6);
-}
-
-.order-total-row {
-  display: flex;
-  justify-content: space-between;
-  margin-top: 0.75rem;
-  padding-top: 0.75rem;
-  border-top: 1px solid rgba(201,168,76,0.2);
-}
-
-.order-total-label {
-  font-family: 'Cormorant Garamond', serif;
-  font-size: 1rem;
-  color: var(--cream);
-}
-
-.order-total-value {
-  font-family: 'Cormorant Garamond', serif;
-  font-size: 1.3rem;
-  color: var(--gold);
-}
-
-/* Adjustments in panel */
-.adj-row {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 0.5rem;
-  margin-bottom: 0.75rem;
-}
-
-.adj-field label {
-  display: block;
-  font-size: 0.6rem;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-  color: rgba(245,240,232,0.3);
-  margin-bottom: 0.3rem;
-}
-
-.adj-field input, .adj-field select {
-  width: 100%;
-  height: 30px;
-  padding: 0 0.5rem;
-  border: 1px solid rgba(255,255,255,0.1);
-  background: rgba(255,255,255,0.05);
-  color: rgba(245,240,232,0.7);
-  font-family: 'Jost', sans-serif;
-  font-size: 0.78rem;
-}
-
-.adj-field input:focus, .adj-field select:focus {
-  outline: none;
-  border-color: rgba(201,168,76,0.4);
-}
-
-.adj-field select option { background: #1a1a16; }
-
-.order-actions {
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
-}
-
-.order-btn {
-  width: 100%;
-  padding: 0.75rem;
-  font-family: 'Jost', sans-serif;
-  font-size: 0.7rem;
-  font-weight: 500;
-  letter-spacing: 0.15em;
-  text-transform: uppercase;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0.5rem;
-  transition: all 0.2s;
-  border: 1px solid;
-}
-
-.order-btn-main {
-  background: var(--terracotta);
-  border-color: var(--terracotta);
-  color: white;
-}
-
-.order-btn-main:hover { background: var(--dark-terracotta); }
-
-.order-btn-wa {
-  background: transparent;
-  border-color: rgba(37,211,102,0.4);
-  color: #25d366;
-}
-
-.order-btn-wa:hover { background: rgba(37,211,102,0.08); }
-
-.order-btn-ghost {
-  background: transparent;
-  border-color: rgba(245,240,232,0.15);
-  color: rgba(245,240,232,0.5);
-}
-
-.order-btn-ghost:hover { border-color: rgba(245,240,232,0.3); color: rgba(245,240,232,0.7); }
-
-/* ===== RESERVATION SECTION ===== */
-#reservation { background: var(--warm); }
-
-.reservation-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 5rem;
-  align-items: start;
-}
-
-.reservation-info h2 {
-  font-family: 'Cormorant Garamond', serif;
-  font-size: clamp(2rem, 3.5vw, 3rem);
-  font-weight: 300;
-  line-height: 1.1;
-  margin-bottom: 1.5rem;
-}
-
-.reservation-info p {
-  font-size: 0.85rem;
-  color: var(--muted);
-  line-height: 1.9;
-  margin-bottom: 2rem;
-}
-
-.info-list {
-  list-style: none;
-  display: flex;
-  flex-direction: column;
-  gap: 0.75rem;
-}
-
-.info-list li {
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
-  font-size: 0.82rem;
-  color: var(--mid);
-}
-
-.info-list li::before {
-  content: '';
-  width: 20px;
-  height: 1px;
-  background: var(--terracotta);
-  flex-shrink: 0;
-}
-
-/* Form */
-.res-form {
-  background: white;
-  padding: 2.5rem;
-}
-
-.form-title {
-  font-family: 'Cormorant Garamond', serif;
-  font-size: 1.6rem;
-  font-weight: 300;
-  margin-bottom: 0.5rem;
-  color: var(--dark);
-}
-
-.form-subtitle {
-  font-size: 0.75rem;
-  color: var(--muted);
-  margin-bottom: 2rem;
-  letter-spacing: 0.05em;
-}
-
-.form-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 1rem;
-  margin-bottom: 1rem;
-}
-
-.form-field {
-  display: flex;
-  flex-direction: column;
-  gap: 0.4rem;
-}
-
-.form-field.full { grid-column: 1 / -1; }
-
-.form-field label {
-  font-size: 0.65rem;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-  color: var(--muted);
-}
-
-.form-field input,
-.form-field select,
-.form-field textarea {
-  height: 42px;
-  padding: 0 1rem;
-  border: 1px solid var(--border);
-  background: var(--cream);
-  color: var(--dark);
-  font-family: 'Jost', sans-serif;
-  font-size: 0.9rem;
-  font-weight: 300;
-  width: 100%;
-  transition: border-color 0.2s;
-}
-
-.form-field textarea {
-  height: 80px;
-  padding: 0.75rem 1rem;
-  resize: none;
-}
-
-.form-field input:focus,
-.form-field select:focus,
-.form-field textarea:focus {
-  outline: none;
-  border-color: var(--terracotta);
-}
-
-.form-field select option { background: white; }
-
-.form-submit {
-  width: 100%;
-  padding: 1rem;
-  background: var(--dark);
-  color: var(--cream);
-  border: none;
-  font-family: 'Jost', sans-serif;
-  font-size: 0.75rem;
-  font-weight: 500;
-  letter-spacing: 0.2em;
-  text-transform: uppercase;
-  cursor: pointer;
-  margin-top: 0.5rem;
-  transition: all 0.3s;
-}
-
-.form-submit:hover { background: var(--terracotta); }
-
-/* ===== SUCCESS ===== */
-.success-overlay {
-  display: none;
-  flex-direction: column;
-  align-items: center;
-  text-align: center;
-  padding: 2.5rem 1.5rem;
-  gap: 1rem;
-}
-
-.success-icon {
-  width: 60px;
-  height: 60px;
-  border: 1px solid var(--terracotta);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 1.5rem;
-  color: var(--terracotta);
-  margin-bottom: 0.5rem;
-}
-
-.success-title {
-  font-family: 'Cormorant Garamond', serif;
-  font-size: 1.8rem;
-  color: var(--dark);
-  font-weight: 300;
-}
-
-.success-sub {
-  font-size: 0.8rem;
-  color: var(--muted);
-}
-
-.receipt-box {
-  background: var(--cream);
-  border: 1px solid var(--border);
-  padding: 1.25rem;
-  font-size: 0.78rem;
-  text-align: left;
-  width: 100%;
-  max-height: 220px;
-  overflow-y: auto;
-}
-
-.receipt-row {
-  display: flex;
-  justify-content: space-between;
-  padding: 3px 0;
-  color: var(--mid);
-  border-bottom: 1px dotted var(--border);
-}
-
-.receipt-row:last-child { border-bottom: none; }
-
-.success-actions {
-  display: flex;
-  gap: 0.75rem;
-  width: 100%;
-}
-
-.success-btn {
-  flex: 1;
-  padding: 0.7rem;
-  border: 1px solid var(--border);
-  background: transparent;
-  color: var(--muted);
-  font-family: 'Jost', sans-serif;
-  font-size: 0.7rem;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-  cursor: pointer;
-  transition: all 0.2s;
-}
-
-.success-btn:hover { border-color: var(--dark); color: var(--dark); }
-
-.new-btn {
-  border: none;
-  background: transparent;
-  color: var(--muted);
-  font-family: 'Jost', sans-serif;
-  font-size: 0.75rem;
-  cursor: pointer;
-  text-decoration: underline;
-  text-underline-offset: 3px;
-  margin-top: 0.5rem;
-}
-
-/* ===== FOOTER ===== */
-footer {
-  background: var(--dark);
-  padding: 4rem 0 2rem;
-  color: rgba(245,240,232,0.5);
-}
-
-.footer-grid {
-  display: grid;
-  grid-template-columns: 2fr 1fr 1fr;
-  gap: 3rem;
-  margin-bottom: 3rem;
-}
-
-.footer-brand h2 {
-  font-family: 'Cormorant Garamond', serif;
-  font-size: 1.8rem;
-  font-weight: 300;
-  color: var(--cream);
-  margin-bottom: 1rem;
-}
-
-.footer-brand h2 span { color: var(--gold); font-style: italic; }
-
-.footer-brand p {
-  font-size: 0.78rem;
-  line-height: 1.8;
-  color: rgba(245,240,232,0.35);
-}
-
-.footer-col h4 {
-  font-size: 0.65rem;
-  letter-spacing: 0.2em;
-  text-transform: uppercase;
-  color: var(--gold);
-  margin-bottom: 1.25rem;
-}
-
-.footer-col p, .footer-col a {
-  font-size: 0.8rem;
-  color: rgba(245,240,232,0.4);
-  line-height: 2;
-  text-decoration: none;
-  display: block;
-}
-
-.footer-col a:hover { color: var(--cream); }
-
-.footer-bottom {
-  border-top: 1px solid rgba(255,255,255,0.06);
-  padding-top: 2rem;
-  text-align: center;
-  font-size: 0.7rem;
-  color: rgba(245,240,232,0.2);
-  letter-spacing: 0.1em;
-}
-
-/* ===== MOBILE ===== */
-@media (max-width: 900px) {
-  nav { padding: 1rem 1.5rem; }
-  .nav-links { display: none; }
-  
-  .about-strip .container { grid-template-columns: 1fr; }
-  
-  .menu-layout { grid-template-columns: 1fr; }
-  .order-panel { position: static; }
-  
-  .reservation-grid { grid-template-columns: 1fr; gap: 3rem; }
-  
-  .footer-grid { grid-template-columns: 1fr; gap: 2rem; }
-  
-  .form-grid { grid-template-columns: 1fr; }
-}
-
-@media (max-width: 600px) {
-  .hero-title { font-size: 3rem; }
-  section { padding: 4rem 0; }
-}
-
-/* ===== PRINT MENU BUTTON ===== */
-.print-menu-btn {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.5rem;
-  padding: 0.6rem 1.4rem;
-  border: 1px solid var(--border);
-  background: transparent;
-  color: var(--muted);
-  font-family: 'Jost', sans-serif;
-  font-size: 0.7rem;
-  font-weight: 400;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-  cursor: pointer;
-  transition: all 0.2s;
-  margin-left: auto;
-}
-.print-menu-btn:hover {
-  border-color: var(--dark);
-  color: var(--dark);
-  background: rgba(26,26,22,0.04);
-}
-.menu-top-bar {
-  display: flex;
-  align-items: center;
-  flex-wrap: wrap;
-  gap: 0.75rem;
-  margin-bottom: 2.5rem;
-}
-.menu-top-bar .lang-toggle { margin-bottom: 0; }
-
-/* ===== PRINT STYLES ===== */
-@media print {
-  @page {
-    size: A4;
-    margin: 15mm 18mm 20mm;
+  :root {
+    --bg: #0d0f14;
+    --surface: #161920;
+    --border: #252830;
+    --accent: #f0a500;
+    --accent2: #e05c2a;
+    --text: #e8eaf0;
+    --muted: #5a5f70;
+    --off-bg: #1a1c22;
+    --morning-bg: rgba(96, 180, 255, 0.12);
+    --morning-col: #60b4ff;
+    --afternoon-bg: rgba(240, 165, 0, 0.12);
+    --afternoon-col: #f0a500;
+    --holiday-bg: rgba(255,255,255,0.03);
+    --holiday-col: #3d4150;
+    --radius: 10px;
   }
 
-  * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
 
-  /* Hide everything except the print menu */
-  body > *:not(#print-menu-overlay) { display: none !important; }
-  #print-menu-overlay { display: block !important; }
-
-  #print-menu-overlay {
-    font-family: 'Cormorant Garamond', serif;
-    background: white;
-    color: #1a1a16;
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Noto Sans Georgian', sans-serif;
+    min-height: 100vh;
+    padding: 32px 20px 60px;
   }
 
-  .pm-header {
-    display: flex !important;
-    align-items: center;
-    justify-content: space-between;
-    padding-bottom: 12mm;
-    border-bottom: 0.5pt solid #c9a84c;
-    margin-bottom: 8mm;
+  header {
+    max-width: 1300px;
+    margin: 0 auto 36px;
+    display: flex;
+    align-items: flex-end;
+    gap: 20px;
+    flex-wrap: wrap;
   }
 
-  .pm-brand { }
-  .pm-brand-name {
-    font-size: 28pt;
-    font-weight: 300;
-    letter-spacing: 0.04em;
-    color: #1a1a16;
+  .logo-block h1 {
+    font-size: 2.2rem;
+    font-weight: 900;
+    letter-spacing: -1px;
     line-height: 1;
   }
-  .pm-brand-name span { color: #c9a84c; font-style: italic; }
-  .pm-brand-sub {
-    font-family: 'Jost', sans-serif;
-    font-size: 7pt;
-    letter-spacing: 0.2em;
+  .logo-block h1 span { color: var(--accent); }
+  .logo-block p {
+    font-size: 0.82rem;
+    color: var(--muted);
+    margin-top: 4px;
+    letter-spacing: 0.05em;
     text-transform: uppercase;
-    color: #8a7e76;
-    margin-top: 3mm;
-  }
-  .pm-contact {
-    text-align: right;
-    font-family: 'Jost', sans-serif;
-    font-size: 8pt;
-    color: #8a7e76;
-    line-height: 1.8;
   }
 
-  .pm-body {
-    columns: 2;
-    column-gap: 10mm;
-  }
-
-  .pm-cat {
-    break-inside: avoid;
-    margin-bottom: 6mm;
-  }
-
-  .pm-cat-title {
-    font-family: 'Jost', sans-serif;
-    font-size: 7pt;
-    font-weight: 500;
-    letter-spacing: 0.25em;
-    text-transform: uppercase;
-    color: #b85c38;
-    padding-bottom: 2mm;
-    border-bottom: 0.5pt solid rgba(184,92,56,0.3);
-    margin-bottom: 2.5mm;
-  }
-
-  .pm-item {
+  .legend {
     display: flex;
-    justify-content: space-between;
-    align-items: baseline;
-    padding: 1.5mm 0;
-    border-bottom: 0.3pt dotted rgba(180,160,130,0.4);
-    gap: 3mm;
-  }
-  .pm-item:last-child { border-bottom: none; }
-
-  .pm-item-name {
-    font-size: 9.5pt;
-    font-weight: 400;
-    color: #1a1a16;
-    line-height: 1.25;
-    flex: 1;
-  }
-
-  .pm-item-dots {
-    flex: 1;
-    border-bottom: 0.3pt dotted rgba(180,160,130,0.5);
-    margin: 0 1.5mm 1.5mm;
-    min-width: 5mm;
-  }
-
-  .pm-item-price {
-    font-family: 'Jost', sans-serif;
-    font-size: 8.5pt;
-    font-weight: 400;
-    color: #4a4440;
-    white-space: nowrap;
-    flex-shrink: 0;
-  }
-
-  .pm-footer {
-    margin-top: 10mm;
-    padding-top: 4mm;
-    border-top: 0.5pt solid #c9a84c;
-    display: flex !important;
-    justify-content: space-between;
+    gap: 16px;
+    flex-wrap: wrap;
+    margin-left: auto;
     align-items: center;
   }
-
-  .pm-footer-text {
-    font-family: 'Jost', sans-serif;
-    font-size: 7pt;
-    color: #8a7e76;
-    letter-spacing: 0.08em;
+  .legend-item {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    font-size: 0.78rem;
+    color: var(--muted);
   }
-  .pm-footer-gold {
-    font-size: 7pt;
-    color: #c9a84c;
-    letter-spacing: 0.15em;
+  .legend-dot {
+    width: 10px; height: 10px;
+    border-radius: 50%;
+  }
+
+  .table-wrap {
+    max-width: 1300px;
+    margin: 0 auto;
+    overflow-x: auto;
+    border-radius: 14px;
+    border: 1px solid var(--border);
+    background: var(--surface);
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    min-width: 900px;
+  }
+
+  thead th {
+    background: var(--bg);
+    padding: 10px 8px;
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--muted);
+    border-bottom: 1px solid var(--border);
+    text-align: center;
+  }
+  thead th.day-num {
+    font-size: 1.1rem;
+    font-weight: 900;
+    color: var(--text);
+    letter-spacing: -0.5px;
+  }
+  thead th.day-num.weekend { color: var(--accent2); }
+  thead th:first-child {
+    text-align: left;
+    padding-left: 20px;
+    min-width: 200px;
+  }
+
+  tbody tr {
+    border-bottom: 1px solid var(--border);
+    transition: background 0.15s;
+  }
+  tbody tr:last-child { border-bottom: none; }
+  tbody tr:hover { background: rgba(255,255,255,0.025); }
+
+  td {
+    padding: 0;
+    text-align: center;
+    vertical-align: middle;
+  }
+  td:first-child {
+    text-align: left;
+    padding: 14px 16px 14px 20px;
+  }
+
+  .waiter-name {
+    font-size: 0.88rem;
+    font-weight: 600;
+    color: var(--text);
+    line-height: 1.3;
+  }
+  .waiter-phone {
+    font-size: 0.74rem;
+    color: var(--muted);
+    margin-top: 2px;
+    font-weight: 400;
+  }
+
+  .cell {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 62px;
+    font-size: 0.8rem;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+    cursor: default;
+  }
+
+  .cell.morning {
+    background: var(--morning-bg);
+    color: var(--morning-col);
+  }
+  .cell.afternoon {
+    background: var(--afternoon-bg);
+    color: var(--afternoon-col);
+  }
+  .cell.off {
+    background: var(--holiday-bg);
+    color: var(--holiday-col);
+    font-size: 0.7rem;
+    font-weight: 600;
+    letter-spacing: 0.1em;
     text-transform: uppercase;
   }
-}
+  .cell.special {
+    background: rgba(224, 92, 42, 0.12);
+    color: var(--accent2);
+  }
 
-/* ===== ADMIN PANEL ===== */
-.admin-fab {
-  position: fixed;
-  bottom: 2rem;
-  right: 2rem;
-  width: 48px;
-  height: 48px;
-  border-radius: 50%;
-  background: var(--forest);
-  border: 1px solid rgba(201,168,76,0.4);
-  color: var(--gold);
-  font-size: 1.2rem;
-  cursor: pointer;
-  z-index: 300;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  box-shadow: 0 4px 20px rgba(0,0,0,0.3);
-  transition: all 0.2s;
-}
-.admin-fab:hover { transform: scale(1.1); background: var(--dark); }
+  .date-col-header {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2px;
+  }
 
-.admin-modal {
-  display: none;
-  position: fixed;
-  inset: 0;
-  background: rgba(0,0,0,0.75);
-  z-index: 500;
-  overflow-y: auto;
-  padding: 1.5rem;
-}
-.admin-box {
-  background: var(--dark);
-  max-width: 900px;
-  margin: 0 auto;
-  border: 1px solid rgba(201,168,76,0.2);
-  color: var(--cream);
-}
-.admin-top {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 1.25rem 1.75rem;
-  border-bottom: 1px solid rgba(201,168,76,0.15);
-}
-.admin-top h2 {
-  font-family: 'Cormorant Garamond', serif;
-  font-size: 1.4rem;
-  font-weight: 300;
-  color: var(--gold);
-}
-.admin-close {
-  background: transparent;
-  border: none;
-  color: rgba(245,240,232,0.4);
-  font-size: 1.5rem;
-  cursor: pointer;
-  line-height: 1;
-}
-.admin-close:hover { color: var(--cream); }
-.admin-tabs {
-  display: flex;
-  border-bottom: 1px solid rgba(255,255,255,0.08);
-}
-.admin-tab {
-  padding: 0.85rem 1.5rem;
-  background: transparent;
-  border: none;
-  color: rgba(245,240,232,0.4);
-  font-family: 'Jost', sans-serif;
-  font-size: 0.72rem;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-  cursor: pointer;
-  border-bottom: 2px solid transparent;
-  transition: all 0.2s;
-}
-.admin-tab.on {
-  color: var(--gold);
-  border-bottom-color: var(--gold);
-}
-.admin-pane { display: none; padding: 1.5rem 1.75rem; }
-.admin-pane.on { display: block; }
+  /* stats bar */
+  .stats-row td { padding: 0; }
+  .stats-row .stat-cell {
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.72rem;
+    font-weight: 700;
+    color: var(--muted);
+    background: var(--bg);
+    border-top: 1px solid var(--border);
+    flex-direction: column;
+    gap: 1px;
+  }
+  .stats-row .stat-cell .count { font-size: 1rem; color: var(--text); }
 
-/* Login */
-.admin-login {
-  max-width: 320px;
-  margin: 2rem auto;
-  text-align: center;
-}
-.admin-login h3 {
-  font-family: 'Cormorant Garamond', serif;
-  font-size: 1.6rem;
-  color: var(--gold);
-  margin-bottom: 0.5rem;
-}
-.admin-login p {
-  font-size: 0.78rem;
-  color: rgba(245,240,232,0.4);
-  margin-bottom: 2rem;
-}
-.admin-input {
-  width: 100%;
-  padding: 0.75rem 1rem;
-  background: rgba(255,255,255,0.05);
-  border: 1px solid rgba(255,255,255,0.12);
-  color: var(--cream);
-  font-family: 'Jost', sans-serif;
-  font-size: 0.9rem;
-  margin-bottom: 0.75rem;
-}
-.admin-input:focus { outline: none; border-color: var(--gold); }
-.admin-btn {
-  width: 100%;
-  padding: 0.8rem;
-  background: var(--terracotta);
-  border: none;
-  color: white;
-  font-family: 'Jost', sans-serif;
-  font-size: 0.75rem;
-  font-weight: 500;
-  letter-spacing: 0.15em;
-  text-transform: uppercase;
-  cursor: pointer;
-  transition: background 0.2s;
-}
-.admin-btn:hover { background: var(--dark-terracotta); }
-.admin-btn-ghost {
-  background: transparent;
-  border: 1px solid rgba(255,255,255,0.15);
-  color: rgba(245,240,232,0.6);
-}
-.admin-btn-ghost:hover { border-color: var(--gold); color: var(--gold); }
-.admin-btn-danger {
-  background: transparent;
-  border: 1px solid rgba(192,57,43,0.4);
-  color: #e74c3c;
-  font-size: 0.7rem;
-  padding: 0.4rem 0.75rem;
-  cursor: pointer;
-  font-family: 'Jost', sans-serif;
-  letter-spacing: 0.08em;
-  transition: all 0.15s;
-}
-.admin-btn-danger:hover { background: rgba(192,57,43,0.15); }
-.admin-btn-sm {
-  padding: 0.4rem 0.85rem;
-  font-size: 0.68rem;
-  letter-spacing: 0.1em;
-}
-
-/* Menu table */
-.admin-toolbar {
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
-  margin-bottom: 1.25rem;
-  flex-wrap: wrap;
-}
-.admin-search {
-  flex: 1;
-  min-width: 180px;
-  padding: 0.55rem 1rem;
-  background: rgba(255,255,255,0.05);
-  border: 1px solid rgba(255,255,255,0.1);
-  color: var(--cream);
-  font-family: 'Jost', sans-serif;
-  font-size: 0.82rem;
-}
-.admin-search:focus { outline: none; border-color: var(--gold); }
-.admin-search::placeholder { color: rgba(245,240,232,0.25); }
-.admin-cat-filter {
-  padding: 0.55rem 1rem;
-  background: rgba(255,255,255,0.05);
-  border: 1px solid rgba(255,255,255,0.1);
-  color: var(--cream);
-  font-family: 'Jost', sans-serif;
-  font-size: 0.8rem;
-}
-.admin-cat-filter:focus { outline: none; border-color: var(--gold); }
-.admin-cat-filter option { background: #1a1a16; }
-
-.admin-table {
-  width: 100%;
-  border-collapse: collapse;
-  font-size: 0.8rem;
-}
-.admin-table th {
-  text-align: left;
-  padding: 0.6rem 0.75rem;
-  font-size: 0.65rem;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-  color: rgba(245,240,232,0.35);
-  border-bottom: 1px solid rgba(255,255,255,0.08);
-  font-weight: 400;
-}
-.admin-table td {
-  padding: 0.6rem 0.75rem;
-  border-bottom: 1px solid rgba(255,255,255,0.05);
-  color: rgba(245,240,232,0.8);
-  vertical-align: middle;
-}
-.admin-table tr:hover td { background: rgba(255,255,255,0.03); }
-.admin-table .td-name { font-family: 'Cormorant Garamond', serif; font-size: 0.95rem; }
-.admin-table .td-price { color: var(--gold); font-weight: 500; white-space: nowrap; }
-.admin-table .td-cat { font-size: 0.7rem; color: rgba(245,240,232,0.35); }
-.admin-table .td-acts { display: flex; gap: 0.4rem; white-space: nowrap; }
-
-/* Add/Edit form */
-.admin-form-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 0.85rem;
-  margin-bottom: 1rem;
-}
-.admin-field { display: flex; flex-direction: column; gap: 0.35rem; }
-.admin-field.span2 { grid-column: 1 / -1; }
-.admin-field label {
-  font-size: 0.62rem;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-  color: rgba(245,240,232,0.35);
-}
-.admin-field input, .admin-field select {
-  padding: 0.6rem 0.85rem;
-  background: rgba(255,255,255,0.05);
-  border: 1px solid rgba(255,255,255,0.1);
-  color: var(--cream);
-  font-family: 'Jost', sans-serif;
-  font-size: 0.88rem;
-}
-.admin-field input:focus, .admin-field select:focus {
-  outline: none;
-  border-color: var(--gold);
-}
-.admin-field select option { background: #1a1a16; }
-.admin-form-actions { display: flex; gap: 0.6rem; margin-top: 0.5rem; }
-.admin-msg {
-  padding: 0.75rem 1rem;
-  font-size: 0.78rem;
-  margin-bottom: 1rem;
-  display: none;
-}
-.admin-msg.ok { background: rgba(39,174,96,0.15); border: 1px solid rgba(39,174,96,0.3); color: #2ecc71; }
-.admin-msg.err { background: rgba(192,57,43,0.15); border: 1px solid rgba(192,57,43,0.3); color: #e74c3c; }
-.admin-section-title {
-  font-family: 'Cormorant Garamond', serif;
-  font-size: 1.15rem;
-  color: var(--gold);
-  margin-bottom: 1rem;
-  padding-bottom: 0.6rem;
-  border-bottom: 1px solid rgba(201,168,76,0.15);
-}
-.badge {
-  display: inline-block;
-  padding: 0.15rem 0.5rem;
-  font-size: 0.62rem;
-  letter-spacing: 0.08em;
-  border-radius: 2px;
-}
-.badge-edit { background: rgba(201,168,76,0.15); color: var(--gold); border: 1px solid rgba(201,168,76,0.3); }
-
+  @media (max-width: 600px) {
+    body { padding: 16px 8px 40px; }
+    .logo-block h1 { font-size: 1.4rem; }
+    thead th:first-child { min-width: 130px; }
+  }
 </style>
 </head>
 <body>
 
-<!-- NAV -->
-<nav id="nav">
-  <div class="nav-logo">Restaurant <span>Tiflis</span></div>
-  <ul class="nav-links">
-    <li><a href="#menu">მენიუ</a></li>
-    <li><a href="#reservation">რეზერვაცია</a></li>
-    <li><a href="#contact">კონტაქტი</a></li>
-  </ul>
-  <a href="#reservation" class="nav-reserve">მაგიდის დაჯავშნა</a>
-</nav>
+<header>
+  <div class="logo-block">
+    <h1>მიმტანების <span>განრიგი</span></h1>
+    <p>აპრილი · 22 — მაისი 4</p>
+  </div>
+  <div class="legend">
+    <div class="legend-item"><div class="legend-dot" style="background:#60b4ff"></div> 09:00</div>
+    <div class="legend-item"><div class="legend-dot" style="background:#f0a500"></div> 14:00</div>
+    <div class="legend-item"><div class="legend-dot" style="background:#3d4150;border:1px solid #3d4150"></div> OFF</div>
+    <div class="legend-item"><div class="legend-dot" style="background:#e05c2a"></div> 15:00</div>
+  </div>
+</header>
 
-<!-- HERO -->
-<div class="hero" id="home">
-  <div class="hero-bg"></div>
-  <div class="hero-pattern"></div>
-  <div class="hero-content">
-    <div class="hero-eyebrow">ბათუმი · 2018 წლიდან</div>
-    <h1 class="hero-title">Restaurant<br><em>Tiflis</em></h1>
-    <div class="hero-subtitle">ქართული სამზარეულო · ვ.გორგასალის ქ. 18/110</div>
-    <div class="hero-divider"></div>
-    <div class="hero-cta">
-      <a href="#menu" class="btn-primary">მენიუს ნახვა</a>
-      <a href="#reservation" class="btn-outline">მაგიდის დაჯავშნა</a>
-    </div>
-  </div>
-  <div class="hero-scroll">
-    <span>გადაახვიეთ</span>
-    <div class="scroll-line"></div>
-  </div>
+<div class="table-wrap">
+  <table id="schedule-table">
+    <thead id="table-head"></thead>
+    <tbody id="table-body"></tbody>
+  </table>
 </div>
-
-<!-- ABOUT STRIP -->
-<div class="about-strip">
-  <div class="container">
-    <div class="about-item">
-      <div class="about-icon">🍽</div>
-      <h3>ნამდვილი ქართული</h3>
-      <p>ტრადიციული რეცეპტები<br>თანამედროვე მიწოდებით</p>
-    </div>
-    <div class="about-item">
-      <div class="about-icon">🔥</div>
-      <h3>Josper ღუმელი</h3>
-      <p>სპეციალური კერძები ხის ნახშირზე<br>და მაყალზე</p>
-    </div>
-    <div class="about-item">
-      <div class="about-icon">🍷</div>
-      <h3>სახლის ღვინო</h3>
-      <p>ქართული ნეკტარი პირდაპირ<br>კახეთიდან</p>
-    </div>
-  </div>
-</div>
-
-<!-- MENU -->
-<section id="menu">
-  <div class="container">
-    <div class="section-label">ჩვენი მენიუ</div>
-    <h2 class="section-title">კერძები & <em>სასმელები</em></h2>
-
-    <div class="menu-top-bar">
-      <div class="lang-toggle">
-        <button class="lang-btn active" onclick="setLang('ka')">ქართული</button>
-        <button class="lang-btn" onclick="setLang('en')">English</button>
-        <button class="lang-btn" onclick="setLang('ru')">Русский</button>
-      </div>
-      <button class="print-menu-btn" onclick="printMenu()">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M6 9V2h12v7"/><path d="M6 18H4a2 2 0 01-2-2v-5a2 2 0 012-2h16a2 2 0 012 2v5a2 2 0 01-2 2h-2"/><path d="M6 14h12v8H6z"/></svg>
-        მენიუს დაბეჭდვა
-      </button>
-    </div>
-
-    <div class="menu-layout">
-      <!-- Left: Menu List -->
-      <div>
-        <div class="cat-tabs" id="cat-tabs"></div>
-        <div class="menu-list" id="menu-list"></div>
-      </div>
-
-      <!-- Right: Order Panel -->
-      <div class="order-panel">
-        <div class="order-header">
-          <h3 id="lt-order">შეკვეთა</h3>
-          <button class="clear-btn" onclick="clearAll()" id="lt-clear">გასუფთავება</button>
-        </div>
-
-        <div id="success-overlay" class="success-overlay">
-          <div class="success-icon">✓</div>
-          <div class="success-title" id="s-name"></div>
-          <div class="success-sub" id="s-sub"></div>
-          <div class="receipt-box" id="receipt"></div>
-          <div class="success-actions">
-            <button class="success-btn" onclick="sharePDF()">📄 PDF</button>
-            <button class="success-btn" onclick="sendWASuccess()">📱 WhatsApp</button>
-          </div>
-          <button class="new-btn" onclick="resetAll()" id="lt-new">ახალი შეკვეთა</button>
-        </div>
-
-        <div id="order-wrap">
-          <div class="order-items" id="order-list">
-            <div class="order-empty" id="lt-empty">კერძები არ არის შერჩეული</div>
-          </div>
-
-          <div class="order-totals">
-            <div class="adj-row">
-              <div class="adj-field">
-                <label>მომსახ. %</label>
-                <input type="number" id="f-svc" value="0" min="0" max="100" oninput="recalc()">
-              </div>
-              <div class="adj-field">
-                <label>ფასდაკლ. %</label>
-                <input type="number" id="f-disc" value="0" min="0" max="100" oninput="recalc()">
-              </div>
-            </div>
-            <div class="adj-row">
-              <div class="adj-field">
-                <label>ავანსი ₾</label>
-                <input type="number" id="f-adv" value="0" min="0" oninput="recalc()">
-              </div>
-              <div class="adj-field">
-                <label>გადახდა</label>
-                <select id="f-pay">
-                  <option value="">—</option>
-                  <option value="ნაღდი">ნაღდი</option>
-                  <option value="ბარათი">ბარათი</option>
-                  <option value="გადარიცხვა">გადარიცხვა</option>
-                </select>
-              </div>
-            </div>
-
-            <div class="order-row" id="row-disc" style="display:none">
-              <span class="order-row-label" id="lt-disc">ფასდაკლება</span>
-              <span class="order-row-value" id="tv-disc" style="color:#e74c3c">—</span>
-            </div>
-            <div class="order-row" id="row-svc" style="display:none">
-              <span class="order-row-label" id="lt-svc">მომსახურება</span>
-              <span class="order-row-value" id="tv-svc">—</span>
-            </div>
-            <div class="order-row" id="row-adv" style="display:none">
-              <span class="order-row-label" id="lt-adv">ავანსი</span>
-              <span class="order-row-value" id="tv-adv" style="color:#e74c3c">—</span>
-            </div>
-
-            <div class="order-total-row">
-              <span class="order-total-label" id="lt-total">სულ</span>
-              <span class="order-total-value" id="tv-total">₾0.00</span>
-            </div>
-            <div class="order-row" style="margin-top:0.3rem">
-              <span class="order-row-label" id="lt-pp">1 სტუმარზე</span>
-              <span class="order-row-value" id="tv-pp">₾0.00</span>
-            </div>
-          </div>
-
-          <div class="order-actions">
-            <button class="order-btn order-btn-main" onclick="scrollToReserve()">📋 რეზერვაცია + შეკვეთა</button>
-            <button class="order-btn order-btn-wa" onclick="sendWA()">📱 WhatsApp-ით გაგზავნა</button>
-            <button class="order-btn order-btn-ghost" onclick="saveOrder()">💾 შენახვა</button>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- RESERVATION -->
-<section id="reservation">
-  <div class="container">
-    <div class="reservation-grid">
-      <div class="reservation-info">
-        <div class="section-label">ჯავშანი</div>
-        <h2 class="section-title">მაგიდის<br><em>დაჯავშნა</em></h2>
-        <p>გთავაზობთ უმეცე გამოცდილებას ქართული სამზარეულოს საუკეთესო კერძებით. წინასწარ შეკვეთა მნიშვნელოვანია განსაკუთრებული ღონისძიებებისა და ჯგუფური ვიზიტისთვის.</p>
-        <ul class="info-list">
-          <li>ბათუმი, ვ.გორგასალის ქ. 18/110</li>
-          <li>+995 568 76 76 38</li>
-          <li>ყოველდღე: 12:00 — 24:00</li>
-          <li>ჯგუფები: +995 555 00 00 00</li>
-        </ul>
-      </div>
-
-      <div>
-        <div id="res-success" class="success-overlay" style="background:white;padding:2.5rem;">
-          <div class="success-icon">✓</div>
-          <div class="success-title">ჯავშანი მიღებულია!</div>
-          <div class="success-sub">მალე დაგიკავშირდებით დასადასტურებლად</div>
-          <button class="success-btn" onclick="resetRes()" style="margin-top:1rem;max-width:200px">ახალი ჯავშანი</button>
-        </div>
-
-        <div id="res-form-wrap">
-          <div class="res-form">
-            <h3 class="form-title">სარეზერვაციო<br>ფორმა</h3>
-            <p class="form-subtitle">შეავსეთ ფორმა · ჩვენ დაგიდასტურებთ</p>
-
-            <div class="form-grid">
-              <div class="form-field">
-                <label>სახელი და გვარი *</label>
-                <input type="text" id="r-name" placeholder="თქვენი სახელი">
-              </div>
-              <div class="form-field">
-                <label>ტელეფონი *</label>
-                <input type="tel" id="r-phone" placeholder="+995...">
-              </div>
-              <div class="form-field">
-                <label>ელ. ფოსტა</label>
-                <input type="email" id="r-email" placeholder="email@example.com">
-              </div>
-              <div class="form-field">
-                <label>სტუმრების რაოდენობა</label>
-                <select id="r-guests">
-                  <option value="1">1 სტუმარი</option>
-                  <option value="2" selected>2 სტუმარი</option>
-                  <option value="3">3 სტუმარი</option>
-                  <option value="4">4 სტუმარი</option>
-                  <option value="5">5 სტუმარი</option>
-                  <option value="6">6 სტუმარი</option>
-                  <option value="7">7 სტუმარი</option>
-                  <option value="8">8+ სტუმარი</option>
-                </select>
-              </div>
-              <div class="form-field">
-                <label>თარიღი *</label>
-                <input type="date" id="r-date">
-              </div>
-              <div class="form-field">
-                <label>დრო *</label>
-                <input type="time" id="r-time" value="19:00">
-              </div>
-              <div class="form-field full">
-                <label>სასურველი მაგიდა</label>
-                <input type="text" id="r-table" placeholder="მაგ. ფანჯარასთან, ტერასაზე...">
-              </div>
-              <div class="form-field full">
-                <label>განსაკუთრებული სურვილი</label>
-                <textarea id="r-note" placeholder="ალერგია, დაბადების დღე, სხვა სურვილი..."></textarea>
-              </div>
-            </div>
-
-            <button class="form-submit" onclick="submitReservation()">მაგიდის დაჯავშნა</button>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
-
-
-
-<!-- ADMIN FAB -->
-<button class="admin-fab" onclick="openAdmin()" title="ადმინ პანელი">⚙</button>
-
-<!-- ADMIN MODAL -->
-<div id="admin-modal" class="admin-modal">
-  <div class="admin-box">
-    <div class="admin-top">
-      <h2>ადმინ პანელი</h2>
-      <button class="admin-close" onclick="closeAdmin()">×</button>
-    </div>
-
-    <!-- LOGIN -->
-    <div id="admin-login-wrap">
-      <div class="admin-login">
-        <h3>🔐 შესვლა</h3>
-        <p>ადმინ პანელში შესასვლელად შეიყვანეთ პაროლი</p>
-        <input class="admin-input" type="password" id="admin-pw" placeholder="პაროლი" onkeydown="if(event.key==='Enter')adminLogin()">
-        <button class="admin-btn" onclick="adminLogin()">შესვლა</button>
-        <div id="admin-pw-err" style="color:#e74c3c;font-size:.75rem;margin-top:.75rem;display:none">❌ პაროლი არასწორია</div>
-      </div>
-    </div>
-
-    <!-- PANEL (after login) -->
-    <div id="admin-panel-wrap" style="display:none">
-      <div class="admin-tabs">
-        <button class="admin-tab on" onclick="adminTab('menu')">🍽 მენიუ</button>
-        <button class="admin-tab" onclick="adminTab('add')">➕ კერძის დამატება</button>
-        <button class="admin-tab" onclick="adminTab('cats')">📂 კატეგორიები</button>
-        <button class="admin-tab" onclick="adminTab('settings')">⚙ პარამეტრები</button>
-      </div>
-
-      <!-- MENU LIST TAB -->
-      <div id="at-menu" class="admin-pane on">
-        <div class="admin-toolbar">
-          <input class="admin-search" type="text" id="adm-search" placeholder="🔍 კერძის ძებნა..." oninput="adminRenderMenu()">
-          <select class="admin-cat-filter" id="adm-cat-filter" onchange="adminRenderMenu()">
-            <option value="">ყველა კატეგორია</option>
-          </select>
-          <button class="admin-btn admin-btn-sm" onclick="adminTab('add')">+ დამატება</button>
-        </div>
-        <div id="adm-msg-menu" class="admin-msg"></div>
-        <div style="overflow-x:auto">
-          <table class="admin-table">
-            <thead><tr>
-              <th>კერძი (ქართ.)</th>
-              <th>English</th>
-              <th>კატეგ.</th>
-              <th>ფასი</th>
-              <th>მოქმედება</th>
-            </tr></thead>
-            <tbody id="adm-tbody"></tbody>
-          </table>
-        </div>
-        <div id="adm-count" style="margin-top:.75rem;font-size:.72rem;color:rgba(245,240,232,.3)"></div>
-      </div>
-
-      <!-- ADD/EDIT TAB -->
-      <div id="at-add" class="admin-pane">
-        <div id="adm-msg-add" class="admin-msg"></div>
-        <div id="adm-edit-badge" style="display:none;margin-bottom:1rem">
-          <span class="badge badge-edit">✏ რედაქტირების რეჟიმი</span>
-          <button onclick="adminCancelEdit()" style="background:transparent;border:none;color:rgba(245,240,232,.4);cursor:pointer;font-size:.75rem;margin-left:.5rem">გაუქმება</button>
-        </div>
-        <div class="admin-section-title" id="adm-form-title">ახალი კერძის დამატება</div>
-        <div class="admin-form-grid">
-          <div class="admin-field">
-            <label>სახელი ქართულად *</label>
-            <input type="text" id="af-ka" placeholder="კერძის სახელი">
-          </div>
-          <div class="admin-field">
-            <label>Name in English</label>
-            <input type="text" id="af-en" placeholder="Dish name">
-          </div>
-          <div class="admin-field">
-            <label>Название на русском</label>
-            <input type="text" id="af-ru" placeholder="Название блюда">
-          </div>
-          <div class="admin-field">
-            <label>ფასი (₾) *</label>
-            <input type="number" id="af-price" placeholder="0.00" min="0" step="0.5">
-          </div>
-          <div class="admin-field span2">
-            <label>კატეგორია *</label>
-            <select id="af-cat"></select>
-          </div>
-        </div>
-        <div class="admin-form-actions">
-          <button class="admin-btn" style="flex:1" onclick="adminSaveDish()">💾 შენახვა</button>
-          <button class="admin-btn admin-btn-ghost" onclick="adminCancelEdit()">გაუქმება</button>
-        </div>
-      </div>
-
-      <!-- CATEGORIES TAB -->
-      <div id="at-cats" class="admin-pane">
-        <div class="admin-section-title">კატეგორიების მართვა</div>
-        <div id="adm-msg-cats" class="admin-msg"></div>
-        <div id="adm-cats-list" style="margin-bottom:1.5rem"></div>
-        <div class="admin-section-title" style="font-size:1rem">ახალი კატეგორია</div>
-        <div class="admin-form-grid">
-          <div class="admin-field">
-            <label>სახელი ქართულად *</label>
-            <input type="text" id="cf-ka" placeholder="კატეგორია">
-          </div>
-          <div class="admin-field">
-            <label>Name in English</label>
-            <input type="text" id="cf-en" placeholder="Category">
-          </div>
-          <div class="admin-field span2">
-            <label>Название на русском</label>
-            <input type="text" id="cf-ru" placeholder="Категория">
-          </div>
-        </div>
-        <button class="admin-btn admin-btn-sm" style="width:auto" onclick="adminAddCat()">+ კატეგორიის დამატება</button>
-      </div>
-
-      <!-- SETTINGS TAB -->
-      <div id="at-settings" class="admin-pane">
-        <div class="admin-section-title">პარამეტრები</div>
-        <div class="admin-form-grid">
-          <div class="admin-field span2">
-            <label>რესტორნის სახელი</label>
-            <input type="text" id="st-name" value="Restaurant Tiflis">
-          </div>
-          <div class="admin-field span2">
-            <label>მისამართი</label>
-            <input type="text" id="st-addr" value="ბათუმი, ვ.გორგასალის ქ. 18/110">
-          </div>
-          <div class="admin-field">
-            <label>ტელეფონი</label>
-            <input type="text" id="st-phone" value="+995 568 76 76 38">
-          </div>
-          <div class="admin-field">
-            <label>WhatsApp ნომერი (კოდით)</label>
-            <input type="text" id="st-wa" value="995568767638">
-          </div>
-          <div class="admin-field">
-            <label>სამუშაო საათები</label>
-            <input type="text" id="st-hours" value="12:00 — 24:00">
-          </div>
-          <div class="admin-field">
-            <label>ახალი ადმინ პაროლი</label>
-            <input type="password" id="st-pw" placeholder="ცარიელი = არ შეიცვლება">
-          </div>
-        </div>
-        <div id="adm-msg-settings" class="admin-msg"></div>
-        <div class="admin-form-actions">
-          <button class="admin-btn" onclick="adminSaveSettings()">💾 შენახვა</button>
-          <button class="admin-btn admin-btn-ghost admin-btn-danger" onclick="adminResetData()">🗑 ყველა ცვლილების გაუქმება</button>
-        </div>
-        <div style="margin-top:1.5rem;padding-top:1rem;border-top:1px solid rgba(255,255,255,.06)">
-          <div style="font-size:.7rem;color:rgba(245,240,232,.25);line-height:1.8">
-            ყველა ცვლილება ინახება ბრაუზერში (localStorage).<br>
-            სხვა მოწყობილობაზე სანახავად გამოიყენეთ GitHub Sync.
-          </div>
-        </div>
-      </div>
-
-    </div>
-  </div>
-</div>
-
-<!-- PRINT MENU OVERLAY (hidden on screen, shown only on print) -->
-<div id="print-menu-overlay" style="display:none"></div>
-
-<!-- FOOTER -->
-<footer id="contact">
-  <div class="container">
-    <div class="footer-grid">
-      <div class="footer-brand">
-        <h2>Restaurant <span>Tiflis</span></h2>
-        <p>ქართული სამზარეულოს საუკეთესო ტრადიციები შერწყმული თანამედროვე სამზარეულოს ხელოვნებასთან. ბათუმის გულში, ვ. გორგასალის ქუჩაზე.</p>
-      </div>
-      <div class="footer-col">
-        <h4>სამუშაო საათები</h4>
-        <p>ყოველდღე</p>
-        <p>12:00 — 24:00</p>
-        <p style="margin-top:0.5rem">შაბ-კვირა</p>
-        <p>11:00 — 01:00</p>
-      </div>
-      <div class="footer-col">
-        <h4>კონტაქტი</h4>
-        <a href="tel:+995568767638">+995 568 76 76 38</a>
-        <a href="/cdn-cgi/l/email-protection#2a43444c456a5e434c464359044d4f"><span class="__cf_email__" data-cfemail="94fdfaf2fbd4e0fdf2f8fde7baf3f1">[email&#160;protected]</span></a>
-        <p style="margin-top:0.5rem">ვ.გორგასალის ქ. 18/110</p>
-        <p>ბათუმი, საქართველო</p>
-      </div>
-    </div>
-    <div class="footer-bottom">
-      © 2024 Restaurant Tiflis · ყველა უფლება დაცულია
-    </div>
-  </div>
-</footer>
 
 <script>
-// ===== DATA =====
-const CATS=[{id:0,ka:"სალათები",en:"Salads",ru:"Салаты"},{id:13,ka:"ცივი წასახემსებელი",en:"Cold Appetizers",ru:"Холодная закуска"},{id:23,ka:"ცხელი წასახემსებელი",en:"Hot Snacks",ru:"Горячий снек"},{id:30,ka:"წვნიანი",en:"Soups",ru:"Суп"},{id:39,ka:"ცომეული",en:"Baked Goods",ru:"Выпечка"},{id:57,ka:"სოუსი",en:"Sauces",ru:"Соус"},{id:61,ka:"ხინკალი",en:"Khinkali",ru:"Хинкали"},{id:72,ka:"გრილი & Josper",en:"Grill & Josper",ru:"Гриль & Джоспер"},{id:89,ka:"პასტა / რიზოტო",en:"Pasta / Risotto",ru:"Паста/ризотто"},{id:94,ka:"ცხელი კერძები",en:"Hot Dishes",ru:"Горячие блюда"},{id:117,ka:"თევზეული",en:"Fish",ru:"Рыба"},{id:126,ka:"გარნირი",en:"Sides",ru:"Гарнир"},{id:132,ka:"დესერტი",en:"Dessert",ru:"Десерт"},{id:143,ka:"სასმელი",en:"Drinks",ru:"Напитки"},{id:150,ka:"არაყი",en:"Vodka",ru:"Водка"},{id:168,ka:"სახლის ღვინო",en:"House Wine",ru:"Домашнее вино"}];
+const days = [22,23,24,25,26,27,28,29,30,31,1,2,3,4];
+const dayNames = ['ორ','სამ','ოთხ','ხუთ','პარ','შაბ','კვ'];
+// April 22, 2025 = Tuesday (index 1)
+// weekday of April 22: let's compute
+function getDayOfWeek(d) {
+  // days 22-30 = April, 31=May 1 doesn't exist so 31=May 1, 1=May 1... 
+  // Actually: April 22 2025 = Monday (0)? Let's just assign:
+  // April 22 2025: day index. April 1 2025 = Tuesday(2). +21 days = Tuesday+21%7=2+0=2 => Wednesday? 
+  // Let me just hardcode: Apr 22=Tue, 23=Wed, 24=Thu, 25=Fri, 26=Sat, 27=Sun, 28=Mon, 29=Tue, 30=Wed, May1=Thu, 2=Fri, 3=Sat, 4=Sun
+  const map = {22:1,23:2,24:3,25:4,26:5,27:6,28:0,29:1,30:2,31:3,1:4,2:5,3:6,4:0}; // mapped by position index
+  return map[d];
+}
+// weekend = Saturday(5) or Sunday(6)
+const isWeekend = i => {
+  const wd = [1,2,3,4,5,6,0,1,2,3,4,5,6,0]; // weekdays for each col
+  return wd[i] === 5 || wd[i] === 6;
+}
+const weekdayAbbr = ['კვ','ორ','სამ','ოთხ','ხუთ','პარ','შაბ'];
+const colWeekdays = [1,2,3,4,5,6,0,1,2,3,4,5,6,0];
 
-const MENU=[{id:1,ka:"ტრადიციული ქართული სალათი",en:"Traditional Georgian Salad",ru:"Традиционный грузинский салат",p:11,cat:0},{id:2,ka:"ტრადიციული ქართული სალათი ნიგვზით",en:"Georgian Salad with Walnuts",ru:"Салат с грецкими орехами",p:14,cat:0},{id:3,ka:"ქათმის სალათი",en:"Chicken Salad",ru:"Куриный салат",p:17.5,cat:0},{id:4,ka:"რუკოლა სალათი თაფლის სოუსით",en:"Arugula with Honey Dressing",ru:"Рукола с медовым соусом",p:18.5,cat:0},{id:5,ka:"ენის სალათი",en:"Tender Veal Tongue Salad",ru:"Салат из языка",p:19,cat:0},{id:6,ka:"ბერძნული სალათი",en:"Greek Salad",ru:"Греческий салат",p:20,cat:0},{id:7,ka:"მწნილის ასორტი",en:"Assorted Pickles",ru:"Ассорти солений",p:12,cat:0},{id:8,ka:"სალათი კამეჩის ყველით და პესტო",en:"Salad with Buffalo Cheese & Pesto",ru:"Салат с сыром буффало",p:23.5,cat:0},{id:9,ka:"ცეზარი ქათმით",en:"Caesar with Chicken",ru:"Цезарь с курицей",p:24.5,cat:0},{id:10,ka:"კარამელიზირებული მსხლის სალათი ლურჯი ყველით",en:"Caramelized Pear & Blue Cheese",ru:"Карамелизованная груша с голубым сыром",p:28,cat:0},{id:11,ka:"მანგო ავოკადოს სალათი ვეფხისებრი კრევეტებით",en:"Mango Avocado with Tiger Prawns",ru:"Манго авокадо с тигровыми креветками",p:36.5,cat:0},{id:12,ka:"ცეზარი კრევეტებით",en:"Caesar with Prawns",ru:"Цезарь с креветками",p:39.5,cat:0},{id:14,ka:"შერეული ყველის ასორტი",en:"Cheese Assortment",ru:"Ассорти сыров",p:32.5,cat:13},{id:15,ka:"ფხალის დაფა",en:"Phkali Board",ru:"Доска пхали",p:22,cat:13},{id:16,ka:"ხრაშუნა პური პომიდვრით და ნივრით",en:"Crispy Bread with Tomatoes & Garlic",ru:"Хрустящий хлеб с помидорами",p:18.5,cat:13},{id:17,ka:"მარილში გამოყვანილი ორაგული კრემ-ყველით",en:"Salted Salmon with Cream Cheese",ru:"Соленый лосось со сливочным сыром",p:42,cat:13},{id:18,ka:"კომბოსტო ნიგვზით",en:"Cabbage with Walnuts",ru:"Капуста с орехами",p:15,cat:13},{id:19,ka:"მწვანილის ასორტი",en:"Fresh Herbs Assortment",ru:"Зелень ассорти",p:12,cat:13},{id:20,ka:"იმერული ყველი",en:"Imeretian Cheese",ru:"Имеретинский сыр",p:12.5,cat:13},{id:21,ka:"სულგუნი ყველი",en:"Sulguni Cheese",ru:"Сыр сулугуни",p:14.5,cat:13},{id:22,ka:"ბადრიჯანი ნიგვზით",en:"Eggplant Rolls with Walnut",ru:"Рулетики из баклажанов",p:11,cat:13},{id:24,ka:"ხრაშუნა ბერძნული ტიროპიტა",en:"Crispy Greek Tiropita",ru:"Хрустящая тиропита",p:20,cat:23},{id:25,ka:"ქათმის ხრაშუნა ხვეულა",en:"Crispy Chicken Rolls",ru:"Хрустящие куриные рулетики",p:17.5,cat:23},{id:26,ka:"ხორციანი ბლინები (4 ცალი)",en:"Meat Pancakes (4 pcs)",ru:"Блинчики с мясом (4 шт)",p:17.5,cat:23},{id:27,ka:"შემწვარი სულგუნი",en:"Fried Sulguni",ru:"Жареный сулугуни",p:20,cat:23},{id:28,ka:"აჯაფსანდალი",en:"Ajapsandali",ru:"Аджапсандали",p:17,cat:23},{id:29,ka:"მინი ჩებურეკი",en:"Mini Cheburek",ru:"Мини чебурек",p:15,cat:23},{id:31,ka:"სოკოს კრემ სუპი",en:"Mushroom Cream Soup",ru:"Крем-суп с шампиньонами",p:17,cat:30},{id:32,ka:"გოგრის კრემ სუპი",en:"Pumpkin Cream Soup",ru:"Тыквенный крем-суп",p:17,cat:30},{id:33,ka:"ტრადიციული ჩიხირთმა",en:"Chikhirtma",ru:"Чихиртма",p:18,cat:30},{id:34,ka:"თათარიახნი",en:"Tatarakhni",ru:"Татариахни",p:18,cat:30},{id:35,ka:"სუპ-ხარჩო",en:"Kharcho Soup",ru:"Суп-харчо",p:19,cat:30},{id:36,ka:"ჩაქაფული ხბოს ხორცით",en:"Chakapuli with Veal",ru:"Чакапули с телятиной",p:30.5,cat:30},{id:37,ka:"ჩაქაფული ბატკნის ხორცით",en:"Chakapuli with Lamb",ru:"Чакапули с бараниной",p:37,cat:30},{id:38,ka:"პელმენის წვნიანი",en:"Dumpling Soup",ru:"Суп с пельменями",p:18,cat:30},{id:40,ka:"პიცა მარგარიტა",en:"Margherita Pizza",ru:"Пицца Маргарита",p:18,cat:39},{id:41,ka:"პიცა პეპერონი",en:"Pepperoni Pizza",ru:"Пицца пепперони",p:22,cat:39},{id:44,ka:"ლაზური ხაჭაპური",en:"Lazuri Khachapuri",ru:"Лазури хачапури",p:26,cat:39},{id:45,ka:"ხაჭაპური შამფურზე",en:"Khachapuri on a Skewer",ru:"Хачапури на шампуре",p:25,cat:39},{id:48,ka:"აჭარული ხაჭაპური",en:"Adjarian Khachapuri",ru:"Аджарский хачапури",p:17.5,cat:39},{id:49,ka:"ხაჭაპური იმერული",en:"Imeretian Khachapuri",ru:"Хачапури имеретинский",p:17,cat:39},{id:50,ka:"ხაჭაპური მეგრული",en:"Mingrelian Khachapuri",ru:"Хачапури мегрельский",p:23,cat:39},{id:52,ka:"კუბდარი",en:"Kubdari with Meat",ru:"Кубдари с мясом",p:30,cat:39},{id:55,ka:"პურის ასორტი",en:"Bread Assortment",ru:"Хлебное ассорти",p:4,cat:39},{id:58,ka:"ტყემალი",en:"Tkemali Sauce",ru:"Ткемали",p:4,cat:57},{id:59,ka:"საწებელი",en:"Tomato Sauce",ru:"Томатный соус",p:4,cat:57},{id:60,ka:"ბაჟე",en:"Walnut Sauce Bazhe",ru:"Баже",p:15,cat:57},{id:62,ka:"ხინკალი ქალაქური",en:"Kalakuri Khinkali",ru:"Хинкали калакури",p:2,cat:61},{id:63,ka:"ხინკალი მთიულური",en:"Mtiuluri Khinkali",ru:"Хинкали мтиулури",p:2,cat:61},{id:64,ka:"ხინკალი საქონლის ხორცით",en:"Beef Khinkali",ru:"Хинкали с говядиной",p:2,cat:61},{id:65,ka:"ხინკალი სოკოთი",en:"Mushroom Khinkali",ru:"Хинкали с грибами",p:2,cat:61},{id:66,ka:"ხინკალი ყველით",en:"Cheese Khinkali",ru:"Хинкали с сыром",p:2,cat:61},{id:70,ka:"შემწვარი ხინკალი სოუსით (5 ცალი)",en:"Fried Khinkali with Sauce (5 pcs)",ru:"Жареные хинкали (5 шт)",p:18.5,cat:61},{id:71,ka:"ხინკალი სახლური",en:"Home-Style Khinkali",ru:"Хинкали домашние",p:3,cat:61},{id:74,ka:"შეფ ბურგერი დიდი",en:"Large Chef Burger",ru:"Большой шеф-бургер",p:42,cat:72},{id:75,ka:"შეფ ბურგერი პატარა",en:"Small Chef Burger",ru:"Маленький шеф-бургер",p:22,cat:72},{id:76,ka:"მეგრული კუპატი",en:"Mingrelian Kupati Sausage",ru:"Мегрельский купати",p:26.5,cat:72},{id:78,ka:"ხბოს მწვადი",en:"Veal Shashlik",ru:"Шашлык из телятины",p:28.5,cat:72},{id:79,ka:"ხბოს ნეკნი აჯიკით",en:"Veal Ribs with Adjika",ru:"Телячьи ребрышки",p:35,cat:72},{id:80,ka:"ღორის მწვადი",en:"Pork Shashlik",ru:"Шашлык из свинины",p:22,cat:72},{id:84,ka:"ქათმის მწვადი",en:"Chicken Shashlik",ru:"Куриный шашлык",p:18,cat:72},{id:86,ka:"ქაბაბი",en:"Kebab",ru:"Кебаб",p:18,cat:72},{id:88,ka:"ცხვრის ქაბაბი",en:"Lamb Kebab",ru:"Кебаб из баранины",p:24,cat:72},{id:90,ka:"კარბონარა",en:"Carbonara",ru:"Карбонара",p:26,cat:89},{id:91,ka:"ალ არაბიატა",en:"Arrabbiata",ru:"Аль арабиата",p:18,cat:89},{id:92,ka:"რიზოტო ქათმით და პარმეზანით",en:"Risotto with Chicken & Parmesan",ru:"Ризотто с курицей",p:27,cat:89},{id:93,ka:"რიზოტო კრევეტებით",en:"Risotto with Prawns",ru:"Ризотто с креветками",p:45,cat:89},{id:95,ka:"ტრადიციული ტოლმა",en:"Traditional Dolma",ru:"Традиционная долма",p:18,cat:94},{id:97,ka:"შქმერული",en:"Shkmeruli Chicken",ru:"Шкмерули",p:42,cat:94},{id:98,ka:"ოსტრი / ხბოს ხორცი პომიდვრით",en:"Ostri / Braised Veal",ru:"Остри / Тушеная телятина",p:28,cat:94},{id:100,ka:"ტრადიციული ხაშლამა",en:"Khashlama",ru:"Хашлама",p:30,cat:94},{id:101,ka:"ლობიო ქოთანში",en:"Lobio Beans in Pot",ru:"Лобио в горшочке",p:14,cat:94},{id:103,ka:"ოჯახური ღორის ხორცით",en:"Odjakuri with Pork",ru:"Оджакхури со свининой",p:28,cat:94},{id:104,ka:"ოჯახური ხბოს ხორცით",en:"Odjakuri with Veal",ru:"Оджакхури с телятиной",p:30,cat:94},{id:108,ka:"კანჭი გამომცხვარი კარტოფილით",en:"Pork Knuckle with Baked Potatoes",ru:"Рулька со запеченным картофелем",p:115,cat:94},{id:112,ka:"მეგრული ხარჩო",en:"Megrelian Kharcho",ru:"Харчо по-мегрельски",p:33,cat:94},{id:118,ka:"კალმახი",en:"Trout",ru:"Форель",p:23.5,cat:117},{id:119,ka:"პანკოში შემწვარი კრევეტები",en:"Panko-Crusted Prawns",ru:"Креветки в панировке",p:45,cat:117},{id:120,ka:"სიბასი ჯოსპერში",en:"Sea Bass in Josper",ru:"Морской окунь в джоспер",p:40,cat:117},{id:121,ka:"დორადო ჯოსპერში",en:"Dorado in Josper",ru:"Дорадо в джоспер",p:40,cat:117},{id:122,ka:"ორაგულის ფილე ასპარაგუსით",en:"Salmon with Asparagus",ru:"Филе лосося со спаржей",p:65,cat:117},{id:127,ka:"კარტოფილი ფრი",en:"French Fries",ru:"Картофель фри",p:8.5,cat:126},{id:128,ka:"ბრინჯი ბოსტნეულით",en:"Rice with Vegetables",ru:"Рис с овощами",p:13.5,cat:126},{id:129,ka:"კარტოფილი მექსიკურად",en:"Mexican-Style Potatoes",ru:"Картофель по-мексикански",p:14.5,cat:126},{id:131,ka:"გამომცხვარი კარტოფილი",en:"Baked Potatoes",ru:"Запеченный картофель",p:16.5,cat:126},{id:133,ka:"ნაყინის ასორტიმენტი",en:"Ice Cream Assortment",ru:"Ассортимент мороженого",p:8.5,cat:132},{id:135,ka:"ხილის სალათი",en:"Fruit Salad",ru:"Фруктовый салат",p:18,cat:132},{id:137,ka:"ფონდანტე",en:"Chocolate Fondant",ru:"Шоколадный фондан",p:17.5,cat:132},{id:139,ka:"ფრანგული კრეპი",en:"French Crepe",ru:"Французский креп",p:18,cat:132},{id:140,ka:"ხილის ასორტი",en:"Seasonal Fruit",ru:"Сезонные фрукты",p:30,cat:132},{id:141,ka:"ნამცხვარი ნიგვზით",en:"Walnut Cake",ru:"Торт с орехами",p:3,cat:132},{id:144,ka:"ლიმონათი კაზბეგი",en:"Kazbegi Lemonade",ru:"Лимонад Казбеги",p:4,cat:143},{id:145,ka:"ნაბეღლავი",en:"Nabeglavi",ru:"Набеглави",p:4,cat:143},{id:146,ka:"წყალი ბახმარო",en:"Bakhmaro Water",ru:"Вода Бахмаро",p:4,cat:143},{id:147,ka:"ბორჯომი",en:"Borjomi",ru:"Боржоми",p:4,cat:143},{id:148,ka:"კოლა / ფანტა / სპრაიტი",en:"Coke / Fanta / Sprite",ru:"Кола / Фанта / Спрайт",p:4,cat:143},{id:149,ka:"წვენი 1 ლ",en:"Juice 1 L",ru:"Сок 1 л",p:15,cat:143},{id:169,ka:"რქაწითელი",en:"Rkatsiteli Dry White",ru:"Ркацители белое сухое",p:15,cat:168},{id:170,ka:"მანავის მწვანე",en:"Manavis Mtsvane White",ru:"Мцване белое",p:16,cat:168},{id:171,ka:"ქისი",en:"Kisi Dry White",ru:"Киси белое сухое",p:19,cat:168},{id:173,ka:"ჩხავერი",en:"Chkhaveri Rosé",ru:"Чхавери розовое",p:80,cat:168},{id:174,ka:"საფერავი",en:"Saperavi Dry Red",ru:"Саперави красное",p:27,cat:168},{id:175,ka:"ქინძმარაული",en:"Kindzmarauli Semi-Sweet",ru:"Киндзмараули полусладкое",p:30,cat:168},{id:176,ka:"ოჯალეში",en:"Odzhaleshi Semi-Sweet",ru:"Оджалеши полусладкое",p:65,cat:168},{id:177,ka:"ხვანჭკარა",en:"Khvanchkara Semi-Sweet",ru:"Хванчкара полусладкое",p:80,cat:168}];
+const waiters = [
+  {
+    name: 'ლაშა სვანიძე',
+    phone: '558 667 748',
+    shifts: ['14:00','14:00','OFF','09:00','14:00','OFF','14:00','14:00','OFF','14:00','14:00','OFF','14:00','14:00']
+  },
+  {
+    name: 'ირაკლი ბერიძე',
+    phone: '557 613 585',
+    shifts: ['14:00','OFF','09:00','14:00','OFF','OFF','14:00','14:00','OFF','09:00','14:00','OFF','09:00','14:00']
+  },
+  {
+    name: 'კახი კახაძე',
+    phone: '514 280 066',
+    shifts: ['OFF','09:00','14:00','OFF','09:00','14:00','OFF','09:00','14:00','OFF','09:00','14:00','OFF','09:00']
+  },
+  {
+    name: 'დეა ჟღენტი',
+    phone: '579 047 426',
+    shifts: ['OFF','09:00','14:00','OFF','09:00','09:00','OFF','—','09:00','OFF','09:00','14:00','OFF','14:00']
+  },
+  {
+    name: 'ლუკა არძენაძე',
+    phone: '599 400 361',
+    shifts: ['09:00','OFF','OFF','14:00','14:00','OFF','09:00','14:00','OFF','OFF','14:00','14:00','OFF','09:00']
+  },
+  {
+    name: 'ბაჩი რომანაძე',
+    phone: '555 664 576',
+    shifts: ['14:00','14:00','OFF','09:00','14:00','14:00','OFF','OFF','09:00','14:00','OFF','09:00','14:00','OFF']
+  },
+  {
+    name: 'რატი ტაკიძე',
+    phone: '571 181 397',
+    shifts: ['14:00','14:00','OFF','14:00','14:00','14:00','OFF','09:00','OFF','09:00','OFF','09:00','14:00','OFF']
+  },
+  {
+    name: 'ნატა შარაბიძე',
+    phone: '555 867 676',
+    shifts: ['09:00','OFF','3','OFF','OFF','OFF','09:00','14:00','OFF','3','OFF','3','OFF','14:00']
+  },
+  {
+    name: 'ხვიჩა შარაძე',
+    phone: '597 041 719',
+    shifts: ['OFF','OFF','09:00','14:00','09:00','14:00','OFF','14:00','14:00','14:00','OFF','OFF','09:00','OFF']
+  },
+  {
+    name: 'ლუკა გოგუაძე',
+    phone: '558 474 651',
+    shifts: ['OFF','14:00','14:00','OFF','OFF','14:00','14:00','—','14:00','OFF','OFF','OFF','14:00','OFF']
+  }
+];
 
-const TXT = {
-  ka: { order:'შეკვეთა', clear:'გასუფთავება', empty:'კერძები არ არის', saved:'შენახულია', savedSub:'შეკვეთა წარმატებით შეინახა', total:'სულ', pp:'1 სტუმარზე', disc:'ფასდაკლება', svc:'მომსახურება', adv:'ავანსი', sub:'ქვეჯამი', newR:'ახალი შეკვეთა', errN:'გთხოვთ შეიყვანოთ სახელი', errT:'გთხოვთ მიუთითოთ მაგიდა' },
-  en: { order:'Order', clear:'Clear', empty:'No items selected', saved:'Saved', savedSub:'Order saved successfully', total:'Total', pp:'Per guest', disc:'Discount', svc:'Service', adv:'Advance', sub:'Subtotal', newR:'New Order', errN:'Please enter name', errT:'Please enter table' },
-  ru: { order:'Заказ', clear:'Очистить', empty:'Ничего не выбрано', saved:'Сохранено', savedSub:'Заказ успешно сохранен', total:'Итого', pp:'На 1 гостя', disc:'Скидка', svc:'Обслуживание', adv:'Аванс', sub:'Подытог', newR:'Новый заказ', errN:'Введите имя', errT:'Введите стол' }
-};
+function cellClass(val) {
+  if (!val || val === 'OFF') return 'off';
+  if (val === '09:00') return 'morning';
+  if (val === '14:00') return 'afternoon';
+  if (val === '3') return 'special';
+  return 'special';
+}
+function cellLabel(val) {
+  if (!val || val === 'OFF') return 'OFF';
+  if (val === '3') return '15:00';
+  return val;
+}
 
-let lang = 'ka', catIdx = 0, order = {};
-const g = id => document.getElementById(id);
+// Build header
+const thead = document.getElementById('table-head');
+const headerRow = document.createElement('tr');
+const th0 = document.createElement('th');
+th0.textContent = 'მიმტანი';
+headerRow.appendChild(th0);
 
-// Nav scroll
-window.addEventListener('scroll', () => {
-  g('nav').classList.toggle('scrolled', window.scrollY > 60);
+days.forEach((d, i) => {
+  const th = document.createElement('th');
+  const wd = colWeekdays[i];
+  if (wd === 5 || wd === 6) th.classList.add('weekend');
+  th.innerHTML = `<div class="date-col-header"><span class="day-num ${wd===5||wd===6?'weekend':''}">${d}</span><span>${weekdayAbbr[wd]}</span></div>`;
+  headerRow.appendChild(th);
+});
+thead.appendChild(headerRow);
+
+// Build body
+const tbody = document.getElementById('table-body');
+waiters.forEach(w => {
+  const tr = document.createElement('tr');
+  const tdName = document.createElement('td');
+  tdName.innerHTML = `<div class="waiter-name">${w.name}</div><div class="waiter-phone">${w.phone}</div>`;
+  tr.appendChild(tdName);
+  w.shifts.forEach(s => {
+    const td = document.createElement('td');
+    const div = document.createElement('div');
+    div.className = 'cell ' + cellClass(s);
+    div.textContent = cellLabel(s);
+    td.appendChild(div);
+    tr.appendChild(td);
+  });
+  tbody.appendChild(tr);
 });
 
-function setLang(l) {
-  lang = l;
-  document.querySelectorAll('.lang-btn').forEach((b,i) => b.classList.toggle('active', ['ka','en','ru'][i] === l));
-  renderCats(); renderMenu(); renderOrder();
-}
+// Stats row
+const statsRow = document.createElement('tr');
+statsRow.className = 'stats-row';
+const tdEmpty = document.createElement('td');
+const emptyCell = document.createElement('div');
+emptyCell.className = 'stat-cell';
+emptyCell.innerHTML = '<span>სულ</span>';
+tdEmpty.appendChild(emptyCell);
+statsRow.appendChild(tdEmpty);
 
-function renderCats() {
-  g('cat-tabs').innerHTML = CATS.map((c,i) =>
-    `<button class="cat-tab${i===catIdx?' active':''}" onclick="selCat(${i})">${c[lang]}</button>`
-  ).join('');
-}
-
-function selCat(i) { catIdx = i; renderCats(); renderMenu(); }
-
-function renderMenu() {
-  const catId = CATS[catIdx].id;
-  const items = MENU.filter(m => m.cat === catId);
-  if (!items.length) { g('menu-list').innerHTML = '<div style="padding:2rem;color:var(--muted);font-style:italic">—</div>'; return; }
-  g('menu-list').innerHTML = items.map(m => {
-    const q = order[m.id] || 0;
-    return `<div class="menu-item${q>0?' selected':''}">
-      <div class="menu-item-name">${m[lang]}</div>
-      <div class="menu-item-price">₾${m.p%1===0?m.p:m.p.toFixed(2)}</div>
-      <div class="qty-ctrl">
-        <button class="qty-btn" onclick="chg(${m.id},-1)">−</button>
-        <input class="qty-input" type="number" min="0" value="${q||''}" placeholder="0" oninput="setQ(${m.id},this.value)">
-        <button class="qty-btn" onclick="chg(${m.id},1)">+</button>
-      </div>
-    </div>`;
-  }).join('');
-}
-
-function chg(id, d) {
-  const nv = Math.max(0, (order[id]||0)+d);
-  if (nv === 0) delete order[id]; else order[id] = nv;
-  renderMenu(); renderOrder();
-}
-
-function setQ(id, v) {
-  const nv = parseInt(v)||0;
-  if (nv <= 0) delete order[id]; else order[id] = nv;
-  renderOrder();
-}
-
-function clearAll() { order = {}; renderMenu(); renderOrder(); }
-
-function removeItem(id) { delete order[id]; renderMenu(); renderOrder(); }
-
-function renderOrder() {
-  const ids = Object.keys(order).map(Number);
-  const el = g('order-list');
-  const t = TXT[lang];
-  if (!ids.length) {
-    el.innerHTML = `<div class="order-empty">${t.empty}</div>`;
-    recalc(); return;
-  }
-  el.innerHTML = ids.map(id => {
-    const item = MENU.find(m => m.id === id);
-    if (!item) return '';
-    const q = order[id], s = item.p * q;
-    return `<div class="order-line">
-      <div class="order-line-name">${item[lang]}</div>
-      <div class="order-line-qty">
-        <button class="qty-btn" style="width:20px;height:20px;font-size:11px" onclick="chg(${id},-1)">−</button>
-        <span style="font-size:.75rem;color:rgba(245,240,232,.6);min-width:16px;text-align:center">${q}</span>
-        <button class="qty-btn" style="width:20px;height:20px;font-size:11px" onclick="chg(${id},1)">+</button>
-      </div>
-      <div class="order-line-price">₾${s.toFixed(2)}</div>
-      <button class="remove-btn" onclick="removeItem(${id})">×</button>
-    </div>`;
-  }).join('');
-  recalc();
-}
-
-function recalc() {
-  const t = TXT[lang];
-  const svc = parseFloat(g('f-svc').value)||0;
-  const disc = parseFloat(g('f-disc').value)||0;
-  const adv = parseFloat(g('f-adv').value)||0;
-  const guests = parseInt(g('r-guests')?.value||'2')||1;
-  let sub = 0;
-  Object.keys(order).forEach(id => {
-    const item = MENU.find(m => m.id === parseInt(id));
-    if (item) sub += item.p * order[id];
-  });
-  const dA = sub*disc/100, afterD = sub-dA, sA = afterD*svc/100;
-  const total = Math.max(0, afterD+sA-adv);
-  g('tv-total').textContent = '₾'+total.toFixed(2);
-  g('tv-pp').textContent = '₾'+(total/guests).toFixed(2);
-  if (g('tv-disc')) g('tv-disc').textContent = '−₾'+dA.toFixed(2);
-  if (g('tv-svc')) g('tv-svc').textContent = '₾'+sA.toFixed(2);
-  if (g('tv-adv')) g('tv-adv').textContent = '−₾'+adv.toFixed(2);
-  g('row-disc').style.display = disc>0?'flex':'none';
-  g('row-svc').style.display = svc>0?'flex':'none';
-  g('row-adv').style.display = adv>0?'flex':'none';
-}
-
-function buildText() {
-  const name = g('r-name')?.value||'—';
-  const phone = g('r-phone')?.value||'—';
-  const date = g('r-date')?.value||'—';
-  const time = g('r-time')?.value||'—';
-  const guests = g('r-guests')?.value||'2';
-  const note = g('r-note')?.value||'';
-  const svc = parseFloat(g('f-svc').value)||0;
-  const disc = parseFloat(g('f-disc').value)||0;
-  const adv = parseFloat(g('f-adv').value)||0;
-  let sub = 0, lines = '';
-  Object.keys(order).map(Number).forEach(id => {
-    const item = MENU.find(m => m.id === id);
-    if (!item) return;
-    const q = order[id], lt = item.p*q; sub += lt;
-    lines += `  • ${item.ka} ×${q} — ₾${lt.toFixed(2)}\n`;
-  });
-  const dA=sub*disc/100, afterD=sub-dA, sA=afterD*svc/100, total=Math.max(0,afterD+sA-adv);
-  let t = `🍃 *Restaurant Tiflis* 🍃\n━━━━━━━━━━━━━━━━━━━\n*${name}* | 📅 ${date} 🕐 ${time}\n👥 ${guests} სტუმარი${phone!=='—'?'\n📞 '+phone:''}\n\n*შეკვეთა:*\n${lines}───────────────────\n`;
-  t += `ქვეჯამი: ₾${sub.toFixed(2)}\n`;
-  if(disc>0) t+=`ფასდაკლება ${disc}%: −₾${dA.toFixed(2)}\n`;
-  if(svc>0) t+=`მომსახურება ${svc}%: ₾${sA.toFixed(2)}\n`;
-  if(adv>0) t+=`ავანსი: −₾${adv.toFixed(2)}\n`;
-  t += `*სულ: ₾${total.toFixed(2)}*\n1 სტუმარზე: ₾${(total/Math.max(1,parseInt(guests))).toFixed(2)}`;
-  if(note) t+=`\n\n📝 ${note}`;
-  return t;
-}
-
-function sendWA() {
-  const phone = g('r-phone')?.value?.replace(/\D/g,'')||'';
-  const text = buildText();
-  const url = phone ? `https://wa.me/${phone}?text=${encodeURIComponent(text)}` : `https://wa.me/?text=${encodeURIComponent(text)}`;
-  window.open(url,'_blank');
-}
-
-function sendWASuccess() { sendWA(); }
-
-function buildReceiptHTML() {
-  const name = g('r-name')?.value||'—';
-  const date = g('r-date')?.value||'—';
-  const time = g('r-time')?.value||'—';
-  const guests = g('r-guests')?.value||'2';
-  let rows = '';
-  let sub = 0;
-  Object.keys(order).map(Number).forEach(id => {
-    const item = MENU.find(m => m.id === id);
-    if (!item) return;
-    const q = order[id], lt = item.p*q; sub += lt;
-    rows += `<div class="receipt-row"><span>${item.ka} ×${q}</span><span>₾${lt.toFixed(2)}</span></div>`;
-  });
-  const disc = parseFloat(g('f-disc').value)||0, svc = parseFloat(g('f-svc').value)||0, adv = parseFloat(g('f-adv').value)||0;
-  const dA=sub*disc/100,afterD=sub-dA,sA=afterD*svc/100,total=Math.max(0,afterD+sA-adv);
-  rows += `<div class="receipt-row" style="font-weight:500;color:var(--terracotta);border-top:1px solid var(--border);padding-top:6px;margin-top:4px"><span>სულ</span><span>₾${total.toFixed(2)}</span></div>`;
-  return `<div style="font-family:'Cormorant Garamond',serif;font-size:1rem;margin-bottom:.5rem;color:var(--dark)">${name} — ${date} ${time} · ${guests} სტ.</div>${rows}`;
-}
-
-function saveOrder() {
-  if (!Object.keys(order).length) { alert('შეარჩიეთ კერძები'); return; }
-  try {
-    const ex = JSON.parse(localStorage.getItem('tiflis_orders')||'[]');
-    const name = g('r-name')?.value||'სტუმარი';
-    const svc=parseFloat(g('f-svc').value)||0, disc=parseFloat(g('f-disc').value)||0, adv=parseFloat(g('f-adv').value)||0;
-    let sub=0;
-    const items = Object.entries(order).map(([id,q])=>{
-      const item=MENU.find(m=>m.id===parseInt(id)); if(!item)return null;
-      sub+=item.p*q; return{id:parseInt(id),ka:item.ka,price:item.p,qty:q};
-    }).filter(Boolean);
-    const dA=sub*disc/100,afterD=sub-dA,sA=afterD*svc/100,total=Math.max(0,afterD+sA-adv);
-    ex.unshift({id:Date.now(),name,date:g('r-date')?.value,time:g('r-time')?.value,guests:g('r-guests')?.value,phone:g('r-phone')?.value,items,sub,total,savedAt:new Date().toISOString()});
-    localStorage.setItem('tiflis_orders',JSON.stringify(ex));
-  } catch(e) {}
-  g('s-name').textContent = TXT[lang].saved + ' — ' + (g('r-name')?.value||'');
-  g('s-sub').textContent = TXT[lang].savedSub;
-  g('receipt').innerHTML = buildReceiptHTML();
-  g('success-overlay').style.display = 'flex';
-  g('order-wrap').style.display = 'none';
-}
-
-function resetAll() {
-  order = {};
-  g('success-overlay').style.display = 'none';
-  g('order-wrap').style.display = 'block';
-  renderMenu(); renderOrder();
-}
-
-function sharePDF() { window.print(); }
-
-function scrollToReserve() {
-  document.getElementById('reservation').scrollIntoView({behavior:'smooth'});
-}
-
-// Reservation Form
-function submitReservation() {
-  const name = g('r-name').value.trim();
-  const phone = g('r-phone').value.trim();
-  const date = g('r-date').value;
-  const time = g('r-time').value;
-  if (!name) { alert('გთხოვთ შეიყვანოთ სახელი'); return; }
-  if (!phone) { alert('გთხოვთ შეიყვანოთ ტელეფონი'); return; }
-  if (!date) { alert('გთხოვთ შეარჩიოთ თარიღი'); return; }
-
-  // Build WA message for reservation
-  const guests = g('r-guests').value;
-  const table = g('r-table').value;
-  const note = g('r-note').value;
-  const email = g('r-email').value;
-  let text = `🍃 *Restaurant Tiflis — ჯავშანი*\n━━━━━━━━━━━━━━━\n`;
-  text += `👤 *${name}*\n📞 ${phone}\n`;
-  if(email) text += `✉️ ${email}\n`;
-  text += `\n📅 ${date}  🕐 ${time}\n👥 ${guests} სტუმარი\n`;
-  if(table) text += `🪑 ${table}\n`;
-
-  // Include menu items if any
-  if (Object.keys(order).length > 0) {
-    text += `\n*წინასწარი შეკვეთა:*\n`;
-    let sub = 0;
-    Object.keys(order).map(Number).forEach(id => {
-      const item = MENU.find(m=>m.id===id);
-      if (!item) return;
-      const q=order[id],lt=item.p*q; sub+=lt;
-      text+=`  • ${item.ka} ×${q} — ₾${lt.toFixed(2)}\n`;
-    });
-    text+=`\nსავარაუდო ღირებულება: ₾${sub.toFixed(2)}\n`;
-  }
-
-  if(note) text += `\n📝 ${note}`;
-
-  // Save locally
-  try {
-    const ex = JSON.parse(localStorage.getItem('tiflis_reservations')||'[]');
-    ex.unshift({id:Date.now(),name,phone,email,date,time,guests,table,note,savedAt:new Date().toISOString()});
-    localStorage.setItem('tiflis_reservations',JSON.stringify(ex));
-  } catch(e) {}
-
-  // Show success
-  g('res-form-wrap').style.display = 'none';
-  g('res-success').style.display = 'flex';
-
-  // Open WhatsApp
-  const waPhone = '995568767638';
-  setTimeout(() => {
-    window.open(`https://wa.me/${waPhone}?text=${encodeURIComponent(text)}`, '_blank');
-  }, 600);
-}
-
-function resetRes() {
-  g('res-form-wrap').style.display = 'block';
-  g('res-success').style.display = 'none';
-  ['r-name','r-phone','r-email','r-table','r-note'].forEach(id => { if(g(id)) g(id).value=''; });
-  g('r-date').value=''; g('r-time').value='19:00'; g('r-guests').value='2';
-}
-
-// Set min date
-const today = new Date().toISOString().split('T')[0];
-document.addEventListener('DOMContentLoaded', () => {
-  if (g('r-date')) g('r-date').min = today;
-  renderCats(); renderMenu(); renderOrder();
+days.forEach((d, i) => {
+  const td = document.createElement('td');
+  const div = document.createElement('div');
+  div.className = 'stat-cell';
+  const count = waiters.filter(w => w.shifts[i] !== 'OFF' && w.shifts[i] && w.shifts[i] !== '—').length;
+  div.innerHTML = `<span class="count">${count}</span><span>მიმტ.</span>`;
+  td.appendChild(div);
+  statsRow.appendChild(td);
 });
-
-// ===== ADMIN PANEL =====
-const ADMIN_PW_DEFAULT = 'tiflis2024';
-
-// Load overrides from localStorage
-function loadOverrides() {
-  try {
-    const ov = JSON.parse(localStorage.getItem('tiflis_menu_override') || '{}');
-    if (ov.MENU) {
-      MENU.length = 0;
-      ov.MENU.forEach(m => MENU.push(m));
-    }
-    if (ov.CATS) {
-      CATS.length = 0;
-      ov.CATS.forEach(c => CATS.push(c));
-    }
-  } catch(e) {}
-}
-
-function saveOverrides() {
-  try {
-    localStorage.setItem('tiflis_menu_override', JSON.stringify({ MENU: [...MENU], CATS: [...CATS] }));
-  } catch(e) {}
-}
-
-function getAdminPw() {
-  return localStorage.getItem('tiflis_admin_pw') || ADMIN_PW_DEFAULT;
-}
-
-function openAdmin() {
-  g('admin-modal').style.display = 'block';
-  document.body.style.overflow = 'hidden';
-  const logged = sessionStorage.getItem('tiflis_admin_logged');
-  if (logged === '1') {
-    showAdminPanel();
-  } else {
-    g('admin-login-wrap').style.display = 'block';
-    g('admin-panel-wrap').style.display = 'none';
-    setTimeout(() => g('admin-pw').focus(), 100);
-  }
-}
-
-function closeAdmin() {
-  g('admin-modal').style.display = 'none';
-  document.body.style.overflow = '';
-  g('admin-pw').value = '';
-  g('admin-pw-err').style.display = 'none';
-}
-
-function adminLogin() {
-  const pw = g('admin-pw').value;
-  if (pw === getAdminPw()) {
-    sessionStorage.setItem('tiflis_admin_logged', '1');
-    g('admin-pw-err').style.display = 'none';
-    showAdminPanel();
-  } else {
-    g('admin-pw-err').style.display = 'block';
-    g('admin-pw').value = '';
-    g('admin-pw').focus();
-  }
-}
-
-function showAdminPanel() {
-  g('admin-login-wrap').style.display = 'none';
-  g('admin-panel-wrap').style.display = 'block';
-  adminPopulateCatFilter();
-  adminPopulateCatSelect();
-  adminRenderMenu();
-  adminRenderCatsList();
-  adminLoadSettings();
-}
-
-function adminTab(t) {
-  document.querySelectorAll('.admin-tab').forEach((b,i) => {
-    b.classList.toggle('on', ['menu','add','cats','settings'][i] === t);
-  });
-  document.querySelectorAll('.admin-pane').forEach(p => p.classList.remove('on'));
-  g('at-' + t).classList.add('on');
-  if (t === 'add') {
-    g('adm-form-title').textContent = 'ახალი კერძის დამატება';
-    g('adm-edit-badge').style.display = 'none';
-  }
-}
-
-function adminMsg(elId, msg, type) {
-  const el = g(elId);
-  el.textContent = msg;
-  el.className = 'admin-msg ' + type;
-  el.style.display = 'block';
-  setTimeout(() => { el.style.display = 'none'; }, 3000);
-}
-
-// --- MENU TAB ---
-function adminPopulateCatFilter() {
-  const sel = g('adm-cat-filter');
-  sel.innerHTML = '<option value="">ყველა კატეგორია</option>' +
-    CATS.map(c => `<option value="${c.id}">${c.ka}</option>`).join('');
-}
-
-function adminPopulateCatSelect() {
-  const sel = g('af-cat');
-  sel.innerHTML = CATS.map(c => `<option value="${c.id}">${c.ka}</option>`).join('');
-}
-
-function adminRenderMenu() {
-  const search = (g('adm-search').value || '').toLowerCase();
-  const catFilter = g('adm-cat-filter').value;
-  let items = MENU.filter(m => {
-    const matchCat = !catFilter || m.cat === parseInt(catFilter);
-    const matchSearch = !search ||
-      m.ka.toLowerCase().includes(search) ||
-      m.en.toLowerCase().includes(search);
-    return matchCat && matchSearch;
-  });
-
-  const getCatName = id => {
-    const c = CATS.find(c => c.id === id);
-    return c ? c.ka : '—';
-  };
-
-  const tbody = g('adm-tbody');
-  if (!items.length) {
-    tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;color:rgba(245,240,232,.3);padding:2rem;font-style:italic">კერძები არ მოიძებნა</td></tr>';
-  } else {
-    tbody.innerHTML = items.map(m => `
-      <tr>
-        <td class="td-name">${m.ka}</td>
-        <td style="color:rgba(245,240,232,.5);font-size:.78rem">${m.en}</td>
-        <td class="td-cat">${getCatName(m.cat)}</td>
-        <td class="td-price">₾${m.p % 1 === 0 ? m.p : m.p.toFixed(2)}</td>
-        <td><div class="td-acts">
-          <button class="admin-btn admin-btn-ghost admin-btn-sm" onclick="adminEditDish(${m.id})">✏</button>
-          <button class="admin-btn-danger" onclick="adminDeleteDish(${m.id})">🗑</button>
-        </div></td>
-      </tr>`).join('');
-  }
-  g('adm-count').textContent = `${items.length} კერძი`;
-}
-
-// --- ADD/EDIT ---
-let editingId = null;
-
-function adminEditDish(id) {
-  const m = MENU.find(m => m.id === id);
-  if (!m) return;
-  editingId = id;
-  g('af-ka').value = m.ka;
-  g('af-en').value = m.en || '';
-  g('af-ru').value = m.ru || '';
-  g('af-price').value = m.p;
-  g('af-cat').value = m.cat;
-  g('adm-form-title').textContent = 'კერძის რედაქტირება';
-  g('adm-edit-badge').style.display = 'block';
-  adminTab('add');
-}
-
-function adminCancelEdit() {
-  editingId = null;
-  g('af-ka').value = '';
-  g('af-en').value = '';
-  g('af-ru').value = '';
-  g('af-price').value = '';
-  g('adm-form-title').textContent = 'ახალი კერძის დამატება';
-  g('adm-edit-badge').style.display = 'none';
-}
-
-function adminSaveDish() {
-  const ka = g('af-ka').value.trim();
-  const en = g('af-en').value.trim();
-  const ru = g('af-ru').value.trim();
-  const price = parseFloat(g('af-price').value);
-  const cat = parseInt(g('af-cat').value);
-
-  if (!ka) { adminMsg('adm-msg-add', '❌ ქართული სახელი სავალდებულოა', 'err'); return; }
-  if (isNaN(price) || price < 0) { adminMsg('adm-msg-add', '❌ ფასი სავალდებულოა', 'err'); return; }
-
-  if (editingId !== null) {
-    const idx = MENU.findIndex(m => m.id === editingId);
-    if (idx !== -1) {
-      MENU[idx] = { ...MENU[idx], ka, en, ru, p: price, cat };
-    }
-    adminMsg('adm-msg-add', '✅ კერძი განახლდა', 'ok');
-    editingId = null;
-    g('adm-edit-badge').style.display = 'none';
-    g('adm-form-title').textContent = 'ახალი კერძის დამატება';
-  } else {
-    const newId = Math.max(...MENU.map(m => m.id), 0) + 1;
-    MENU.push({ id: newId, ka, en, ru, p: price, cat });
-    adminMsg('adm-msg-add', '✅ კერძი დაემატა: ' + ka, 'ok');
-  }
-
-  saveOverrides();
-  g('af-ka').value = '';
-  g('af-en').value = '';
-  g('af-ru').value = '';
-  g('af-price').value = '';
-  renderCats(); renderMenu(); renderOrder();
-  adminRenderMenu();
-}
-
-function adminDeleteDish(id) {
-  const m = MENU.find(m => m.id === id);
-  if (!m) return;
-  if (!confirm('წაშალოთ: ' + m.ka + '?')) return;
-  const idx = MENU.findIndex(m => m.id === id);
-  MENU.splice(idx, 1);
-  saveOverrides();
-  renderMenu(); renderOrder();
-  adminRenderMenu();
-  adminMsg('adm-msg-menu', '🗑 წაიშალა: ' + m.ka, 'ok');
-}
-
-// --- CATEGORIES TAB ---
-function adminRenderCatsList() {
-  g('adm-cats-list').innerHTML = CATS.map(c => `
-    <div style="display:flex;align-items:center;gap:.75rem;padding:.6rem 0;border-bottom:1px solid rgba(255,255,255,.05)">
-      <span style="flex:1;font-family:'Cormorant Garamond',serif;font-size:1rem;color:rgba(245,240,232,.8)">${c.ka}</span>
-      <span style="font-size:.72rem;color:rgba(245,240,232,.3);flex:1">${c.en || ''}</span>
-      <span style="font-size:.7rem;color:rgba(245,240,232,.25)">${MENU.filter(m=>m.cat===c.id).length} კერძი</span>
-      <button class="admin-btn-danger" onclick="adminDeleteCat(${c.id})">🗑</button>
-    </div>`).join('');
-}
-
-function adminAddCat() {
-  const ka = g('cf-ka').value.trim();
-  const en = g('cf-en').value.trim();
-  const ru = g('cf-ru').value.trim();
-  if (!ka) { adminMsg('adm-msg-cats', '❌ ქართული სახელი სავალდებულოა', 'err'); return; }
-  const newId = Math.max(...CATS.map(c => c.id), 0) + 10;
-  CATS.push({ id: newId, ka, en, ru });
-  saveOverrides();
-  g('cf-ka').value = ''; g('cf-en').value = ''; g('cf-ru').value = '';
-  renderCats();
-  adminRenderCatsList();
-  adminPopulateCatFilter();
-  adminPopulateCatSelect();
-  adminMsg('adm-msg-cats', '✅ კატეგორია დაემატა: ' + ka, 'ok');
-}
-
-function adminDeleteCat(id) {
-  const c = CATS.find(c => c.id === id);
-  if (!c) return;
-  const count = MENU.filter(m => m.cat === id).length;
-  if (count > 0) {
-    if (!confirm(c.ka + ' — კატეგორიაში ' + count + ' კერძია. მაინც წაშლით?')) return;
-  } else {
-    if (!confirm('წაშალოთ კატეგორია: ' + c.ka + '?')) return;
-  }
-  const idx = CATS.findIndex(c => c.id === id);
-  CATS.splice(idx, 1);
-  saveOverrides();
-  renderCats(); renderMenu();
-  adminRenderCatsList();
-  adminPopulateCatFilter();
-  adminPopulateCatSelect();
-  adminMsg('adm-msg-cats', '🗑 წაიშალა: ' + c.ka, 'ok');
-}
-
-// --- SETTINGS TAB ---
-function adminLoadSettings() {
-  try {
-    const s = JSON.parse(localStorage.getItem('tiflis_settings') || '{}');
-    if (s.name) g('st-name').value = s.name;
-    if (s.addr) g('st-addr').value = s.addr;
-    if (s.phone) g('st-phone').value = s.phone;
-    if (s.wa) g('st-wa').value = s.wa;
-    if (s.hours) g('st-hours').value = s.hours;
-  } catch(e) {}
-}
-
-function adminSaveSettings() {
-  const s = {
-    name: g('st-name').value,
-    addr: g('st-addr').value,
-    phone: g('st-phone').value,
-    wa: g('st-wa').value,
-    hours: g('st-hours').value
-  };
-  localStorage.setItem('tiflis_settings', JSON.stringify(s));
-  const newPw = g('st-pw').value;
-  if (newPw.trim()) {
-    localStorage.setItem('tiflis_admin_pw', newPw.trim());
-    g('st-pw').value = '';
-  }
-  adminMsg('adm-msg-settings', '✅ პარამეტრები შენახულია', 'ok');
-}
-
-function adminResetData() {
-  if (!confirm('გაუქმდება ყველა ცვლილება და მენიუ საწყის მდგომარეობას დაუბრუნდება. დარწმუნებული ხართ?')) return;
-  localStorage.removeItem('tiflis_menu_override');
-  location.reload();
-}
-
-// Close modal on backdrop click
-g('admin-modal').addEventListener('click', function(e) {
-  if (e.target === this) closeAdmin();
-});
-
-// ===== PRINT MENU =====
-function printMenu() {
-  const overlay = g('print-menu-overlay');
-  const printLang = lang;
-  let catsHTML = '';
-  CATS.forEach(cat => {
-    const items = MENU.filter(m => m.cat === cat.id);
-    if (!items.length) return;
-    const itemsHTML = items.map(m =>
-      `<div class="pm-item">
-        <span class="pm-item-name">${m[printLang]}</span>
-        <span class="pm-item-dots"></span>
-        <span class="pm-item-price">&#8382;${m.p % 1 === 0 ? m.p : m.p.toFixed(2)}</span>
-      </div>`
-    ).join('');
-    catsHTML += `<div class="pm-cat"><div class="pm-cat-title">${cat[printLang]}</div>${itemsHTML}</div>`;
-  });
-  overlay.innerHTML = `
-    <div class="pm-header">
-      <div class="pm-brand">
-        <div class="pm-brand-name">Restaurant <span>Tiflis</span></div>
-        <div class="pm-brand-sub">ქართული სამზარეულო · ბათუმი</div>
-      </div>
-      <div class="pm-contact">
-        ვ.გორგასალის ქ. 18/110, ბათუმი<br>
-        +995 568 76 76 38<br>
-        ყოველდღე 12:00 — 24:00
-      </div>
-    </div>
-    <div class="pm-body">${catsHTML}</div>
-    <div class="pm-footer">
-      <span class="pm-footer-text">ფასები მოიცავს დღგ-ს · ალერგიის შემთხვევაში მიმართეთ სერვისს</span>
-      <span class="pm-footer-gold">Restaurant Tiflis &copy; ${new Date().getFullYear()}</span>
-    </div>`;
-  overlay.style.display = 'block';
-  window.print();
-  overlay.style.display = 'none';
-}
-
-// Init
-loadOverrides();
-document.addEventListener('DOMContentLoaded', () => {
-  if (g('r-date')) g('r-date').min = today;
-  renderCats(); renderMenu(); renderOrder();
-});
-renderCats(); renderMenu(); renderOrder();
-
+tbody.appendChild(statsRow);
 </script>
 </body>
 </html>
