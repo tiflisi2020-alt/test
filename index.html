@@ -6,290 +6,387 @@
 <title>მიმტანების განრიგი</title>
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Georgian:wght@300;400;600;700;900&display=swap" rel="stylesheet">
 <style>
-:root {
-  --bg:#0d0f14; --surface:#161920; --surface2:#1c1f28; --border:#252830;
-  --accent:#f0a500; --accent2:#e05c2a; --text:#e8eaf0; --muted:#5a5f70;
-  --m-bg:rgba(96,180,255,0.13);  --m-col:#60b4ff;
-  --a-bg:rgba(240,165,0,0.13);   --a-col:#f0a500;
-  --e-bg:rgba(224,92,42,0.13);   --e-col:#e05c2a;
-  --o-bg:rgba(255,255,255,0.03); --o-col:#3a3f52;
-  --h-bg:rgba(120,80,255,0.15);  --h-col:#a78bfa;
-  --v-bg:rgba(20,200,130,0.13);  --v-col:#34d399;
-  --an-bg:rgba(236,72,153,0.13); --an-col:#f472b6;
+:root{
+  --bg:#0d0f14; --sf:#161920; --s2:#1c1f28; --s3:#22262f;
+  --br:#252830; --br2:#2e3240;
+  --ac:#f0a500; --ac2:#e05c2a; --tx:#e8eaf0; --mu:#5a5f70;
+  --m-b:rgba(96,180,255,.14);  --m-c:#60b4ff;
+  --a-b:rgba(240,165,0,.14);   --a-c:#f0a500;
+  --e-b:rgba(224,92,42,.14);   --e-c:#e05c2a;
+  --o-b:rgba(255,255,255,.03); --o-c:#3a3f52;
+  --H-b:rgba(120,80,255,.16);  --H-c:#a78bfa;
+  --V-b:rgba(20,200,130,.14);  --V-c:#34d399;
+  --A-b:rgba(236,72,153,.14);  --A-c:#f472b6;
 }
 *{box-sizing:border-box;margin:0;padding:0;}
 html{-webkit-text-size-adjust:100%;}
-body{background:var(--bg);color:var(--text);font-family:'Noto Sans Georgian',sans-serif;min-height:100vh;padding-bottom:60px;}
+body{background:var(--bg);color:var(--tx);font-family:'Noto Sans Georgian',sans-serif;min-height:100vh;padding-bottom:60px;}
 
-/* HEADER */
-.hdr{background:var(--surface);border-bottom:1px solid var(--border);padding:16px 16px 12px;position:sticky;top:0;z-index:99;}
-.hdr-top{display:flex;align-items:center;justify-content:space-between;}
-.hdr h1{font-size:1.2rem;font-weight:900;letter-spacing:-0.3px;}
-.hdr h1 span{color:var(--accent);}
-.hdr p{font-size:0.7rem;color:var(--muted);margin-top:2px;text-transform:uppercase;letter-spacing:0.07em;}
-.legend{display:flex;gap:10px;flex-wrap:wrap;margin-top:8px;}
-.li{display:flex;align-items:center;gap:5px;font-size:0.68rem;color:var(--muted);}
-.ld{width:8px;height:8px;border-radius:50%;}
+/* ── HEADER ── */
+.hdr{background:var(--sf);border-bottom:1px solid var(--br);padding:14px 16px 10px;position:sticky;top:0;z-index:90;box-shadow:0 2px 12px rgba(0,0,0,.4);}
+.hdr-top{display:flex;align-items:center;justify-content:space-between;gap:10px;}
+.hdr h1{font-size:1.15rem;font-weight:900;letter-spacing:-.3px;}
+.hdr h1 span{color:var(--ac);}
+.hdr-sub{font-size:.68rem;color:var(--mu);margin-top:2px;text-transform:uppercase;letter-spacing:.07em;}
+.leg{display:flex;gap:10px;flex-wrap:wrap;margin-top:8px;}
+.li{display:flex;align-items:center;gap:5px;font-size:.66rem;color:var(--mu);}
+.ld{width:7px;height:7px;border-radius:50%;}
+.sync-row{display:flex;align-items:center;gap:6px;margin-top:5px;}
+.sd{width:7px;height:7px;border-radius:50%;flex-shrink:0;}
+.sd.ok{background:#34d399;} .sd.spin{background:var(--ac);animation:blink 1s infinite;} .sd.err{background:#f87171;}
+@keyframes blink{0%,100%{opacity:1;}50%{opacity:.3;}}
+.st{font-size:.63rem;color:var(--mu);}
+.abtn{background:var(--s2);border:1px solid var(--br);color:var(--mu);padding:7px 11px;
+  border-radius:8px;font-family:inherit;font-size:.72rem;font-weight:700;cursor:pointer;
+  display:flex;align-items:center;gap:5px;white-space:nowrap;transition:all .15s;flex-shrink:0;}
+.abtn:hover{border-color:var(--ac);color:var(--ac);}
 
-/* ADMIN BTN */
-.admin-btn{background:var(--surface2);border:1px solid var(--border);color:var(--muted);
-  padding:7px 12px;border-radius:8px;font-family:inherit;font-size:0.72rem;font-weight:700;
-  cursor:pointer;display:flex;align-items:center;gap:5px;transition:all 0.15s;white-space:nowrap;}
-.admin-btn:hover{border-color:var(--accent);color:var(--accent);}
+/* ── WEEK GRID ── */
+.wk-section{padding:10px 10px 0;}
+.wk-nav{display:flex;align-items:center;gap:8px;margin-bottom:8px;}
+.wk-nav-btn{background:var(--s2);border:1px solid var(--br);border-radius:8px;
+  padding:6px 13px;font-family:inherit;font-size:.75rem;font-weight:700;color:var(--tx);cursor:pointer;transition:all .15s;}
+.wk-nav-btn:hover{border-color:var(--ac);}
+.wk-label{flex:1;text-align:center;font-size:.82rem;font-weight:800;color:var(--tx);}
+.wk-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:4px;}
+.wk-col{background:var(--sf);border:1px solid var(--br);border-radius:10px;overflow:hidden;}
+.wk-col.today{border-color:var(--ac);}
+.wk-col.today .wk-col-hdr{background:rgba(240,165,0,.1);}
+.wk-col-hdr{padding:6px 4px 4px;text-align:center;background:var(--s2);}
+.wk-dn{font-size:.55rem;font-weight:700;text-transform:uppercase;color:var(--mu);letter-spacing:.04em;}
+.wk-dd{font-size:1.05rem;font-weight:900;line-height:1.1;}
+.wk-dd.wknd{color:var(--ac2);}
+.wk-dm{font-size:.52rem;color:var(--mu);}
+.wk-entries{padding:4px 3px;display:flex;flex-direction:column;gap:3px;min-height:40px;}
+.wk-entry{border-radius:6px;padding:3px 4px;font-size:.6rem;font-weight:700;line-height:1.3;}
+.wk-ename{display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.wk-epos{font-size:.52rem;opacity:.85;}
+.wk-empty{font-size:.58rem;color:var(--mu);text-align:center;padding:6px 0;}
 
-/* VIEW TOGGLE */
-.vtog{display:flex;gap:8px;padding:10px 12px;background:var(--bg);border-bottom:1px solid var(--border);}
-.vbtn{flex:1;padding:8px;border-radius:8px;border:1px solid var(--border);background:var(--surface);
-  color:var(--muted);font-family:inherit;font-size:0.73rem;font-weight:700;cursor:pointer;transition:all 0.15s;}
-.vbtn.active{background:var(--accent);color:#000;border-color:var(--accent);}
+/* ── VIEW TOGGLE ── */
+.vtog{display:flex;gap:8px;padding:10px 12px;background:var(--bg);border-bottom:1px solid var(--br);margin-top:8px;}
+.vbtn{flex:1;padding:8px;border-radius:8px;border:1px solid var(--br);background:var(--sf);
+  color:var(--mu);font-family:inherit;font-size:.73rem;font-weight:700;cursor:pointer;transition:all .15s;}
+.vbtn.active{background:var(--ac);color:#000;border-color:var(--ac);}
 
-/* WAITER CARDS */
+/* ── WAITER CARDS ── */
 #vw{padding:10px 10px 0;}
-.wcard{margin-bottom:8px;border-radius:12px;border:1px solid var(--border);overflow:hidden;background:var(--surface);}
-.wcard-hdr{display:flex;align-items:center;padding:11px 13px;background:var(--surface2);
-  cursor:pointer;-webkit-tap-highlight-color:transparent;gap:10px;}
-.winfo{flex:1;min-width:0;}
-.wname{font-size:0.88rem;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
-.wphone{font-size:0.7rem;color:var(--muted);margin-top:1px;}
-.wbadges{display:flex;gap:4px;flex-shrink:0;flex-wrap:wrap;justify-content:flex-end;max-width:130px;}
-.badge{font-size:0.62rem;font-weight:700;padding:2px 6px;border-radius:20px;}
-.badge.m{background:var(--m-bg);color:var(--m-col);}
-.badge.a{background:var(--a-bg);color:var(--a-col);}
-.badge.e{background:var(--e-bg);color:var(--e-col);}
-.chev{width:16px;height:16px;color:var(--muted);flex-shrink:0;transition:transform 0.2s;}
-.wcard.open .chev{transform:rotate(180deg);}
+.wcard{margin-bottom:8px;border-radius:12px;border:1px solid var(--br);overflow:hidden;background:var(--sf);}
+.wcard-hdr{display:flex;align-items:center;padding:11px 13px;background:var(--s2);cursor:pointer;-webkit-tap-highlight-color:transparent;gap:10px;}
+.wi{flex:1;min-width:0;}
+.wn{font-size:.88rem;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.wp{font-size:.7rem;color:var(--mu);margin-top:1px;}
+.wbdg{display:flex;gap:4px;flex-shrink:0;flex-wrap:wrap;justify-content:flex-end;max-width:120px;}
+.bdg{font-size:.6rem;font-weight:700;padding:2px 5px;border-radius:20px;}
+.bdg.m{background:var(--m-b);color:var(--m-c);}
+.bdg.a{background:var(--a-b);color:var(--a-c);}
+.bdg.e{background:var(--e-b);color:var(--e-c);}
+.chv{width:16px;height:16px;color:var(--mu);flex-shrink:0;transition:transform .2s;}
+.wcard.open .chv{transform:rotate(180deg);}
 .wshifts{display:none;padding:8px;gap:5px;flex-wrap:wrap;}
 .wcard.open .wshifts{display:flex;}
+.chip{display:flex;flex-direction:column;align-items:center;gap:1px;flex:1;min-width:40px;max-width:54px;padding:5px 2px;border-radius:8px;}
+.chip .cd{font-size:.55rem;font-weight:700;color:var(--mu);text-transform:uppercase;}
+.chip .cn{font-size:.8rem;font-weight:900;line-height:1;}
+.chip .ct{font-size:.57rem;font-weight:700;}
+.chip .cp{font-size:.52rem;font-weight:800;padding:1px 4px;border-radius:7px;margin-top:1px;}
+.chip.wknd .cd{color:var(--ac2);}
+.chip.m{background:var(--m-b);} .chip.m .cn,.chip.m .ct{color:var(--m-c);}
+.chip.a{background:var(--a-b);} .chip.a .cn,.chip.a .ct{color:var(--a-c);}
+.chip.e{background:var(--e-b);} .chip.e .cn,.chip.e .ct{color:var(--e-c);}
+.chip.o{background:var(--o-b);} .chip.o .cn,.chip.o .ct{color:var(--o-c);}
 
-/* SHIFT CHIP */
-.chip{display:flex;flex-direction:column;align-items:center;gap:2px;flex:1;min-width:42px;max-width:56px;
-  padding:6px 3px;border-radius:8px;position:relative;}
-.chip .cd{font-size:0.56rem;font-weight:700;color:var(--muted);text-transform:uppercase;}
-.chip .cn{font-size:0.82rem;font-weight:900;line-height:1;}
-.chip .ct{font-size:0.58rem;font-weight:700;}
-.chip .cp{font-size:0.6rem;font-weight:800;margin-top:1px;padding:1px 5px;border-radius:10px;}
-.chip.wknd .cd{color:var(--accent2);}
-.chip.m{background:var(--m-bg);} .chip.m .cn,.chip.m .ct{color:var(--m-col);}
-.chip.a{background:var(--a-bg);} .chip.a .cn,.chip.a .ct{color:var(--a-col);}
-.chip.e{background:var(--e-bg);} .chip.e .cn,.chip.e .ct{color:var(--e-col);}
-.chip.o{background:var(--o-bg);} .chip.o .cn,.chip.o .ct{color:var(--o-col);}
-.pos-H{background:var(--h-bg);color:var(--h-col);}
-.pos-V{background:var(--v-bg);color:var(--v-col);}
-.pos-A{background:var(--an-bg);color:var(--an-col);}
-
-/* DAY VIEW */
+/* ── DAY VIEW ── */
 #vd{padding:10px;}
-.dblock{margin-bottom:8px;border-radius:12px;border:1px solid var(--border);overflow:hidden;background:var(--surface);}
-.dblock-hdr{display:flex;align-items:center;gap:12px;padding:10px 14px;background:var(--surface2);}
-.dbig{font-size:1.5rem;font-weight:900;line-height:1;}
-.dbig.wknd{color:var(--accent2);}
-.dmeta .dname{font-size:0.7rem;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:var(--muted);}
-.dmeta .dmonth{font-size:0.65rem;color:var(--muted);margin-top:1px;}
-.dcount{margin-left:auto;font-size:0.7rem;color:var(--muted);}
-.drow{display:flex;align-items:center;padding:8px 14px;border-top:1px solid var(--border);gap:8px;flex-wrap:wrap;}
-.drinfo{flex:1;min-width:0;}
-.drname{font-size:0.82rem;font-weight:600;}
-.drphone{font-size:0.68rem;color:var(--muted);}
-.dr-right{display:flex;gap:6px;align-items:center;flex-shrink:0;}
-.drshift{font-size:0.7rem;font-weight:700;padding:4px 9px;border-radius:20px;}
-.drshift.m{background:var(--m-bg);color:var(--m-col);}
-.drshift.a{background:var(--a-bg);color:var(--a-col);}
-.drshift.e{background:var(--e-bg);color:var(--e-col);}
-.drshift.o{background:var(--o-bg);color:var(--o-col);}
-.drpos{font-size:0.7rem;font-weight:800;padding:4px 9px;border-radius:20px;}
-.drpos.pos-H{background:var(--h-bg);color:var(--h-col);}
-.drpos.pos-V{background:var(--v-bg);color:var(--v-col);}
-.drpos.pos-A{background:var(--an-bg);color:var(--an-col);}
+.dblk{margin-bottom:8px;border-radius:12px;border:1px solid var(--br);overflow:hidden;background:var(--sf);}
+.dblk-hdr{display:flex;align-items:center;gap:10px;padding:9px 13px;background:var(--s2);}
+.dbig{font-size:1.4rem;font-weight:900;line-height:1;}
+.dbig.wknd{color:var(--ac2);}
+.dmeta .dn{font-size:.68rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--mu);}
+.dmeta .dm{font-size:.62rem;color:var(--mu);}
+.dcnt{margin-left:auto;font-size:.66rem;color:var(--mu);}
+.drow{display:flex;align-items:center;padding:8px 13px;border-top:1px solid var(--br);gap:8px;}
+.drif{flex:1;min-width:0;}
+.drn{font-size:.82rem;font-weight:600;}
+.drp{font-size:.67rem;color:var(--mu);}
+.drr{display:flex;gap:5px;align-items:center;flex-shrink:0;flex-wrap:wrap;}
+.drs{font-size:.68rem;font-weight:700;padding:3px 8px;border-radius:20px;}
+.drs.m{background:var(--m-b);color:var(--m-c);}
+.drs.a{background:var(--a-b);color:var(--a-c);}
+.drs.e{background:var(--e-b);color:var(--e-c);}
+.drs.o{background:var(--o-b);color:var(--o-c);}
+.pc{font-size:.68rem;font-weight:800;padding:3px 8px;border-radius:20px;}
+.pc.H{background:var(--H-b);color:var(--H-c);}
+.pc.V{background:var(--V-b);color:var(--V-c);}
+.pc.A{background:var(--A-b);color:var(--A-c);}
+.dnote{font-size:.65rem;color:var(--mu);font-style:italic;padding:2px 13px 7px;border-top:none;}
 
-/* MODAL OVERLAY */
-.overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.7);z-index:200;
-  align-items:center;justify-content:center;padding:16px;}
-.overlay.show{display:flex;}
-.modal{background:var(--surface);border:1px solid var(--border);border-radius:16px;
-  width:100%;max-width:420px;max-height:90vh;overflow-y:auto;}
-.modal-hdr{display:flex;align-items:center;justify-content:space-between;
-  padding:16px 18px;border-bottom:1px solid var(--border);}
-.modal-hdr h2{font-size:1rem;font-weight:800;}
-.close-btn{background:none;border:none;color:var(--muted);font-size:1.3rem;cursor:pointer;
-  padding:4px;line-height:1;}
-.modal-body{padding:16px 18px;}
+/* ── OVERLAYS ── */
+.ov{display:none;position:fixed;inset:0;background:rgba(0,0,0,.78);z-index:200;
+  align-items:flex-start;justify-content:center;padding:12px;overflow-y:auto;}
+.ov.show{display:flex;}
+.modal{background:var(--sf);border:1px solid var(--br);border-radius:16px;width:100%;max-width:520px;margin:auto;}
+.mhdr{display:flex;align-items:center;justify-content:space-between;padding:13px 18px;
+  border-bottom:1px solid var(--br);position:sticky;top:0;background:var(--sf);z-index:1;border-radius:16px 16px 0 0;}
+.mhdr h2{font-size:.93rem;font-weight:800;}
+.xbtn{background:none;border:none;color:var(--mu);font-size:1.2rem;cursor:pointer;padding:4px;line-height:1;}
+.mbody{padding:16px 18px;}
 
 /* LOGIN */
-.login-form{display:flex;flex-direction:column;gap:12px;}
-.inp{background:var(--surface2);border:1px solid var(--border);border-radius:8px;
-  padding:10px 13px;color:var(--text);font-family:inherit;font-size:0.85rem;width:100%;outline:none;}
-.inp:focus{border-color:var(--accent);}
-.btn-primary{background:var(--accent);color:#000;border:none;border-radius:8px;
-  padding:11px;font-family:inherit;font-size:0.85rem;font-weight:800;cursor:pointer;width:100%;}
-.err{color:#f87171;font-size:0.75rem;text-align:center;}
+.lform{display:flex;flex-direction:column;gap:12px;}
+.inp{background:var(--s2);border:1px solid var(--br);border-radius:8px;
+  padding:10px 13px;color:var(--tx);font-family:inherit;font-size:.85rem;width:100%;outline:none;}
+.inp:focus{border-color:var(--ac);}
+.btn-p{background:var(--ac);color:#000;border:none;border-radius:8px;
+  padding:11px;font-family:inherit;font-size:.85rem;font-weight:800;cursor:pointer;width:100%;}
+.errmsg{color:#f87171;font-size:.75rem;text-align:center;min-height:18px;}
 
-/* ADMIN PANEL */
-.admin-section{margin-bottom:20px;}
-.admin-section h3{font-size:0.78rem;font-weight:800;text-transform:uppercase;letter-spacing:0.08em;
-  color:var(--muted);margin-bottom:10px;}
-.admin-row{display:flex;align-items:center;padding:9px 0;border-bottom:1px solid var(--border);gap:10px;}
-.admin-row:last-child{border-bottom:none;}
-.ar-info{flex:1;min-width:0;}
-.ar-name{font-size:0.85rem;font-weight:600;}
-.ar-sub{font-size:0.7rem;color:var(--muted);margin-top:1px;}
-.ar-date{font-size:0.75rem;color:var(--muted);min-width:60px;text-align:right;}
-.pos-select{background:var(--surface2);border:1px solid var(--border);border-radius:8px;
-  padding:6px 10px;color:var(--text);font-family:inherit;font-size:0.78rem;font-weight:700;
-  cursor:pointer;outline:none;min-width:95px;}
-.pos-select:focus{border-color:var(--accent);}
-.pos-select option{background:var(--surface2);}
-.save-indicator{font-size:0.68rem;color:var(--v-col);margin-left:6px;opacity:0;transition:opacity 0.3s;}
-.save-indicator.show{opacity:1;}
+/* ADMIN TABS */
+.atabs{display:flex;gap:6px;margin-bottom:16px;}
+.atab{flex:1;padding:8px;border-radius:8px;border:1px solid var(--br);background:var(--s2);
+  color:var(--mu);font-family:inherit;font-size:.72rem;font-weight:700;cursor:pointer;transition:all .15s;}
+.atab.active{background:var(--ac);color:#000;border-color:var(--ac);}
 
-/* DATE NAV */
-.date-nav{display:flex;align-items:center;gap:8px;margin-bottom:14px;}
-.dnav-btn{background:var(--surface2);border:1px solid var(--border);border-radius:8px;
-  padding:6px 10px;color:var(--text);font-family:inherit;font-size:0.8rem;cursor:pointer;}
-.dnav-label{flex:1;text-align:center;font-size:0.82rem;font-weight:700;color:var(--text);}
+/* ADMIN GRID */
+.ag-nav{display:flex;align-items:center;gap:8px;margin-bottom:12px;}
+.ag-nav-btn{background:var(--s2);border:1px solid var(--br);border-radius:7px;
+  padding:5px 11px;font-family:inherit;font-size:.8rem;color:var(--tx);cursor:pointer;transition:all .15s;}
+.ag-nav-btn:hover{border-color:var(--ac);}
+.ag-label{flex:1;text-align:center;font-size:.85rem;font-weight:800;}
+.ag-wrap{overflow-x:auto;border-radius:10px;border:1px solid var(--br);}
+.ag-table{width:100%;border-collapse:collapse;min-width:480px;}
+.ag-table thead th{background:var(--s2);padding:8px 6px;font-size:.63rem;font-weight:700;
+  text-transform:uppercase;letter-spacing:.06em;color:var(--mu);border-bottom:1px solid var(--br);text-align:center;}
+.ag-table thead th:first-child{text-align:left;padding-left:10px;min-width:100px;}
+.ag-table tbody td{padding:5px 4px;border-bottom:1px solid var(--br);vertical-align:middle;text-align:center;}
+.ag-table tbody td:first-child{text-align:left;padding-left:10px;}
+.ag-table tbody tr:last-child td{border-bottom:none;}
+.ag-table tbody tr:hover td{background:rgba(255,255,255,.015);}
+.cn2{font-size:.75rem;font-weight:700;}
+.cp2{font-size:.62rem;color:var(--mu);}
+.th-date{display:flex;flex-direction:column;align-items:center;gap:1px;}
+.th-d{font-size:.9rem;font-weight:900;color:var(--tx);}
+.th-d.wknd{color:var(--ac2);}
+.th-w{font-size:.58rem;color:var(--mu);}
+.gsel{background:var(--s2);border:1px solid var(--br);border-radius:6px;
+  padding:4px 5px;color:var(--tx);font-family:inherit;font-size:.67rem;font-weight:700;
+  cursor:pointer;outline:none;width:100%;transition:border-color .15s;}
+.gsel:focus{border-color:var(--ac);}
+.ginp{background:var(--s2);border:1px solid var(--br);border-radius:6px;
+  padding:3px 5px;color:var(--tx);font-family:inherit;font-size:.63rem;width:100%;outline:none;}
+.ginp:focus{border-color:var(--ac);}
+.gcell{display:flex;flex-direction:column;gap:3px;padding:2px;}
+.off-cell{color:var(--o-c);font-size:.65rem;font-weight:600;text-align:center;padding:4px 0;}
+.flash{animation:flashG .5s ease;}
+@keyframes flashG{0%{background:rgba(52,211,153,.25);}100%{background:transparent;}}
+.save-row{display:flex;align-items:center;justify-content:flex-end;margin-top:12px;gap:10px;}
+.sstt{font-size:.72rem;color:var(--V-c);}
+.sbtn{background:var(--V-c);color:#000;border:none;border-radius:8px;
+  padding:9px 20px;font-family:inherit;font-size:.78rem;font-weight:800;cursor:pointer;transition:opacity .15s;}
+.sbtn:hover{opacity:.9;}
+.sbtn:disabled{opacity:.5;cursor:not-allowed;}
 
-/* SYNC STATUS */
-.sync-dot{width:7px;height:7px;border-radius:50%;display:inline-block;margin-right:4px;}
-.sync-dot.ok{background:#34d399;}
-.sync-dot.loading{background:#f0a500;animation:pulse 1s infinite;}
-.sync-dot.err{background:#f87171;}
-@keyframes pulse{0%,100%{opacity:1;}50%{opacity:0.4;}}
-.sync-status{display:flex;align-items:center;font-size:0.65rem;color:var(--muted);margin-top:4px;}
+/* CALENDAR */
+.cal-nav{display:flex;align-items:center;gap:8px;margin-bottom:10px;}
+.cal-nav-btn{background:var(--s2);border:1px solid var(--br);border-radius:7px;
+  padding:5px 11px;font-family:inherit;font-size:.8rem;color:var(--tx);cursor:pointer;}
+.cal-mo{flex:1;text-align:center;font-size:.85rem;font-weight:800;}
+.cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:3px;margin-bottom:14px;}
+.cc{text-align:center;padding:6px 2px;border-radius:7px;font-size:.75rem;font-weight:600;
+  cursor:pointer;border:2px solid transparent;transition:all .12s;position:relative;user-select:none;}
+.cc.head{color:var(--mu);font-size:.63rem;font-weight:700;text-transform:uppercase;cursor:default;padding:3px;}
+.cc.other{color:var(--mu);opacity:.35;cursor:default;}
+.cc.wknd-c{color:var(--ac2);}
+.cc.today-c{border-color:var(--ac);}
+.cc.has-dot::after{content:'';width:5px;height:5px;border-radius:50%;background:var(--V-c);
+  position:absolute;bottom:2px;left:50%;transform:translateX(-50%);}
+.cc:not(.head):not(.other):hover{background:var(--s3);}
+.cc.active-c{background:rgba(240,165,0,.15);border-color:var(--ac);}
+.cal-detail{background:var(--s2);border-radius:10px;padding:12px 14px;}
+.cal-detail-ttl{font-size:.8rem;font-weight:800;margin-bottom:10px;color:var(--tx);}
+.cal-drow{display:flex;align-items:center;padding:7px 0;border-bottom:1px solid var(--br);gap:8px;}
+.cal-drow:last-child{border-bottom:none;}
+.cal-dn{flex:1;font-size:.8rem;font-weight:600;}
+.cal-dr{display:flex;gap:5px;align-items:center;flex-wrap:wrap;}
 
-/* DESKTOP TABLE */
-@media(min-width:700px){
-  body{padding:28px 20px 60px;}
-  .hdr{position:static;border-radius:14px 14px 0 0;border:1px solid var(--border);border-bottom:none;
-    max-width:1300px;margin:0 auto;padding:20px 24px 16px;}
-  .hdr h1{font-size:1.7rem;}
+/* DESKTOP */
+@media(min-width:720px){
+  body{padding:24px 16px 60px;}
+  .hdr{position:static;border-radius:14px 14px 0 0;border:1px solid var(--br);border-bottom:none;
+    max-width:1340px;margin:0 auto;padding:18px 22px 14px;box-shadow:none;}
+  .hdr h1{font-size:1.6rem;}
+  .wk-section{max-width:1340px;margin:0 auto;padding:0;border:1px solid var(--br);border-top:none;
+    border-bottom:none;background:var(--sf);}
+  .wk-nav{padding:12px 16px 0;}
+  .wk-grid{padding:8px 16px 12px;gap:6px;}
+  .wk-col{min-height:130px;}
+  .wk-entry{font-size:.66rem;}
   .vtog{display:none;}
   #vw,#vd{display:none!important;}
-  #dtable{display:block;}
-  .twrap{max-width:1300px;margin:0 auto;overflow-x:auto;border-radius:0 0 14px 14px;
-    border:1px solid var(--border);border-top:none;background:var(--surface);}
-  table{width:100%;border-collapse:collapse;min-width:900px;}
-  thead th{background:var(--bg);padding:9px 6px;font-size:0.65rem;font-weight:700;
-    letter-spacing:0.07em;text-transform:uppercase;color:var(--muted);
-    border-bottom:1px solid var(--border);text-align:center;}
-  thead th:first-child{text-align:left;padding-left:18px;min-width:190px;}
-  .thd-num{font-size:1rem;font-weight:900;color:var(--text);display:block;}
-  .thd-num.wknd{color:var(--accent2);}
-  tbody tr{border-bottom:1px solid var(--border);}
+  #dtbl{display:block;}
+  .twrap{max-width:1340px;margin:0 auto;overflow-x:auto;border:1px solid var(--br);
+    border-top:none;border-radius:0 0 14px 14px;background:var(--sf);}
+  table{width:100%;border-collapse:collapse;min-width:940px;}
+  thead th{background:var(--bg);padding:8px 5px;font-size:.62rem;font-weight:700;
+    letter-spacing:.07em;text-transform:uppercase;color:var(--mu);border-bottom:1px solid var(--br);text-align:center;}
+  thead th:first-child{text-align:left;padding-left:16px;min-width:185px;}
+  .thn{font-size:.93rem;font-weight:900;color:var(--tx);display:block;}
+  .thn.wknd{color:var(--ac2);}
+  tbody tr{border-bottom:1px solid var(--br);}
   tbody tr:last-child{border-bottom:none;}
-  tbody tr:hover{background:rgba(255,255,255,0.02);}
+  tbody tr:hover{background:rgba(255,255,255,.02);}
   td{padding:0;text-align:center;vertical-align:middle;}
-  td:first-child{text-align:left;padding:10px 12px 10px 18px;}
-  .tname{font-size:0.83rem;font-weight:600;}
-  .tphone{font-size:0.7rem;color:var(--muted);margin-top:1px;}
-  .tcell{display:flex;flex-direction:column;align-items:center;justify-content:center;
-    height:56px;font-size:0.72rem;font-weight:700;gap:3px;}
-  .tcell.m{background:var(--m-bg);color:var(--m-col);}
-  .tcell.a{background:var(--a-bg);color:var(--a-col);}
-  .tcell.e{background:var(--e-bg);color:var(--e-col);}
-  .tcell.o{background:var(--o-bg);color:var(--o-col);font-size:0.62rem;letter-spacing:0.08em;}
-  .tpos{font-size:0.62rem;font-weight:800;padding:2px 6px;border-radius:10px;}
-  .stats-row td{padding:0;}
-  .scell{height:32px;display:flex;align-items:center;justify-content:center;
-    font-size:0.67rem;color:var(--muted);background:var(--bg);
-    border-top:1px solid var(--border);flex-direction:column;gap:1px;}
-  .scell .sc{font-size:0.9rem;color:var(--text);font-weight:700;}
+  td:first-child{text-align:left;padding:9px 10px 9px 16px;}
+  .tn{font-size:.82rem;font-weight:600;}
+  .tph{font-size:.68rem;color:var(--mu);margin-top:1px;}
+  .tc{display:flex;flex-direction:column;align-items:center;justify-content:center;
+    height:54px;font-size:.7rem;font-weight:700;gap:3px;}
+  .tc.m{background:var(--m-b);color:var(--m-c);}
+  .tc.a{background:var(--a-b);color:var(--a-c);}
+  .tc.e{background:var(--e-b);color:var(--e-c);}
+  .tc.o{background:var(--o-b);color:var(--o-c);font-size:.6rem;letter-spacing:.07em;}
+  .tp{font-size:.58rem;font-weight:800;padding:2px 5px;border-radius:7px;}
+  .srow td{padding:0;}
+  .scl{height:30px;display:flex;align-items:center;justify-content:center;
+    font-size:.64rem;color:var(--mu);background:var(--bg);border-top:1px solid var(--br);
+    flex-direction:column;gap:1px;}
+  .scl .sc{font-size:.88rem;color:var(--tx);font-weight:700;}
 }
-#dtable{display:none;}
+#dtbl{display:none;}
 </style>
 </head>
 <body>
 
+<!-- HEADER -->
 <div class="hdr">
   <div class="hdr-top">
     <div>
       <h1>მიმტანების <span>განრიგი</span></h1>
-      <p>22 მარტი — 4 აპრილი</p>
+      <div class="hdr-sub" id="hdrSub">იტვირთება...</div>
     </div>
-    <button class="admin-btn" onclick="openAdmin()">
+    <button class="abtn" onclick="openAdmin()">
       <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>
       Admin
     </button>
   </div>
-  <div class="legend">
-    <div class="li"><div class="ld" style="background:#60b4ff"></div>09:00</div>
-    <div class="li"><div class="ld" style="background:#f0a500"></div>14:00</div>
-    <div class="li"><div class="ld" style="background:#e05c2a"></div>15:00</div>
+  <div class="leg">
+    <div class="li"><div class="ld" style="background:var(--m-c)"></div>09:00</div>
+    <div class="li"><div class="ld" style="background:var(--a-c)"></div>14:00</div>
+    <div class="li"><div class="ld" style="background:var(--e-c)"></div>15:00</div>
     <div class="li"><div class="ld" style="background:#3a3f52;border:1px solid #3a3f52"></div>OFF</div>
-    <div class="li"><div class="ld" style="background:#a78bfa"></div>ჰოლი</div>
-    <div class="li"><div class="ld" style="background:#34d399"></div>ვერანდა</div>
-    <div class="li"><div class="ld" style="background:#f472b6"></div>ანტრესოლი</div>
-    <div class="sync-status" id="syncStatus"><span class="sync-dot loading" id="syncDot"></span><span id="syncText">სინქრონიზაცია...</span></div>
+    <div class="li"><div class="ld" style="background:var(--H-c)"></div>ჰოლი</div>
+    <div class="li"><div class="ld" style="background:var(--V-c)"></div>ვერანდა</div>
+    <div class="li"><div class="ld" style="background:var(--A-c)"></div>ანტრ.</div>
+  </div>
+  <div class="sync-row">
+    <span class="sd spin" id="sd"></span>
+    <span class="st" id="st">სინქრონიზაცია...</span>
   </div>
 </div>
 
+<!-- WEEK GRID -->
+<div class="wk-section">
+  <div class="wk-nav">
+    <button class="wk-nav-btn" onclick="shiftWeek(-1)">◀</button>
+    <div class="wk-label" id="wkLabel">—</div>
+    <button class="wk-nav-btn" onclick="shiftWeek(1)">▶</button>
+  </div>
+  <div class="wk-grid" id="wkGrid"></div>
+</div>
+
+<!-- VIEW TOGGLE (mobile) -->
 <div class="vtog">
-  <button class="vbtn active" onclick="switchView('w',this)">მიმტანით</button>
-  <button class="vbtn" onclick="switchView('d',this)">დღით</button>
+  <button class="vbtn active" onclick="sview('w',this)">მიმტანით</button>
+  <button class="vbtn" onclick="sview('d',this)">დღით</button>
 </div>
 
+<!-- WAITER CARDS -->
 <div id="vw"></div>
+<!-- DAY VIEW -->
 <div id="vd" style="display:none"></div>
-<div id="dtable"><div class="twrap"><table><thead id="dth"></thead><tbody id="dtb"></tbody></table></div></div>
+<!-- DESKTOP TABLE -->
+<div id="dtbl"><div class="twrap"><table><thead id="dth"></thead><tbody id="dtb"></tbody></table></div></div>
 
-<!-- LOGIN MODAL -->
-<div class="overlay" id="loginOverlay">
+<!-- LOGIN -->
+<div class="ov" id="loginOv">
   <div class="modal">
-    <div class="modal-hdr">
-      <h2>🔐 Admin შესვლა</h2>
-      <button class="close-btn" onclick="closeOverlay('loginOverlay')">✕</button>
-    </div>
-    <div class="modal-body">
-      <div class="login-form">
-        <input type="password" class="inp" id="adminPass" placeholder="პაროლი" onkeydown="if(event.key==='Enter')checkLogin()">
-        <button class="btn-primary" onclick="checkLogin()">შესვლა</button>
-        <div class="err" id="loginErr"></div>
+    <div class="mhdr"><h2>🔐 Admin შესვლა</h2><button class="xbtn" onclick="cov('loginOv')">✕</button></div>
+    <div class="mbody">
+      <div class="lform">
+        <input type="password" class="inp" id="passInp" placeholder="პაროლი" onkeydown="if(event.key==='Enter')doLogin()">
+        <button class="btn-p" onclick="doLogin()">შესვლა</button>
+        <div class="errmsg" id="lerr"></div>
       </div>
     </div>
   </div>
 </div>
 
-<!-- ADMIN PANEL MODAL -->
-<div class="overlay" id="adminOverlay">
+<!-- ADMIN -->
+<div class="ov" id="adminOv">
   <div class="modal">
-    <div class="modal-hdr">
-      <h2>⚙️ Admin პანელი</h2>
-      <button class="close-btn" onclick="closeOverlay('adminOverlay')">✕</button>
-    </div>
-    <div class="modal-body">
-      <div class="date-nav">
-        <button class="dnav-btn" onclick="changeAdminDay(-1)">◀</button>
-        <div class="dnav-label" id="adminDayLabel"></div>
-        <button class="dnav-btn" onclick="changeAdminDay(1)">▶</button>
+    <div class="mhdr"><h2>⚙️ Admin პანელი</h2><button class="xbtn" onclick="cov('adminOv')">✕</button></div>
+    <div class="mbody">
+      <div class="atabs">
+        <button class="atab active" onclick="aTab('grid',this)">📋 კვირის ცხრილი</button>
+        <button class="atab" onclick="aTab('cal',this)">📅 კალენდარი</button>
       </div>
-      <div class="admin-section">
-        <h3>პოზიციები</h3>
-        <div id="adminRows"></div>
+
+      <!-- GRID TAB -->
+      <div id="aGrid">
+        <div class="ag-nav">
+          <button class="ag-nav-btn" onclick="agWeek(-1)">◀</button>
+          <div class="ag-label" id="agLabel">—</div>
+          <button class="ag-nav-btn" onclick="agWeek(1)">▶</button>
+        </div>
+        <div class="ag-wrap">
+          <table class="ag-table" id="agTable"></table>
+        </div>
+        <div class="save-row">
+          <span class="sstt" id="sstt"></span>
+          <button class="sbtn" id="saveBtn" onclick="saveGrid()">💾 შენახვა</button>
+        </div>
+      </div>
+
+      <!-- CAL TAB -->
+      <div id="aCal" style="display:none">
+        <div class="cal-nav">
+          <button class="cal-nav-btn" onclick="calMove(-1)">◀</button>
+          <div class="cal-mo" id="calMo">—</div>
+          <button class="cal-nav-btn" onclick="calMove(1)">▶</button>
+        </div>
+        <div class="cal-grid" id="calGrid"></div>
+        <div id="calDetail"></div>
       </div>
     </div>
   </div>
 </div>
 
 <script>
-const SB_URL = 'https://bbroknpeebjuilycutjd.supabase.co';
-const SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJicm9rbnBlZWJqdWlseWN1dGpkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzM4NTk0NjksImV4cCI6MjA4OTQzNTQ2OX0.7rlaolshlMLtFObv6ViaifiSNkiYofiCRm8q2SiJns8';
-const ADMIN_PASS = '151515';
+/* ══════════════════════════════
+   CONSTANTS
+══════════════════════════════ */
+const SB  = 'https://bbroknpeebjuilycutjd.supabase.co';
+const KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJicm9rbnBlZWJqdWlseWN1dGpkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzM4NTk0NjksImV4cCI6MjA4OTQzNTQ2OX0.7rlaolshlMLtFObv6ViaifiSNkiYofiCRm8q2SiJns8';
+const PASS = '151515';
 
-const KD = ['კვ','ორ','სამ','ოთხ','ხუთ','პარ','შაბ'];
-const POSITIONS = {
-  '': '—',
-  'H': 'ჰოლი',
-  'V': 'ვერანდა',
-  'A': 'ანტრესოლი'
-};
+const KD  = ['კვ','ორ','სამ','ოთხ','ხუთ','პარ','შაბ'];
+const MKA = ['იანვარი','თებერვალი','მარტი','აპრილი','მაისი','ივნისი',
+             'ივლისი','აგვისტო','სექტემბერი','ოქტომბერი','ნოემბერი','დეკემბერი'];
+const MSH = ['იან','თებ','მარ','აპრ','მაი','ივნ','ივლ','აგვ','სექ','ოქტ','ნოე','დეკ'];
 
-// March 22 = Sunday(0)
-const cols = [
-  {d:22,m:3,wd:0},{d:23,m:3,wd:1},{d:24,m:3,wd:2},{d:25,m:3,wd:3},
-  {d:26,m:3,wd:4},{d:27,m:3,wd:5},{d:28,m:3,wd:6},
-  {d:29,m:3,wd:0},{d:30,m:3,wd:1},{d:31,m:3,wd:2},
-  {d:1,m:4,wd:3},{d:2,m:4,wd:4},{d:3,m:4,wd:5},{d:4,m:4,wd:6}
+const SHIFTS_OPT = ['09:00','14:00','15:00','OFF'];
+const POS_MAP = {'':'—','H':'ჰოლი','V':'ვერანდა','A':'ანტრ.'};
+const POS_FULL = {'':'—','H':'ჰოლი','V':'ვერანდა','A':'ანტრესოლი'};
+
+/* hardcoded Mar 22 – Apr 4 (Sun–Sat) */
+const FCOLS = [
+  {y:2025,m:3,d:22,wd:0},{y:2025,m:3,d:23,wd:1},{y:2025,m:3,d:24,wd:2},
+  {y:2025,m:3,d:25,wd:3},{y:2025,m:3,d:26,wd:4},{y:2025,m:3,d:27,wd:5},
+  {y:2025,m:3,d:28,wd:6},{y:2025,m:3,d:29,wd:0},{y:2025,m:3,d:30,wd:1},
+  {y:2025,m:3,d:31,wd:2},{y:2025,m:4,d:1,wd:3},{y:2025,m:4,d:2,wd:4},
+  {y:2025,m:4,d:3,wd:5},{y:2025,m:4,d:4,wd:6}
 ];
-
-const waiters = [
+const WAITERS = [
   {name:'ლაშა სვანიძე',   phone:'558 667 748', shifts:['14:00','14:00','OFF','09:00','14:00','OFF','14:00','14:00','OFF','14:00','14:00','OFF','14:00','14:00']},
   {name:'ირაკლი ბერიძე', phone:'557 613 585', shifts:['14:00','OFF','09:00','14:00','OFF','OFF','14:00','14:00','OFF','09:00','14:00','OFF','09:00','14:00']},
   {name:'კახი კახაძე',    phone:'514 280 066', shifts:['OFF','09:00','14:00','OFF','09:00','14:00','OFF','09:00','14:00','OFF','09:00','14:00','OFF','09:00']},
@@ -302,376 +399,448 @@ const waiters = [
   {name:'ლუკა გოგუაძე',  phone:'558 474 651', shifts:['OFF','14:00','14:00','OFF','OFF','14:00','14:00','OFF','14:00','OFF','OFF','OFF','14:00','OFF']}
 ];
 
-// positions cache: {waiter_name|date: position}
-let posCache = {};
-let adminDayIdx = 0;
+/* ══════════════════════════════
+   STATE
+══════════════════════════════ */
+// cache: "name|YYYY-MM-DD" → {shift_time, position, notes}
+let DB = {};
+let wkOff = 0;   // public week offset
+let agOff = 0;   // admin grid week offset
+let calY, calM, selCalDk = null;
 
-function dateKey(col){ return `2025-${String(col.m).padStart(2,'0')}-${String(col.d).padStart(2,'0')}`; }
-function posKey(name,col){ return `${name}|${dateKey(col)}`; }
-
-function cls(v){
+/* ══════════════════════════════
+   UTILS
+══════════════════════════════ */
+const dk  = (y,m,d) => `${y}-${String(m).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
+const pk  = (name,datekey) => `${name}|${datekey}`;
+const iW  = wd => wd===0||wd===6;
+function scls(v){
   if(!v||v==='OFF')return'o';
-  if(v==='09:00')return'm';
-  if(v==='14:00')return'a';
-  if(v==='15:00')return'e';
+  if(v==='09:00')return'm'; if(v==='14:00')return'a'; if(v==='15:00')return'e';
   return'o';
 }
 function lbl(v){return(!v||v==='OFF')?'OFF':v;}
-function isW(wd){return wd===0||wd===6;}
 
-/* ── SUPABASE ── */
-async function sbFetch(path, options={}){
-  const res = await fetch(`${SB_URL}/rest/v1/${path}`, {
-    ...options,
-    headers: {
-      'apikey': SB_KEY,
-      'Authorization': `Bearer ${SB_KEY}`,
-      'Content-Type': 'application/json',
-      'Prefer': 'return=representation',
-      ...(options.headers||{})
-    }
+function weekDates(off){
+  const t=new Date(), wd=t.getDay();
+  const sun=new Date(t); sun.setDate(t.getDate()-wd+off*7);
+  return Array.from({length:7},(_,i)=>{
+    const d=new Date(sun); d.setDate(sun.getDate()+i);
+    return {y:d.getFullYear(),m:d.getMonth()+1,d:d.getDate(),wd:d.getDay()};
   });
-  if(!res.ok){ const t=await res.text(); throw new Error(t); }
-  const text = await res.text();
-  return text ? JSON.parse(text) : null;
 }
 
-async function ensureTable(){
-  // Try to query — if 404 or error, table doesn't exist → create via RPC isn't available
-  // Instead we just try to use it and create via the SQL editor instructions
-  try {
-    await sbFetch('waiter_positions?limit=1');
-    return true;
-  } catch(e) {
-    setSyncStatus('err','ცხრილი არ არსებობს — იხ. ინსტრუქცია');
-    return false;
-  }
+function wkLabel(days){
+  const f=days[0],l=days[6];
+  if(f.m===l.m) return `${f.d}–${l.d} ${MSH[f.m-1]} ${f.y}`;
+  return `${f.d} ${MSH[f.m-1]} – ${l.d} ${MSH[l.m-1]} ${l.y}`;
 }
 
-async function loadPositions(){
-  setSyncStatus('loading','ჩატვირთვა...');
-  try {
-    const data = await sbFetch('waiter_positions?select=waiter_name,shift_date,position');
-    posCache = {};
-    (data||[]).forEach(row => {
-      const col = cols.find(c => dateKey(c) === row.shift_date);
-      if(col) posCache[posKey(row.waiter_name, col)] = row.position;
+function todayDk(){
+  const t=new Date();
+  return dk(t.getFullYear(),t.getMonth()+1,t.getDate());
+}
+
+// get shift for a waiter on a date (DB overrides hardcoded)
+function getShift(name,y,m,d){
+  const key=pk(name,dk(y,m,d));
+  if(DB[key]?.shift_time) return DB[key].shift_time;
+  const i=FCOLS.findIndex(c=>c.y===y&&c.m===m&&c.d===d);
+  if(i>=0){ const w=WAITERS.find(w=>w.name===name); return w?w.shifts[i]:'OFF'; }
+  return 'OFF';
+}
+function getPos(name,y,m,d){ return DB[pk(name,dk(y,m,d))]?.position||''; }
+function getNote(name,y,m,d){ return DB[pk(name,dk(y,m,d))]?.notes||''; }
+
+/* ══════════════════════════════
+   SUPABASE
+══════════════════════════════ */
+async function sbq(path,opts={}){
+  const r=await fetch(`${SB}/rest/v1/${path}`,{
+    ...opts,
+    headers:{'apikey':KEY,'Authorization':`Bearer ${KEY}`,
+      'Content-Type':'application/json','Prefer':'return=representation',...(opts.headers||{})}
+  });
+  const t=await r.text();
+  if(!r.ok) throw new Error(t);
+  return t?JSON.parse(t):null;
+}
+
+async function loadDB(){
+  setSS('spin','ჩატვირთვა...');
+  try{
+    const rows=await sbq('waiter_positions?select=waiter_name,shift_date,shift_time,position,notes');
+    DB={};
+    (rows||[]).forEach(r=>{
+      DB[pk(r.waiter_name,r.shift_date)]={
+        shift_time:r.shift_time||'',
+        position:r.position||'',
+        notes:r.notes||''
+      };
     });
-    setSyncStatus('ok','სინქრონიზებულია');
+    setSS('ok','სინქრონიზებულია');
     renderAll();
-  } catch(e) {
-    if(e.message && e.message.includes('does not exist')){
-      setSyncStatus('err','⚠️ ცხრილი უნდა შეიქმნას');
-      showTableSetupMsg();
-    } else {
-      setSyncStatus('err','შეცდომა');
-    }
-    renderAll();
+  }catch(e){
+    setSS('err','შეცდომა: '+e.message.slice(0,40));
   }
 }
 
-async function savePosition(waiterName, col, position){
-  const key = posKey(waiterName, col);
-  posCache[key] = position;
-  renderAll();
-
-  try {
-    if(position === '') {
-      await sbFetch(`waiter_positions?waiter_name=eq.${encodeURIComponent(waiterName)}&shift_date=eq.${dateKey(col)}`, {
-        method: 'DELETE'
-      });
-    } else {
-      await sbFetch('waiter_positions', {
-        method: 'POST',
-        headers: {'Prefer':'resolution=merge-duplicates,return=representation'},
-        body: JSON.stringify({ waiter_name: waiterName, shift_date: dateKey(col), position })
-      });
-    }
-    return true;
-  } catch(e) {
-    setSyncStatus('err','შენახვის შეცდომა');
-    return false;
-  }
+async function upsertRows(rows){
+  return sbq('waiter_positions',{
+    method:'POST',
+    headers:{'Prefer':'resolution=merge-duplicates,return=representation'},
+    body:JSON.stringify(rows)
+  });
 }
 
-function setSyncStatus(state, text){
-  const dot = document.getElementById('syncDot');
-  const txt = document.getElementById('syncText');
-  dot.className = 'sync-dot ' + state;
-  txt.textContent = text;
+function setSS(state,txt){
+  document.getElementById('sd').className='sd '+state;
+  document.getElementById('st').textContent=txt;
 }
 
-function showTableSetupMsg(){
-  // Show a small notice in admin panel about creating the table
-}
+/* ══════════════════════════════
+   RENDER: WEEK GRID (public)
+══════════════════════════════ */
+function shiftWeek(d){ wkOff+=d; renderWeek(); }
 
-/* ── RENDER ── */
-function getPos(name, col){ return posCache[posKey(name,col)] || ''; }
+function renderWeek(){
+  const days=weekDates(wkOff);
+  const tdk=todayDk();
+  document.getElementById('wkLabel').textContent=wkLabel(days);
+  document.getElementById('hdrSub').textContent=wkLabel(days);
 
-function posTag(p, el='span'){
-  if(!p) return '';
-  return `<${el} class="tpos pos-${p}">${POSITIONS[p]}</${el}>`;
-}
+  const g=document.getElementById('wkGrid');
+  g.innerHTML='';
+  days.forEach(c=>{
+    const cdkv=dk(c.y,c.m,c.d);
+    const isT=cdkv===tdk;
+    const col=document.createElement('div');
+    col.className='wk-col'+(isT?' today':'');
 
-function renderAll(){
-  renderWaiterView();
-  renderDayView();
-  renderDesktopTable();
-}
-
-function renderWaiterView(){
-  const vw = document.getElementById('vw');
-  const opens = new Set();
-  vw.querySelectorAll('.wcard.open').forEach(c=>opens.add(c.dataset.name));
-  vw.innerHTML = '';
-
-  waiters.forEach(w=>{
-    let m=0,a=0,e=0;
-    w.shifts.forEach(s=>{if(s==='09:00')m++;else if(s==='14:00')a++;else if(s==='15:00')e++;});
-    const badges=[m?`<span class="badge m">09×${m}</span>`:'',a?`<span class="badge a">14×${a}</span>`:'',e?`<span class="badge e">15×${e}</span>`:''  ].join('');
-
-    const chips = cols.map((c,i) => {
-      const p = getPos(w.name, c);
-      const posHtml = p ? `<span class="cp pos-${p}">${POSITIONS[p]}</span>` : '';
-      return `<div class="chip ${cls(w.shifts[i])} ${isW(c.wd)?'wknd':''}">
-        <span class="cd">${KD[c.wd]}</span>
-        <span class="cn">${c.d}</span>
-        <span class="ct">${lbl(w.shifts[i])}</span>
-        ${posHtml}
+    const workers=WAITERS.filter(w=>getShift(w.name,c.y,c.m,c.d)!=='OFF');
+    const entries=workers.map(w=>{
+      const s=getShift(w.name,c.y,c.m,c.d);
+      const p=getPos(w.name,c.y,c.m,c.d);
+      const short=w.name.split(' ')[0];
+      return `<div class="wk-entry" style="background:var(--${scls(s)}-b);color:var(--${scls(s)}-c)">
+        <span class="wk-ename">${short}</span>
+        ${p?`<span class="wk-epos" style="color:var(--${p}-c)">${POS_MAP[p]}</span>`:''}
       </div>`;
     }).join('');
 
-    const card = document.createElement('div');
-    card.className = 'wcard' + (opens.has(w.name)?' open':'');
-    card.dataset.name = w.name;
-    card.innerHTML = `<div class="wcard-hdr" onclick="tog(this)">
-      <div class="winfo"><div class="wname">${w.name}</div><div class="wphone">${w.phone}</div></div>
-      <div class="wbadges">${badges}</div>
-      <svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
+    col.innerHTML=`<div class="wk-col-hdr">
+      <div class="wk-dn">${KD[c.wd]}</div>
+      <div class="wk-dd ${iW(c.wd)?'wknd':''}">${c.d}</div>
+      <div class="wk-dm">${MSH[c.m-1]}</div>
+    </div>
+    <div class="wk-entries">${entries||'<div class="wk-empty">—</div>'}</div>`;
+    g.appendChild(col);
+  });
+}
+
+/* ══════════════════════════════
+   RENDER: WAITER CARDS
+══════════════════════════════ */
+function renderCards(){
+  const vw=document.getElementById('vw');
+  const opens=new Set([...vw.querySelectorAll('.wcard.open')].map(c=>c.dataset.n));
+  vw.innerHTML='';
+  WAITERS.forEach(w=>{
+    let m=0,a=0,e=0;
+    w.shifts.forEach(s=>{if(s==='09:00')m++;else if(s==='14:00')a++;else if(s==='15:00')e++;});
+    const bdgs=[m?`<span class="bdg m">09×${m}</span>`:'',a?`<span class="bdg a">14×${a}</span>`:'',e?`<span class="bdg e">15×${e}</span>`:''  ].join('');
+    const chips=FCOLS.map((c,i)=>{
+      const s=w.shifts[i];
+      const p=getPos(w.name,c.y,c.m,c.d);
+      return `<div class="chip ${scls(s)} ${iW(c.wd)?'wknd':''}">
+        <span class="cd">${KD[c.wd]}</span><span class="cn">${c.d}</span>
+        <span class="ct">${lbl(s)}</span>
+        ${p?`<span class="cp" style="background:var(--${p}-b);color:var(--${p}-c)">${POS_MAP[p]}</span>`:''}
+      </div>`;
+    }).join('');
+    const card=document.createElement('div');
+    card.className='wcard'+(opens.has(w.name)?' open':'');
+    card.dataset.n=w.name;
+    card.innerHTML=`<div class="wcard-hdr" onclick="tog(this)">
+      <div class="wi"><div class="wn">${w.name}</div><div class="wp">${w.phone}</div></div>
+      <div class="wbdg">${bdgs}</div>
+      <svg class="chv" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
     </div><div class="wshifts">${chips}</div>`;
     vw.appendChild(card);
   });
 }
 
+/* ══════════════════════════════
+   RENDER: DAY VIEW
+══════════════════════════════ */
 function renderDayView(){
-  const vd = document.getElementById('vd');
-  vd.innerHTML = '';
-
-  cols.forEach((c,i) => {
-    const mo = c.m===3?'მარტი':'აპრილი';
-    const workers = waiters.filter(w => w.shifts[i]!=='OFF');
-
-    const rows = workers.map(w => {
-      const p = getPos(w.name, c);
+  const vd=document.getElementById('vd'); vd.innerHTML='';
+  FCOLS.forEach((c,i)=>{
+    const workers=WAITERS.filter(w=>w.shifts[i]!=='OFF');
+    const rows=workers.map(w=>{
+      const p=getPos(w.name,c.y,c.m,c.d);
+      const n=getNote(w.name,c.y,c.m,c.d);
       return `<div class="drow">
-        <div class="drinfo"><div class="drname">${w.name}</div><div class="drphone">${w.phone}</div></div>
-        <div class="dr-right">
-          ${p ? `<span class="drpos pos-${p}">${POSITIONS[p]}</span>` : ''}
-          <span class="drshift ${cls(w.shifts[i])}">${lbl(w.shifts[i])}</span>
+        <div class="drif"><div class="drn">${w.name}</div><div class="drp">${w.phone}</div></div>
+        <div class="drr">
+          ${p?`<span class="pc ${p}">${POS_FULL[p]}</span>`:''}
+          <span class="drs ${scls(w.shifts[i])}">${lbl(w.shifts[i])}</span>
         </div>
-      </div>`;
+      </div>${n?`<div class="dnote" style="padding:4px 13px 8px;font-size:.63rem;color:var(--mu);font-style:italic">💬 ${n}</div>`:''}`;
     }).join('');
-
-    const block = document.createElement('div');
-    block.className = 'dblock';
-    block.innerHTML = `<div class="dblock-hdr">
-      <div class="dbig ${isW(c.wd)?'wknd':''}">${c.d}</div>
-      <div class="dmeta"><div class="dname">${KD[c.wd]}</div><div class="dmonth">${mo}</div></div>
-      <div class="dcount">${workers.length} მიმტ.</div>
+    const b=document.createElement('div'); b.className='dblk';
+    b.innerHTML=`<div class="dblk-hdr">
+      <div class="dbig ${iW(c.wd)?'wknd':''}">${c.d}</div>
+      <div class="dmeta"><div class="dn">${KD[c.wd]}</div><div class="dm">${MKA[c.m-1]}</div></div>
+      <div class="dcnt">${workers.length} მიმტ.</div>
     </div>${rows}`;
-    vd.appendChild(block);
+    vd.appendChild(b);
   });
 }
 
-function renderDesktopTable(){
-  const dth = document.getElementById('dth');
-  const dtb = document.getElementById('dtb');
-  dth.innerHTML = '';
-  dtb.innerHTML = '';
-
-  const hr = document.createElement('tr');
-  const th0 = document.createElement('th'); th0.textContent='მიმტანი'; hr.appendChild(th0);
-  cols.forEach(c => {
-    const th = document.createElement('th');
-    th.innerHTML = `<span class="thd-num ${isW(c.wd)?'wknd':''}">${c.d}</span>${KD[c.wd]}`;
+/* ══════════════════════════════
+   RENDER: DESKTOP TABLE
+══════════════════════════════ */
+function renderTable(){
+  const dth=document.getElementById('dth'),dtb=document.getElementById('dtb');
+  dth.innerHTML='';dtb.innerHTML='';
+  const hr=document.createElement('tr');
+  const t0=document.createElement('th');t0.textContent='მიმტანი';hr.appendChild(t0);
+  FCOLS.forEach(c=>{
+    const th=document.createElement('th');
+    th.innerHTML=`<span class="thn ${iW(c.wd)?'wknd':''}">${c.d}</span>${KD[c.wd]}`;
     hr.appendChild(th);
   });
   dth.appendChild(hr);
-
-  waiters.forEach(w => {
-    const tr = document.createElement('tr');
-    const td0 = document.createElement('td');
-    td0.innerHTML = `<div class="tname">${w.name}</div><div class="tphone">${w.phone}</div>`;
+  WAITERS.forEach(w=>{
+    const tr=document.createElement('tr');
+    const td0=document.createElement('td');
+    td0.innerHTML=`<div class="tn">${w.name}</div><div class="tph">${w.phone}</div>`;
     tr.appendChild(td0);
-    w.shifts.forEach((s,i) => {
-      const p = getPos(w.name, cols[i]);
-      const td = document.createElement('td');
-      const d = document.createElement('div');
-      d.className = 'tcell '+cls(s);
-      d.innerHTML = lbl(s) + (p ? `<span class="tpos pos-${p}">${POSITIONS[p]}</span>` : '');
+    w.shifts.forEach((s,i)=>{
+      const p=getPos(w.name,FCOLS[i].y,FCOLS[i].m,FCOLS[i].d);
+      const td=document.createElement('td');
+      const d=document.createElement('div'); d.className='tc '+scls(s);
+      d.innerHTML=lbl(s)+(p?`<span class="tp" style="background:var(--${p}-b);color:var(--${p}-c)">${POS_MAP[p]}</span>`:'');
       td.appendChild(d); tr.appendChild(td);
     });
     dtb.appendChild(tr);
   });
-
-  // Stats
-  const sr = document.createElement('tr'); sr.className='stats-row';
-  const std0 = document.createElement('td');
-  const sc0 = document.createElement('div'); sc0.className='scell'; sc0.innerHTML='<span>სულ</span>';
-  std0.appendChild(sc0); sr.appendChild(std0);
-  cols.forEach((c,i) => {
-    const n = waiters.filter(w=>w.shifts[i]!=='OFF').length;
-    const td = document.createElement('td');
-    const d = document.createElement('div'); d.className='scell';
-    d.innerHTML = `<span class="sc">${n}</span><span>მიმტ.</span>`;
+  // stats
+  const sr=document.createElement('tr'); sr.className='srow';
+  const sd0=document.createElement('td');
+  const sc0=document.createElement('div'); sc0.className='scl'; sc0.innerHTML='<span>სულ</span>';
+  sd0.appendChild(sc0); sr.appendChild(sd0);
+  FCOLS.forEach((c,i)=>{
+    const n=WAITERS.filter(w=>w.shifts[i]!=='OFF').length;
+    const td=document.createElement('td');
+    const d=document.createElement('div'); d.className='scl';
+    d.innerHTML=`<span class="sc">${n}</span><span>მიმტ.</span>`;
     td.appendChild(d); sr.appendChild(td);
   });
   dtb.appendChild(sr);
 }
 
-function tog(h){ h.parentElement.classList.toggle('open'); }
+function renderAll(){ renderWeek(); renderCards(); renderDayView(); renderTable(); }
 
-function switchView(v,btn){
+function tog(h){ h.parentElement.classList.toggle('open'); }
+function sview(v,btn){
   document.querySelectorAll('.vbtn').forEach(b=>b.classList.remove('active'));
   btn.classList.add('active');
-  document.getElementById('vw').style.display = v==='w'?'block':'none';
-  document.getElementById('vd').style.display = v==='d'?'block':'none';
+  document.getElementById('vw').style.display=v==='w'?'block':'none';
+  document.getElementById('vd').style.display=v==='d'?'block':'none';
 }
 
-/* ── AUTH ── */
+/* ══════════════════════════════
+   AUTH
+══════════════════════════════ */
 function openAdmin(){
-  if(sessionStorage.getItem('adminOk')==='1'){ openAdminPanel(); return; }
-  document.getElementById('adminPass').value='';
-  document.getElementById('loginErr').textContent='';
-  document.getElementById('loginOverlay').classList.add('show');
-  setTimeout(()=>document.getElementById('adminPass').focus(),100);
+  if(sessionStorage.getItem('aok')==='1'){openAdminPanel();return;}
+  document.getElementById('passInp').value='';
+  document.getElementById('lerr').textContent='';
+  document.getElementById('loginOv').classList.add('show');
+  setTimeout(()=>document.getElementById('passInp').focus(),150);
 }
-function checkLogin(){
-  if(document.getElementById('adminPass').value===ADMIN_PASS){
-    sessionStorage.setItem('adminOk','1');
-    closeOverlay('loginOverlay');
-    openAdminPanel();
-  } else {
-    document.getElementById('loginErr').textContent='არასწორი პაროლი';
+function doLogin(){
+  if(document.getElementById('passInp').value===PASS){
+    sessionStorage.setItem('aok','1');
+    cov('loginOv'); openAdminPanel();
+  }else{
+    document.getElementById('lerr').textContent='არასწორი პაროლი ❌';
   }
 }
-function closeOverlay(id){ document.getElementById(id).classList.remove('show'); }
+function cov(id){ document.getElementById(id).classList.remove('show'); }
 
-/* ── ADMIN PANEL ── */
+/* ══════════════════════════════
+   ADMIN PANEL
+══════════════════════════════ */
 function openAdminPanel(){
-  adminDayIdx = 0;
-  // find today or first working day
-  const today = new Date();
-  const todayStr = `2025-${String(today.getMonth()+1).padStart(2,'0')}-${String(today.getDate()).padStart(2,'0')}`;
-  const idx = cols.findIndex(c=>dateKey(c)===todayStr);
-  if(idx>=0) adminDayIdx=idx;
-  renderAdminDay();
-  document.getElementById('adminOverlay').classList.add('show');
+  agOff=0; renderAdminGrid();
+  const t=new Date(); calY=t.getFullYear(); calM=t.getMonth(); renderCal();
+  document.getElementById('adminOv').classList.add('show');
+}
+function aTab(tab,btn){
+  document.querySelectorAll('.atab').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById('aGrid').style.display=tab==='grid'?'block':'none';
+  document.getElementById('aCal').style.display=tab==='cal'?'block':'none';
 }
 
-function changeAdminDay(dir){
-  adminDayIdx = Math.max(0, Math.min(cols.length-1, adminDayIdx+dir));
-  renderAdminDay();
+/* ── ADMIN GRID ── */
+function agWeek(d){ agOff+=d; renderAdminGrid(); }
+
+function renderAdminGrid(){
+  const days=weekDates(agOff);
+  document.getElementById('agLabel').textContent=wkLabel(days);
+  document.getElementById('sstt').textContent='';
+
+  const tbl=document.getElementById('agTable');
+  tbl.innerHTML='';
+
+  // thead
+  const thead=document.createElement('thead');
+  const hr=document.createElement('tr');
+  const th0=document.createElement('th'); th0.textContent='მიმტანი'; hr.appendChild(th0);
+  days.forEach(c=>{
+    const th=document.createElement('th');
+    th.innerHTML=`<div class="th-date"><span class="th-d ${iW(c.wd)?'wknd':''}">${c.d}</span><span class="th-w">${KD[c.wd]}</span></div>`;
+    hr.appendChild(th);
+  });
+  thead.appendChild(hr); tbl.appendChild(thead);
+
+  // tbody
+  const tbody=document.createElement('tbody');
+  WAITERS.forEach(w=>{
+    const tr=document.createElement('tr');
+    const td0=document.createElement('td');
+    td0.innerHTML=`<div class="cn2">${w.name.split(' ')[0]}</div><div class="cp2">${w.phone}</div>`;
+    tr.appendChild(td0);
+
+    days.forEach(c=>{
+      const dkv=dk(c.y,c.m,c.d);
+      const curS=getShift(w.name,c.y,c.m,c.d);
+      const curP=getPos(w.name,c.y,c.m,c.d);
+      const curN=getNote(w.name,c.y,c.m,c.d);
+      const td=document.createElement('td');
+
+      const shiftOpts=SHIFTS_OPT.map(s=>`<option value="${s}"${curS===s?' selected':''}>${s}</option>`).join('');
+      const posOpts=Object.entries(POS_MAP).map(([k,v])=>`<option value="${k}"${curP===k?' selected':''}>${v}</option>`).join('');
+
+      td.innerHTML=`<div class="gcell">
+        <select class="gsel" data-n="${w.name}" data-dk="${dkv}" data-t="s">${shiftOpts}</select>
+        <select class="gsel" data-n="${w.name}" data-dk="${dkv}" data-t="p">${posOpts}</select>
+        <input class="ginp" placeholder="შენიშვნა" value="${curN}" data-n="${w.name}" data-dk="${dkv}" data-t="n">
+      </div>`;
+      tr.appendChild(td);
+    });
+    tbody.appendChild(tr);
+  });
+  tbl.appendChild(tbody);
 }
 
-function renderAdminDay(){
-  const col = cols[adminDayIdx];
-  const mo = col.m===3?'მარტი':'აპრილი';
-  document.getElementById('adminDayLabel').textContent = `${col.d} ${mo} · ${KD[col.wd]}`;
+async function saveGrid(){
+  const btn=document.getElementById('saveBtn');
+  const sstt=document.getElementById('sstt');
+  btn.disabled=true; btn.textContent='⏳...'; sstt.textContent='';
 
-  const container = document.getElementById('adminRows');
-  container.innerHTML = '';
+  // collect all values from the grid
+  const map={};
+  document.querySelectorAll('#agTable .gsel, #agTable .ginp').forEach(el=>{
+    const key=pk(el.dataset.n, el.dataset.dk);
+    if(!map[key]) map[key]={waiter_name:el.dataset.n, shift_date:el.dataset.dk};
+    if(el.dataset.t==='s') map[key].shift_time=el.value;
+    if(el.dataset.t==='p') map[key].position=el.value||null;
+    if(el.dataset.t==='n') map[key].notes=el.value||null;
+  });
 
-  const workingWaiters = waiters.filter(w => w.shifts[adminDayIdx]!=='OFF');
+  const rows=Object.values(map);
+  if(!rows.length){ btn.disabled=false; btn.textContent='💾 შენახვა'; return; }
 
-  if(workingWaiters.length===0){
-    container.innerHTML = '<div style="color:var(--muted);font-size:0.8rem;text-align:center;padding:16px 0">ამ დღეს არავინ მუშაობს</div>';
+  try{
+    await upsertRows(rows);
+    // update local cache
+    rows.forEach(r=>{
+      DB[pk(r.waiter_name,r.shift_date)]={
+        shift_time:r.shift_time||'',
+        position:r.position||'',
+        notes:r.notes||''
+      };
+    });
+    // flash
+    document.querySelectorAll('#agTable tbody tr').forEach(tr=>{
+      tr.classList.add('flash');
+      setTimeout(()=>tr.classList.remove('flash'),500);
+    });
+    sstt.textContent='✓ შენახულია';
+    setSS('ok','შენახულია');
+    renderAll();
+  }catch(e){
+    sstt.textContent='⚠️ '+e.message.slice(0,50);
+    setSS('err','შეცდომა');
+  }
+  btn.disabled=false; btn.textContent='💾 შენახვა';
+}
+
+/* ── CALENDAR ── */
+function calMove(d){ calM+=d; if(calM<0){calM=11;calY--;}if(calM>11){calM=0;calY++;} renderCal(); }
+
+function renderCal(){
+  document.getElementById('calMo').textContent=`${MKA[calM]} ${calY}`;
+  const g=document.getElementById('calGrid'); g.innerHTML='';
+  KD.forEach(d=>{const c=document.createElement('div');c.className='cc head';c.textContent=d;g.appendChild(c);});
+  const firstWd=new Date(calY,calM,1).getDay();
+  const dim=new Date(calY,calM+1,0).getDate();
+  const tdk2=todayDk();
+  for(let i=0;i<firstWd;i++){const c=document.createElement('div');c.className='cc other';g.appendChild(c);}
+  for(let day=1;day<=dim;day++){
+    const wd=new Date(calY,calM,day).getDay();
+    const dkv=dk(calY,calM+1,day);
+    const isT=dkv===tdk2;
+    const hasDot=Object.keys(DB).some(k=>k.includes('|'+dkv)&&(DB[k].position||DB[k].notes));
+    const c=document.createElement('div');
+    c.className='cc'+(iW(wd)?' wknd-c':'')+(isT?' today-c':'')+(hasDot?' has-dot':'')+(selCalDk===dkv?' active-c':'');
+    c.textContent=day;
+    c.onclick=()=>{selCalDk=dkv; renderCal(); showCalDay(calY,calM+1,day);};
+    g.appendChild(c);
+  }
+}
+
+function showCalDay(y,m,d){
+  const dkv=dk(y,m,d);
+  const det=document.getElementById('calDetail');
+  const wd=new Date(y,m-1,d).getDay();
+  const workers=WAITERS.map(w=>({...w,s:getShift(w.name,y,m,d),p:getPos(w.name,y,m,d),n:getNote(w.name,y,m,d)}))
+    .filter(w=>w.s!=='OFF');
+
+  if(!workers.length){
+    det.innerHTML=`<div class="cal-detail"><div class="cal-detail-ttl">${d} ${MKA[m-1]} · ${KD[wd]}</div>
+      <div style="color:var(--mu);font-size:.78rem">მუშა მიმტანი არ არის</div></div>`;
     return;
   }
 
-  workingWaiters.forEach(w => {
-    const currentPos = getPos(w.name, col);
-    const row = document.createElement('div');
-    row.className = 'admin-row';
+  const rows=workers.map(w=>`<div class="cal-drow">
+    <div class="cal-dn">${w.name}</div>
+    <div class="cal-dr">
+      ${w.p?`<span class="pc ${w.p}">${POS_FULL[w.p]}</span>`:''}
+      <span class="drs ${scls(w.s)}">${w.s}</span>
+      ${w.n?`<span style="font-size:.62rem;color:var(--mu);font-style:italic">💬 ${w.n}</span>`:''}
+    </div>
+  </div>`).join('');
 
-    const selOpts = Object.entries(POSITIONS).map(([k,v])=>
-      `<option value="${k}" ${currentPos===k?'selected':''}>${v}</option>`
-    ).join('');
-
-    const indId = `ind_${w.name.replace(/\s/g,'_')}_${adminDayIdx}`;
-    row.innerHTML = `
-      <div class="ar-info">
-        <div class="ar-name">${w.name}</div>
-        <div class="ar-sub">${lbl(w.shifts[adminDayIdx])}</div>
-      </div>
-      <select class="pos-select" onchange="onPosChange(this,'${w.name}',${adminDayIdx},'${indId}')">
-        ${selOpts}
-      </select>
-      <span class="save-indicator" id="${indId}">✓</span>`;
-    container.appendChild(row);
-  });
+  det.innerHTML=`<div class="cal-detail">
+    <div class="cal-detail-ttl">${d} ${MKA[m-1]} · ${KD[wd]} · ${workers.length} მიმტ.</div>
+    ${rows}
+  </div>`;
 }
 
-async function onPosChange(sel, waiterName, colIdx, indId){
-  const col = cols[colIdx];
-  const position = sel.value;
-  setSyncStatus('loading','შენახვა...');
-  const ok = await savePosition(waiterName, col, position);
-  if(ok){
-    setSyncStatus('ok','შენახულია');
-    const ind = document.getElementById(indId);
-    if(ind){ ind.classList.add('show'); setTimeout(()=>ind.classList.remove('show'),1500); }
-    renderAll();
-  }
-}
-
-/* ── SETUP TABLE NOTICE ── */
-function showSetupNotice(){
-  const n = document.createElement('div');
-  n.style.cssText='background:rgba(240,165,0,0.1);border:1px solid rgba(240,165,0,0.3);border-radius:10px;padding:12px 16px;margin:12px;font-size:0.78rem;line-height:1.6;';
-  n.innerHTML=`<strong style="color:var(--accent)">⚠️ Supabase ცხრილი უნდა შეიქმნას</strong><br>
-გადადი <a href="https://supabase.com/dashboard/project/bbroknpeebjuilycutjd/sql" target="_blank" style="color:var(--m-col)">Supabase SQL Editor-ში</a> და გაუშვი:<br>
-<code style="background:var(--surface2);padding:8px;border-radius:6px;display:block;margin-top:6px;font-size:0.72rem;color:var(--v-col)">
-CREATE TABLE waiter_positions (<br>
-&nbsp;&nbsp;id uuid DEFAULT gen_random_uuid() PRIMARY KEY,<br>
-&nbsp;&nbsp;waiter_name text NOT NULL,<br>
-&nbsp;&nbsp;shift_date date NOT NULL,<br>
-&nbsp;&nbsp;position text NOT NULL,<br>
-&nbsp;&nbsp;created_at timestamptz DEFAULT now(),<br>
-&nbsp;&nbsp;UNIQUE(waiter_name, shift_date)<br>
-);<br>
-ALTER TABLE waiter_positions ENABLE ROW LEVEL SECURITY;<br>
-CREATE POLICY "public_all" ON waiter_positions FOR ALL USING (true) WITH CHECK (true);
-</code>`;
-  document.getElementById('vw').before(n);
-}
-
-/* ── INIT ── */
+/* ══════════════════════════════
+   INIT
+══════════════════════════════ */
 async function init(){
   renderAll();
-  const ok = await ensureTable();
-  if(ok){
-    await loadPositions();
-  } else {
-    setSyncStatus('err','ცხრილი არ არსებობს');
-    showSetupNotice();
-  }
-
-  // realtime polling every 30s
-  setInterval(async()=>{
-    try {
-      const data = await sbFetch('waiter_positions?select=waiter_name,shift_date,position');
-      posCache = {};
-      (data||[]).forEach(row=>{
-        const col=cols.find(c=>dateKey(c)===row.shift_date);
-        if(col) posCache[posKey(row.waiter_name,col)]=row.position;
-      });
-      setSyncStatus('ok','სინქრონიზებულია');
-      renderAll();
-    } catch(e){}
-  }, 30000);
+  await loadDB();
+  setInterval(loadDB, 30000);
 }
-
 init();
 </script>
 </body>
