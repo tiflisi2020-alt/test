@@ -2,377 +2,255 @@
 <html lang="ka">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>მიმტანების განრიგი — აპრილი</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>მიმტანების განრიგი</title>
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Georgian:wght@300;400;600;700;900&display=swap" rel="stylesheet">
 <style>
-  :root {
-    --bg: #0d0f14;
-    --surface: #161920;
-    --border: #252830;
-    --accent: #f0a500;
-    --accent2: #e05c2a;
-    --text: #e8eaf0;
-    --muted: #5a5f70;
-    --off-bg: #1a1c22;
-    --morning-bg: rgba(96, 180, 255, 0.12);
-    --morning-col: #60b4ff;
-    --afternoon-bg: rgba(240, 165, 0, 0.12);
-    --afternoon-col: #f0a500;
-    --holiday-bg: rgba(255,255,255,0.03);
-    --holiday-col: #3d4150;
-    --radius: 10px;
-  }
+:root {
+  --bg:#0d0f14; --surface:#161920; --surface2:#1c1f28; --border:#252830;
+  --accent:#f0a500; --accent2:#e05c2a; --text:#e8eaf0; --muted:#5a5f70;
+  --m-bg:rgba(96,180,255,0.13);  --m-col:#60b4ff;
+  --a-bg:rgba(240,165,0,0.13);   --a-col:#f0a500;
+  --e-bg:rgba(224,92,42,0.13);   --e-col:#e05c2a;
+  --o-bg:rgba(255,255,255,0.03); --o-col:#3a3f52;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+html{-webkit-text-size-adjust:100%;}
+body{background:var(--bg);color:var(--text);font-family:'Noto Sans Georgian',sans-serif;min-height:100vh;padding-bottom:40px;}
 
-  * { box-sizing: border-box; margin: 0; padding: 0; }
+.hdr{background:var(--surface);border-bottom:1px solid var(--border);padding:16px 16px 12px;position:sticky;top:0;z-index:99;}
+.hdr h1{font-size:1.2rem;font-weight:900;letter-spacing:-0.3px;}
+.hdr h1 span{color:var(--accent);}
+.hdr p{font-size:0.7rem;color:var(--muted);margin-top:2px;text-transform:uppercase;letter-spacing:0.07em;}
+.legend{display:flex;gap:12px;flex-wrap:wrap;margin-top:8px;}
+.li{display:flex;align-items:center;gap:5px;font-size:0.7rem;color:var(--muted);}
+.ld{width:8px;height:8px;border-radius:50%;}
 
-  body {
-    background: var(--bg);
-    color: var(--text);
-    font-family: 'Noto Sans Georgian', sans-serif;
-    min-height: 100vh;
-    padding: 32px 20px 60px;
-  }
+.vtog{display:flex;gap:8px;padding:10px 12px;background:var(--bg);border-bottom:1px solid var(--border);}
+.vbtn{flex:1;padding:8px;border-radius:8px;border:1px solid var(--border);background:var(--surface);
+  color:var(--muted);font-family:inherit;font-size:0.75rem;font-weight:700;cursor:pointer;transition:all 0.15s;}
+.vbtn.active{background:var(--accent);color:#000;border-color:var(--accent);}
 
-  header {
-    max-width: 1300px;
-    margin: 0 auto 36px;
-    display: flex;
-    align-items: flex-end;
-    gap: 20px;
-    flex-wrap: wrap;
-  }
+#vw{padding:10px 10px 0;}
+.wcard{margin-bottom:8px;border-radius:12px;border:1px solid var(--border);overflow:hidden;background:var(--surface);}
+.wcard-hdr{display:flex;align-items:center;padding:11px 13px;background:var(--surface2);
+  cursor:pointer;-webkit-tap-highlight-color:transparent;gap:10px;}
+.winfo{flex:1;min-width:0;}
+.wname{font-size:0.88rem;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.wphone{font-size:0.7rem;color:var(--muted);margin-top:1px;}
+.wbadges{display:flex;gap:4px;flex-shrink:0;flex-wrap:wrap;justify-content:flex-end;max-width:120px;}
+.badge{font-size:0.62rem;font-weight:700;padding:2px 6px;border-radius:20px;}
+.badge.m{background:var(--m-bg);color:var(--m-col);}
+.badge.a{background:var(--a-bg);color:var(--a-col);}
+.badge.e{background:var(--e-bg);color:var(--e-col);}
+.chev{width:16px;height:16px;color:var(--muted);flex-shrink:0;transition:transform 0.2s;}
+.wcard.open .chev{transform:rotate(180deg);}
+.wshifts{display:none;padding:8px;gap:5px;flex-wrap:wrap;}
+.wcard.open .wshifts{display:flex;}
+.chip{display:flex;flex-direction:column;align-items:center;gap:2px;flex:1;min-width:42px;max-width:56px;
+  padding:6px 3px;border-radius:8px;}
+.chip .cd{font-size:0.58rem;font-weight:700;color:var(--muted);text-transform:uppercase;}
+.chip .cn{font-size:0.82rem;font-weight:900;line-height:1;}
+.chip .ct{font-size:0.58rem;font-weight:700;}
+.chip.wknd .cd{color:var(--accent2);}
+.chip.m{background:var(--m-bg);} .chip.m .cn,.chip.m .ct{color:var(--m-col);}
+.chip.a{background:var(--a-bg);} .chip.a .cn,.chip.a .ct{color:var(--a-col);}
+.chip.e{background:var(--e-bg);} .chip.e .cn,.chip.e .ct{color:var(--e-col);}
+.chip.o{background:var(--o-bg);} .chip.o .cn,.chip.o .ct{color:var(--o-col);}
 
-  .logo-block h1 {
-    font-size: 2.2rem;
-    font-weight: 900;
-    letter-spacing: -1px;
-    line-height: 1;
-  }
-  .logo-block h1 span { color: var(--accent); }
-  .logo-block p {
-    font-size: 0.82rem;
-    color: var(--muted);
-    margin-top: 4px;
-    letter-spacing: 0.05em;
-    text-transform: uppercase;
-  }
+#vd{padding:10px;}
+.dblock{margin-bottom:8px;border-radius:12px;border:1px solid var(--border);overflow:hidden;background:var(--surface);}
+.dblock-hdr{display:flex;align-items:center;gap:12px;padding:10px 14px;background:var(--surface2);}
+.dbig{font-size:1.5rem;font-weight:900;line-height:1;}
+.dbig.wknd{color:var(--accent2);}
+.dmeta .dname{font-size:0.7rem;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:var(--muted);}
+.dmeta .dmonth{font-size:0.65rem;color:var(--muted);margin-top:1px;}
+.dcount{margin-left:auto;font-size:0.7rem;color:var(--muted);}
+.drow{display:flex;align-items:center;padding:8px 14px;border-top:1px solid var(--border);gap:8px;}
+.drname{flex:1;font-size:0.82rem;font-weight:600;}
+.drphone{font-size:0.68rem;color:var(--muted);}
+.drshift{font-size:0.7rem;font-weight:700;padding:4px 9px;border-radius:20px;flex-shrink:0;}
+.drshift.m{background:var(--m-bg);color:var(--m-col);}
+.drshift.a{background:var(--a-bg);color:var(--a-col);}
+.drshift.e{background:var(--e-bg);color:var(--e-col);}
+.drshift.o{background:var(--o-bg);color:var(--o-col);}
 
-  .legend {
-    display: flex;
-    gap: 16px;
-    flex-wrap: wrap;
-    margin-left: auto;
-    align-items: center;
-  }
-  .legend-item {
-    display: flex;
-    align-items: center;
-    gap: 7px;
-    font-size: 0.78rem;
-    color: var(--muted);
-  }
-  .legend-dot {
-    width: 10px; height: 10px;
-    border-radius: 50%;
-  }
-
-  .table-wrap {
-    max-width: 1300px;
-    margin: 0 auto;
-    overflow-x: auto;
-    border-radius: 14px;
-    border: 1px solid var(--border);
-    background: var(--surface);
-  }
-
-  table {
-    width: 100%;
-    border-collapse: collapse;
-    min-width: 900px;
-  }
-
-  thead th {
-    background: var(--bg);
-    padding: 10px 8px;
-    font-size: 0.72rem;
-    font-weight: 700;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-    color: var(--muted);
-    border-bottom: 1px solid var(--border);
-    text-align: center;
-  }
-  thead th.day-num {
-    font-size: 1.1rem;
-    font-weight: 900;
-    color: var(--text);
-    letter-spacing: -0.5px;
-  }
-  thead th.day-num.weekend { color: var(--accent2); }
-  thead th:first-child {
-    text-align: left;
-    padding-left: 20px;
-    min-width: 200px;
-  }
-
-  tbody tr {
-    border-bottom: 1px solid var(--border);
-    transition: background 0.15s;
-  }
-  tbody tr:last-child { border-bottom: none; }
-  tbody tr:hover { background: rgba(255,255,255,0.025); }
-
-  td {
-    padding: 0;
-    text-align: center;
-    vertical-align: middle;
-  }
-  td:first-child {
-    text-align: left;
-    padding: 14px 16px 14px 20px;
-  }
-
-  .waiter-name {
-    font-size: 0.88rem;
-    font-weight: 600;
-    color: var(--text);
-    line-height: 1.3;
-  }
-  .waiter-phone {
-    font-size: 0.74rem;
-    color: var(--muted);
-    margin-top: 2px;
-    font-weight: 400;
-  }
-
-  .cell {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    height: 62px;
-    font-size: 0.8rem;
-    font-weight: 700;
-    letter-spacing: 0.02em;
-    cursor: default;
-  }
-
-  .cell.morning {
-    background: var(--morning-bg);
-    color: var(--morning-col);
-  }
-  .cell.afternoon {
-    background: var(--afternoon-bg);
-    color: var(--afternoon-col);
-  }
-  .cell.off {
-    background: var(--holiday-bg);
-    color: var(--holiday-col);
-    font-size: 0.7rem;
-    font-weight: 600;
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
-  }
-  .cell.special {
-    background: rgba(224, 92, 42, 0.12);
-    color: var(--accent2);
-  }
-
-  .date-col-header {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 2px;
-  }
-
-  /* stats bar */
-  .stats-row td { padding: 0; }
-  .stats-row .stat-cell {
-    height: 36px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 0.72rem;
-    font-weight: 700;
-    color: var(--muted);
-    background: var(--bg);
-    border-top: 1px solid var(--border);
-    flex-direction: column;
-    gap: 1px;
-  }
-  .stats-row .stat-cell .count { font-size: 1rem; color: var(--text); }
-
-  @media (max-width: 600px) {
-    body { padding: 16px 8px 40px; }
-    .logo-block h1 { font-size: 1.4rem; }
-    thead th:first-child { min-width: 130px; }
-  }
+@media(min-width:700px){
+  body{padding:28px 20px 60px;}
+  .hdr{position:static;border-radius:14px 14px 0 0;border:1px solid var(--border);border-bottom:none;
+    max-width:1300px;margin:0 auto;padding:20px 24px 16px;}
+  .hdr h1{font-size:1.7rem;}
+  .vtog{display:none;}
+  #vw,#vd{display:none!important;}
+  #dtable{display:block;}
+  .twrap{max-width:1300px;margin:0 auto;overflow-x:auto;border-radius:0 0 14px 14px;
+    border:1px solid var(--border);border-top:none;background:var(--surface);}
+  table{width:100%;border-collapse:collapse;min-width:860px;}
+  thead th{background:var(--bg);padding:9px 6px;font-size:0.68rem;font-weight:700;
+    letter-spacing:0.07em;text-transform:uppercase;color:var(--muted);
+    border-bottom:1px solid var(--border);text-align:center;}
+  thead th:first-child{text-align:left;padding-left:18px;min-width:185px;}
+  .thd-num{font-size:1rem;font-weight:900;color:var(--text);display:block;}
+  .thd-num.wknd{color:var(--accent2);}
+  tbody tr{border-bottom:1px solid var(--border);}
+  tbody tr:last-child{border-bottom:none;}
+  tbody tr:hover{background:rgba(255,255,255,0.02);}
+  td{padding:0;text-align:center;vertical-align:middle;}
+  td:first-child{text-align:left;padding:10px 12px 10px 18px;}
+  .tname{font-size:0.83rem;font-weight:600;}
+  .tphone{font-size:0.7rem;color:var(--muted);margin-top:1px;}
+  .tcell{display:flex;align-items:center;justify-content:center;height:52px;font-size:0.72rem;font-weight:700;}
+  .tcell.m{background:var(--m-bg);color:var(--m-col);}
+  .tcell.a{background:var(--a-bg);color:var(--a-col);}
+  .tcell.e{background:var(--e-bg);color:var(--e-col);}
+  .tcell.o{background:var(--o-bg);color:var(--o-col);font-size:0.62rem;letter-spacing:0.08em;}
+  .stats-row td{padding:0;}
+  .scell{height:32px;display:flex;align-items:center;justify-content:center;
+    font-size:0.67rem;color:var(--muted);background:var(--bg);
+    border-top:1px solid var(--border);flex-direction:column;gap:1px;}
+  .scell .sc{font-size:0.9rem;color:var(--text);font-weight:700;}
+}
+#dtable{display:none;}
 </style>
 </head>
 <body>
 
-<header>
-  <div class="logo-block">
-    <h1>მიმტანების <span>განრიგი</span></h1>
-    <p>აპრილი · 22 — მაისი 4</p>
-  </div>
+<div class="hdr">
+  <h1>მიმტანების <span>განრიგი</span></h1>
+  <p>22 მარტი — 4 აპრილი</p>
   <div class="legend">
-    <div class="legend-item"><div class="legend-dot" style="background:#60b4ff"></div> 09:00</div>
-    <div class="legend-item"><div class="legend-dot" style="background:#f0a500"></div> 14:00</div>
-    <div class="legend-item"><div class="legend-dot" style="background:#3d4150;border:1px solid #3d4150"></div> OFF</div>
-    <div class="legend-item"><div class="legend-dot" style="background:#e05c2a"></div> 15:00</div>
+    <div class="li"><div class="ld" style="background:#60b4ff"></div>09:00</div>
+    <div class="li"><div class="ld" style="background:#f0a500"></div>14:00</div>
+    <div class="li"><div class="ld" style="background:#e05c2a"></div>15:00</div>
+    <div class="li"><div class="ld" style="background:#3a3f52;border:1px solid #3a3f52"></div>OFF</div>
   </div>
-</header>
-
-<div class="table-wrap">
-  <table id="schedule-table">
-    <thead id="table-head"></thead>
-    <tbody id="table-body"></tbody>
-  </table>
 </div>
 
-<script>
-const days = [22,23,24,25,26,27,28,29,30,31,1,2,3,4];
-const dayNames = ['ორ','სამ','ოთხ','ხუთ','პარ','შაბ','კვ'];
-// April 22, 2025 = Tuesday (index 1)
-// weekday of April 22: let's compute
-function getDayOfWeek(d) {
-  // days 22-30 = April, 31=May 1 doesn't exist so 31=May 1, 1=May 1... 
-  // Actually: April 22 2025 = Monday (0)? Let's just assign:
-  // April 22 2025: day index. April 1 2025 = Tuesday(2). +21 days = Tuesday+21%7=2+0=2 => Wednesday? 
-  // Let me just hardcode: Apr 22=Tue, 23=Wed, 24=Thu, 25=Fri, 26=Sat, 27=Sun, 28=Mon, 29=Tue, 30=Wed, May1=Thu, 2=Fri, 3=Sat, 4=Sun
-  const map = {22:1,23:2,24:3,25:4,26:5,27:6,28:0,29:1,30:2,31:3,1:4,2:5,3:6,4:0}; // mapped by position index
-  return map[d];
-}
-// weekend = Saturday(5) or Sunday(6)
-const isWeekend = i => {
-  const wd = [1,2,3,4,5,6,0,1,2,3,4,5,6,0]; // weekdays for each col
-  return wd[i] === 5 || wd[i] === 6;
-}
-const weekdayAbbr = ['კვ','ორ','სამ','ოთხ','ხუთ','პარ','შაბ'];
-const colWeekdays = [1,2,3,4,5,6,0,1,2,3,4,5,6,0];
+<div class="vtog">
+  <button class="vbtn active" onclick="switchView('w',this)">მიმტანით</button>
+  <button class="vbtn" onclick="switchView('d',this)">დღით</button>
+</div>
 
-const waiters = [
-  {
-    name: 'ლაშა სვანიძე',
-    phone: '558 667 748',
-    shifts: ['14:00','14:00','OFF','09:00','14:00','OFF','14:00','14:00','OFF','14:00','14:00','OFF','14:00','14:00']
-  },
-  {
-    name: 'ირაკლი ბერიძე',
-    phone: '557 613 585',
-    shifts: ['14:00','OFF','09:00','14:00','OFF','OFF','14:00','14:00','OFF','09:00','14:00','OFF','09:00','14:00']
-  },
-  {
-    name: 'კახი კახაძე',
-    phone: '514 280 066',
-    shifts: ['OFF','09:00','14:00','OFF','09:00','14:00','OFF','09:00','14:00','OFF','09:00','14:00','OFF','09:00']
-  },
-  {
-    name: 'დეა ჟღენტი',
-    phone: '579 047 426',
-    shifts: ['OFF','09:00','14:00','OFF','09:00','09:00','OFF','—','09:00','OFF','09:00','14:00','OFF','14:00']
-  },
-  {
-    name: 'ლუკა არძენაძე',
-    phone: '599 400 361',
-    shifts: ['09:00','OFF','OFF','14:00','14:00','OFF','09:00','14:00','OFF','OFF','14:00','14:00','OFF','09:00']
-  },
-  {
-    name: 'ბაჩი რომანაძე',
-    phone: '555 664 576',
-    shifts: ['14:00','14:00','OFF','09:00','14:00','14:00','OFF','OFF','09:00','14:00','OFF','09:00','14:00','OFF']
-  },
-  {
-    name: 'რატი ტაკიძე',
-    phone: '571 181 397',
-    shifts: ['14:00','14:00','OFF','14:00','14:00','14:00','OFF','09:00','OFF','09:00','OFF','09:00','14:00','OFF']
-  },
-  {
-    name: 'ნატა შარაბიძე',
-    phone: '555 867 676',
-    shifts: ['09:00','OFF','3','OFF','OFF','OFF','09:00','14:00','OFF','3','OFF','3','OFF','14:00']
-  },
-  {
-    name: 'ხვიჩა შარაძე',
-    phone: '597 041 719',
-    shifts: ['OFF','OFF','09:00','14:00','09:00','14:00','OFF','14:00','14:00','14:00','OFF','OFF','09:00','OFF']
-  },
-  {
-    name: 'ლუკა გოგუაძე',
-    phone: '558 474 651',
-    shifts: ['OFF','14:00','14:00','OFF','OFF','14:00','14:00','—','14:00','OFF','OFF','OFF','14:00','OFF']
-  }
+<div id="vw"></div>
+<div id="vd" style="display:none"></div>
+<div id="dtable"><div class="twrap"><table><thead id="dth"></thead><tbody id="dtb"></tbody></table></div></div>
+
+<script>
+// March 22 2025 = Sunday
+// 22=კვ(0) 23=ორ(1) 24=სამ(2) 25=ოთხ(3) 26=ხუთ(4) 27=პარ(5) 28=შაბ(6)
+// 29=კვ(0) 30=ორ(1) 31=სამ(2) Apr1=ოთხ(3) 2=ხუთ(4) 3=პარ(5) 4=შაბ(6)
+const KD = ['კვ','ორ','სამ','ოთხ','ხუთ','პარ','შაბ'];
+const cols = [
+  {d:22,m:3,wd:0},{d:23,m:3,wd:1},{d:24,m:3,wd:2},{d:25,m:3,wd:3},
+  {d:26,m:3,wd:4},{d:27,m:3,wd:5},{d:28,m:3,wd:6},
+  {d:29,m:3,wd:0},{d:30,m:3,wd:1},{d:31,m:3,wd:2},
+  {d:1, m:4,wd:3},{d:2, m:4,wd:4},{d:3, m:4,wd:5},{d:4, m:4,wd:6}
 ];
 
-function cellClass(val) {
-  if (!val || val === 'OFF' || val === '—') return 'off';
-  if (val === '09:00') return 'morning';
-  if (val === '14:00') return 'afternoon';
-  if (val === '3') return 'special';
-  return 'special';
-}
-function cellLabel(val) {
-  if (!val || val === 'OFF') return 'OFF';
-  if (val === '3') return '15:00';
-  if (val === '—') return 'OFF';
-  return val;
-}
+const waiters = [
+  {name:'ლაშა სვანიძე',   phone:'558 667 748', shifts:['14:00','14:00','OFF','09:00','14:00','OFF','14:00','14:00','OFF','14:00','14:00','OFF','14:00','14:00']},
+  {name:'ირაკლი ბერიძე', phone:'557 613 585', shifts:['14:00','OFF','09:00','14:00','OFF','OFF','14:00','14:00','OFF','09:00','14:00','OFF','09:00','14:00']},
+  {name:'კახი კახაძე',    phone:'514 280 066', shifts:['OFF','09:00','14:00','OFF','09:00','14:00','OFF','09:00','14:00','OFF','09:00','14:00','OFF','09:00']},
+  {name:'დეა ჟღენტი',    phone:'579 047 426', shifts:['OFF','09:00','14:00','OFF','09:00','09:00','OFF','OFF','09:00','OFF','09:00','14:00','OFF','14:00']},
+  {name:'ლუკა არძენაძე', phone:'599 400 361', shifts:['09:00','OFF','OFF','14:00','14:00','OFF','09:00','14:00','OFF','OFF','14:00','14:00','OFF','09:00']},
+  {name:'ბაჩი რომანაძე',  phone:'555 664 576', shifts:['14:00','14:00','OFF','09:00','14:00','14:00','OFF','OFF','09:00','14:00','OFF','09:00','14:00','OFF']},
+  {name:'რატი ტაკიძე',   phone:'571 181 397', shifts:['14:00','14:00','OFF','14:00','14:00','14:00','OFF','09:00','OFF','09:00','OFF','09:00','14:00','OFF']},
+  {name:'ნატა შარაბიძე',  phone:'555 867 676', shifts:['09:00','OFF','15:00','OFF','OFF','OFF','09:00','14:00','OFF','15:00','OFF','15:00','OFF','14:00']},
+  {name:'ხვიჩა შარაძე',  phone:'597 041 719', shifts:['OFF','OFF','09:00','14:00','09:00','14:00','OFF','14:00','14:00','14:00','OFF','OFF','09:00','OFF']},
+  {name:'ლუკა გოგუაძე',  phone:'558 474 651', shifts:['OFF','14:00','14:00','OFF','OFF','14:00','14:00','OFF','14:00','OFF','OFF','OFF','14:00','OFF']}
+];
 
-// Build header
-const thead = document.getElementById('table-head');
-const headerRow = document.createElement('tr');
-const th0 = document.createElement('th');
-th0.textContent = 'მიმტანი';
-headerRow.appendChild(th0);
+function cls(v){
+  if(!v||v==='OFF')return'o';
+  if(v==='09:00')return'm';
+  if(v==='14:00')return'a';
+  if(v==='15:00')return'e';
+  return'o';
+}
+function lbl(v){return(!v||v==='OFF')?'OFF':v;}
+function isW(wd){return wd===0||wd===6;}
 
-days.forEach((d, i) => {
-  const th = document.createElement('th');
-  const wd = colWeekdays[i];
-  if (wd === 5 || wd === 6) th.classList.add('weekend');
-  th.innerHTML = `<div class="date-col-header"><span class="day-num ${wd===5||wd===6?'weekend':''}">${d}</span><span>${weekdayAbbr[wd]}</span></div>`;
-  headerRow.appendChild(th);
+// WAITER VIEW
+const vw=document.getElementById('vw');
+waiters.forEach(w=>{
+  let m=0,a=0,e=0;
+  w.shifts.forEach(s=>{if(s==='09:00')m++;else if(s==='14:00')a++;else if(s==='15:00')e++;});
+  const badges=[m?`<span class="badge m">09 ×${m}</span>`:'',a?`<span class="badge a">14 ×${a}</span>`:'',e?`<span class="badge e">15 ×${e}</span>`:''  ].join('');
+  const chips=cols.map((c,i)=>`<div class="chip ${cls(w.shifts[i])} ${isW(c.wd)?'wknd':''}">
+    <span class="cd">${KD[c.wd]}</span>
+    <span class="cn">${c.d}</span>
+    <span class="ct">${lbl(w.shifts[i])}</span>
+  </div>`).join('');
+  const card=document.createElement('div');
+  card.className='wcard';
+  card.innerHTML=`<div class="wcard-hdr" onclick="tog(this)">
+    <div class="winfo"><div class="wname">${w.name}</div><div class="wphone">${w.phone}</div></div>
+    <div class="wbadges">${badges}</div>
+    <svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
+  </div><div class="wshifts">${chips}</div>`;
+  vw.appendChild(card);
 });
-thead.appendChild(headerRow);
+function tog(h){h.parentElement.classList.toggle('open');}
 
-// Build body
-const tbody = document.getElementById('table-body');
-waiters.forEach(w => {
-  const tr = document.createElement('tr');
-  const tdName = document.createElement('td');
-  tdName.innerHTML = `<div class="waiter-name">${w.name}</div><div class="waiter-phone">${w.phone}</div>`;
-  tr.appendChild(tdName);
-  w.shifts.forEach(s => {
-    const td = document.createElement('td');
-    const div = document.createElement('div');
-    div.className = 'cell ' + cellClass(s);
-    div.textContent = cellLabel(s);
-    td.appendChild(div);
-    tr.appendChild(td);
+// DAY VIEW
+const vd=document.getElementById('vd');
+cols.forEach((c,i)=>{
+  const mo=c.m===3?'მარტი':'აპრილი';
+  const workers=waiters.filter(w=>w.shifts[i]!=='OFF');
+  const rows=workers.map(w=>`<div class="drow">
+    <div><div class="drname">${w.name}</div><div class="drphone">${w.phone}</div></div>
+    <span class="drshift ${cls(w.shifts[i])}">${lbl(w.shifts[i])}</span>
+  </div>`).join('');
+  const block=document.createElement('div');
+  block.className='dblock';
+  block.innerHTML=`<div class="dblock-hdr">
+    <div class="dbig ${isW(c.wd)?'wknd':''}">${c.d}</div>
+    <div class="dmeta"><div class="dname">${KD[c.wd]}</div><div class="dmonth">${mo}</div></div>
+    <div class="dcount">${workers.length} მიმტანი</div>
+  </div>${rows}`;
+  vd.appendChild(block);
+});
+
+function switchView(v,btn){
+  document.querySelectorAll('.vbtn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById('vw').style.display=v==='w'?'block':'none';
+  document.getElementById('vd').style.display=v==='d'?'block':'none';
+}
+
+// DESKTOP TABLE
+const dth=document.getElementById('dth');
+const dtb=document.getElementById('dtb');
+const hr=document.createElement('tr');
+const th0=document.createElement('th');th0.textContent='მიმტანი';hr.appendChild(th0);
+cols.forEach(c=>{
+  const th=document.createElement('th');
+  th.innerHTML=`<span class="thd-num ${isW(c.wd)?'wknd':''}">${c.d}</span>${KD[c.wd]}`;
+  hr.appendChild(th);
+});
+dth.appendChild(hr);
+waiters.forEach(w=>{
+  const tr=document.createElement('tr');
+  const td0=document.createElement('td');
+  td0.innerHTML=`<div class="tname">${w.name}</div><div class="tphone">${w.phone}</div>`;
+  tr.appendChild(td0);
+  w.shifts.forEach(s=>{
+    const td=document.createElement('td');
+    const d=document.createElement('div');
+    d.className='tcell '+cls(s);d.textContent=lbl(s);td.appendChild(d);tr.appendChild(td);
   });
-  tbody.appendChild(tr);
+  dtb.appendChild(tr);
 });
-
-// Stats row
-const statsRow = document.createElement('tr');
-statsRow.className = 'stats-row';
-const tdEmpty = document.createElement('td');
-const emptyCell = document.createElement('div');
-emptyCell.className = 'stat-cell';
-emptyCell.innerHTML = '<span>სულ</span>';
-tdEmpty.appendChild(emptyCell);
-statsRow.appendChild(tdEmpty);
-
-days.forEach((d, i) => {
-  const td = document.createElement('td');
-  const div = document.createElement('div');
-  div.className = 'stat-cell';
-  const count = waiters.filter(w => w.shifts[i] !== 'OFF' && w.shifts[i] && w.shifts[i] !== '—').length;
-  div.innerHTML = `<span class="count">${count}</span><span>მიმტ.</span>`;
-  td.appendChild(div);
-  statsRow.appendChild(td);
+const sr=document.createElement('tr');sr.className='stats-row';
+const std0=document.createElement('td');const sc0=document.createElement('div');
+sc0.className='scell';sc0.innerHTML='<span>სულ</span>';std0.appendChild(sc0);sr.appendChild(std0);
+cols.forEach((c,i)=>{
+  const n=waiters.filter(w=>w.shifts[i]!=='OFF').length;
+  const td=document.createElement('td');const d=document.createElement('div');
+  d.className='scell';d.innerHTML=`<span class="sc">${n}</span><span>მიმტ.</span>`;
+  td.appendChild(d);sr.appendChild(td);
 });
-tbody.appendChild(statsRow);
+dtb.appendChild(sr);
 </script>
 </body>
 </html>
