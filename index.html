@@ -489,11 +489,30 @@ async function loadDB(){
 }
 
 async function upsertRows(rows){
-  return sbq('waiter_positions',{
-    method:'POST',
-    headers:{'Prefer':'resolution=merge-duplicates,return=representation'},
-    body:JSON.stringify(rows)
-  });
+  // Send one row at a time to avoid bulk duplicate issues
+  const results = [];
+  for(const row of rows){
+    try{
+      // Try UPDATE first
+      const existing = await sbq(
+        'waiter_positions?waiter_name=eq.'+encodeURIComponent(row.waiter_name)+'&shift_date=eq.'+row.shift_date
+      );
+      if(existing && existing.length > 0){
+        // UPDATE
+        await sbq(
+          'waiter_positions?waiter_name=eq.'+encodeURIComponent(row.waiter_name)+'&shift_date=eq.'+row.shift_date,
+          {method:'PATCH', body:JSON.stringify({shift_time:row.shift_time, position:row.position, notes:row.notes})}
+        );
+      } else {
+        // INSERT
+        await sbq('waiter_positions',{method:'POST', body:JSON.stringify(row)});
+      }
+      results.push(row);
+    }catch(e){
+      console.warn('row error:', row, e.message);
+    }
+  }
+  return results;
 }
 
 function setSS(state,txt){
