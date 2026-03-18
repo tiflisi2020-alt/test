@@ -709,11 +709,30 @@ function aTab(tab,btn){
 }
 
 /* ── ADMIN GRID ── */
-function agWeek(d){ agOff+=d; renderAdminGrid(); }
+// Split FCOLS into weeks (Sun-Sat chunks)
+function getFcolWeeks(){
+  const weeks=[];
+  let week=[];
+  FCOLS.forEach((c,i)=>{
+    week.push(c);
+    if(c.wd===6||i===FCOLS.length-1){ weeks.push(week); week=[]; }
+  });
+  return weeks;
+}
+function agWeek(d){
+  const weeks=getFcolWeeks();
+  agOff=Math.max(0,Math.min(weeks.length-1,agOff+d));
+  renderAdminGrid();
+}
 
 function renderAdminGrid(){
-  const days=weekDates(agOff);
-  document.getElementById('agLabel').textContent=wkLabel(days);
+  const weeks=getFcolWeeks();
+  const days=weeks[agOff]||weeks[0];
+  const first=days[0],last=days[days.length-1];
+  const label=first.m===last.m
+    ? first.d+'–'+last.d+' '+MSH[first.m-1]+' '+first.y
+    : first.d+' '+MSH[first.m-1]+' – '+last.d+' '+MSH[last.m-1]+' '+last.y;
+  document.getElementById('agLabel').textContent=label;
   document.getElementById('sstt').textContent='';
 
   const tbl=document.getElementById('agTable');
