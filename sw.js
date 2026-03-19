@@ -1,7 +1,9 @@
-const CACHE = 'schedule-v1';
+const CACHE = 'schedule-v2';
 const ASSETS = [
   '/test/',
-  '/test/index.html'
+  '/test/index.html',
+  '/test/icon-192.png',
+  '/test/icon-512.png'
 ];
 
 self.addEventListener('install', e => {
@@ -21,9 +23,9 @@ self.addEventListener('activate', e => {
 });
 
 self.addEventListener('fetch', e => {
-  // network first — always get fresh data from Supabase
-  if(e.request.url.includes('supabase.co')){
-    return; // don't cache Supabase requests
+  if(e.request.url.includes('supabase.co') || 
+     e.request.url.includes('fonts.googleapis.com')){
+    return;
   }
   e.respondWith(
     fetch(e.request)
