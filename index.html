@@ -678,7 +678,13 @@ function setSS(state,txt){
 /* ══════════════════════════════
    RENDER: WEEK GRID (public)
 ══════════════════════════════ */
-function shiftWeek(d){ wkOff+=d; renderWeek(); }
+function shiftWeek(d){ wkOff+=d; renderWeek(); renderViewsByWeek(); }
+
+function renderViewsByWeek(){
+  // Re-render waiter cards and day view for current wkOff week
+  renderCardsByWeek(weekDates(wkOff));
+  renderDayViewByWeek(weekDates(wkOff));
+}
 
 function renderWeek(){
   const days=weekDates(wkOff);
@@ -721,18 +727,20 @@ function renderWeek(){
 /* ══════════════════════════════
    RENDER: WAITER CARDS
 ══════════════════════════════ */
-function renderCards(){
+function renderCards(){ renderCardsByWeek(weekDates(wkOff)); }
+
+function renderCardsByWeek(days){
   const vw=document.getElementById('vw');
   const opens=new Set([...vw.querySelectorAll('.wcard.open')].map(c=>c.dataset.n));
   vw.innerHTML='';
-  WAITERS.forEach(w=>{
+  DYNAMIC_WAITERS.forEach(w=>{
     let m=0,a=0,e=0;
-    FCOLS.forEach(c=>{
+    days.forEach(c=>{
       const s=getShift(w.name,c.y,c.m,c.d);
       if(s==='09:00')m++;else if(s==='14:00')a++;else if(s==='15:00')e++;
     });
     const bdgs=[m?`<span class="bdg m">09×${m}</span>`:'',a?`<span class="bdg a">14×${a}</span>`:'',e?`<span class="bdg e">15×${e}</span>`:''  ].join('');
-    const chips=FCOLS.map((c,i)=>{
+    const chips=days.map((c)=>{
       const s=getShift(w.name,c.y,c.m,c.d);
       const p=getPos(w.name,c.y,c.m,c.d);
       return `<div class="chip ${scls(s)} ${iW(c.wd)?'wknd':''}">
@@ -756,15 +764,17 @@ function renderCards(){
 /* ══════════════════════════════
    RENDER: DAY VIEW
 ══════════════════════════════ */
-function renderDayView(){
+function renderDayView(){ renderDayViewByWeek(weekDates(wkOff)); }
+
+function renderDayViewByWeek(days){
   const vd=document.getElementById('vd'); vd.innerHTML='';
-  FCOLS.forEach((c,i)=>{
-    const workers=WAITERS.filter(w=>getShift(w.name,c.y,c.m,c.d)!=='OFF');
+  days.forEach((c)=>{
+    const workers=DYNAMIC_WAITERS.filter(w=>getShift(w.name,c.y,c.m,c.d)!=='OFF');
     const rows=workers.map(w=>{
       const s=getShift(w.name,c.y,c.m,c.d);
       const p=getPos(w.name,c.y,c.m,c.d);
       const n=getNote(w.name,c.y,c.m,c.d);
-      const tel = w.phone.replace(/\s/g,'');
+      const tel=w.phone.replace(/\s/g,'');
       return `<div class="drow">
         <div class="drif"><div class="drn">${w.name}</div><div class="drp">${w.phone}</div></div>
         <div class="drr">
@@ -1204,8 +1214,13 @@ function renderTodayPreview(){
 async function enableNotif(){
   const statusEl = document.getElementById('notifStatus');
   if(!('Notification' in window)){
+    const isIOS = /iP(hone|ad|od)/.test(navigator.userAgent);
     statusEl.className='notif-status err';
-    statusEl.textContent='⚠️ ეს ბრაუზერი შეტყობინებებს არ უჭერს მხარს';
+    if(isIOS){
+      statusEl.innerHTML='📱 iPhone-ზე:<br>1. Safari-ში გახსენი საიტი<br>2. Share → <b>Add to Home Screen</b><br>3. Home Screen-დან გახსენი → მუშაობს!';
+    } else {
+      statusEl.textContent='⚠️ ეს ბრაუზერი შეტყობინებებს არ უჭერს მხარს';
+    }
     return;
   }
   const perm = await Notification.requestPermission();
