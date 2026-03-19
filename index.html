@@ -1181,37 +1181,23 @@ function clearFilter(){
 
 /* ── DELETE FILTERED ── */
 async function deleteFiltered(){
-  const waiter  = document.getElementById('fltWaiter').value;
-  const fromVal = document.getElementById('fltFrom').value;
-  const toVal   = document.getElementById('fltTo').value;
-
-  // collect visible cells
+  // collect all visible selects directly — use data-n attribute
   const toDelete = [];
-  const tbody = document.querySelector('#agTable tbody');
-  if(!tbody) return;
-
-  const days = weekDates(agOff);
-  tbody.querySelectorAll('tr').forEach(tr=>{
+  document.querySelectorAll('#agTable tbody tr').forEach(tr=>{
     if(tr.style.display==='none') return;
-    const cells = tr.querySelectorAll('td');
-    const name = cells[0]?.querySelector('.cn2')?.textContent||'';
-    cells.forEach((td,i)=>{
-      if(i===0) return;
+    tr.querySelectorAll('td').forEach(td=>{
       if(td.style.opacity==='0.2'||td.style.opacity==='.2') return;
       const shiftSel = td.querySelector('[data-t="s"]');
       if(!shiftSel) return;
-      const dkv = shiftSel.dataset.dk;
-      toDelete.push({waiter_name: name, shift_date: dkv});
+      const name = shiftSel.dataset.n;
+      const dkv  = shiftSel.dataset.dk;
+      if(name && dkv) toDelete.push({waiter_name: name, shift_date: dkv});
     });
   });
 
-  if(!toDelete.length){
-    alert('წასაშლელი მონაცემები არ არის');
-    return;
-  }
+  if(!toDelete.length){ alert('წასაშლელი მონაცემები არ არის'); return; }
 
-  const msg = `${toDelete.length} ჩანაწერი წაიშლება. დარწმუნებული ხარ?`;
-  if(!confirm(msg)) return;
+  if(!confirm(toDelete.length+' ჩანაწერი წაიშლება. დარწმუნებული ხარ?')) return;
 
   setSS('spin','წაშლა...');
   let deleted = 0;
