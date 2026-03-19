@@ -169,23 +169,33 @@ body{background:var(--bg);color:var(--tx);font-family:'Noto Sans Georgian',sans-
 .ag-table{width:100%;border-collapse:collapse;min-width:480px;}
 .ag-table thead th{background:var(--s2);padding:8px 6px;font-size:.63rem;font-weight:700;
   text-transform:uppercase;letter-spacing:.06em;color:var(--mu);border-bottom:1px solid var(--br);text-align:center;}
-.ag-table thead th:first-child{text-align:left;padding-left:10px;min-width:100px;}
+.ag-table thead th:first-child{text-align:left;padding-left:10px;min-width:110px;
+  position:sticky;left:0;z-index:2;background:var(--s2);}
 .ag-table tbody td{padding:5px 4px;border-bottom:1px solid var(--br);vertical-align:middle;text-align:center;}
-.ag-table tbody td:first-child{text-align:left;padding-left:10px;}
+.ag-table tbody td:first-child{text-align:left;padding-left:10px;
+  position:sticky;left:0;z-index:1;background:var(--sf);border-right:1px solid var(--br);}
+.ag-table tbody tr:hover td:first-child{background:var(--s2);}
 .ag-table tbody tr:last-child td{border-bottom:none;}
 .ag-table tbody tr:hover td{background:rgba(255,255,255,.015);}
-.cn2{font-size:.75rem;font-weight:700;}
+.cn2{font-size:.78rem;font-weight:800;}
 .cp2{font-size:.62rem;color:var(--mu);}
 .th-date{display:flex;flex-direction:column;align-items:center;gap:1px;}
 .th-d{font-size:.9rem;font-weight:900;color:var(--tx);}
 .th-d.wknd{color:var(--ac2);}
 .th-w{font-size:.58rem;color:var(--mu);}
-.gsel{background:var(--s2);border:1px solid var(--br);border-radius:6px;
-  padding:4px 5px;color:var(--tx);font-family:inherit;font-size:.67rem;font-weight:700;
-  cursor:pointer;outline:none;width:100%;transition:border-color .15s;}
+.gsel{border:2px solid var(--br);border-radius:7px;
+  padding:6px 4px;font-family:inherit;font-size:.72rem;font-weight:800;
+  cursor:pointer;outline:none;width:100%;transition:all .15s;text-align:center;}
 .gsel:focus{border-color:var(--ac);}
+.gsel.s-m{background:var(--m-b);color:var(--m-c);border-color:var(--m-c);}
+.gsel.s-a{background:var(--a-b);color:var(--a-c);border-color:var(--a-c);}
+.gsel.s-e{background:var(--e-b);color:var(--e-c);border-color:var(--e-c);}
+.gsel.s-o{background:var(--o-b);color:var(--o-c);border-color:var(--br);}
+.gsel.s-H{background:var(--H-b);color:var(--H-c);border-color:var(--H-c);}
+.gsel.s-V{background:var(--V-b);color:var(--V-c);border-color:var(--V-c);}
+.gsel.s-A{background:var(--A-b);color:var(--A-c);border-color:var(--A-c);}
 .ginp{background:var(--s2);border:1px solid var(--br);border-radius:6px;
-  padding:3px 5px;color:var(--tx);font-family:inherit;font-size:.63rem;width:100%;outline:none;}
+  padding:4px 5px;color:var(--tx);font-family:inherit;font-size:.63rem;width:100%;outline:none;}
 .ginp:focus{border-color:var(--ac);}
 .gcell{display:flex;flex-direction:column;gap:3px;padding:2px;}
 .off-cell{color:var(--o-c);font-size:.65rem;font-weight:600;text-align:center;padding:4px 0;}
@@ -594,6 +604,11 @@ function todayDk(){
   return dk(t.getFullYear(),t.getMonth()+1,t.getDate());
 }
 
+function nowTimeStr(){
+  const t=new Date();
+  return String(t.getHours()).padStart(2,'0')+':'+String(t.getMinutes()).padStart(2,'0');
+}
+
 // get shift for a waiter on a date (DB overrides hardcoded)
 function getShift(name,y,m,d){
   const key=pk(name,dk(y,m,d));
@@ -764,7 +779,14 @@ function renderCardsByWeek(days){
 /* ══════════════════════════════
    RENDER: DAY VIEW
 ══════════════════════════════ */
-function renderDayView(){ renderDayViewByWeek(weekDates(wkOff)); }
+function renderDayView(){
+  const days = weekDates(wkOff);
+  const tdk = todayDk();
+  // if viewing current week, start from today; otherwise show full week
+  const todayIdx = days.findIndex(c=>dk(c.y,c.m,c.d)===tdk);
+  const filtered = (wkOff===0 && todayIdx>=0) ? days.slice(todayIdx) : days;
+  renderDayViewByWeek(filtered);
+}
 
 function renderDayViewByWeek(days){
   const vd=document.getElementById('vd'); vd.innerHTML='';
@@ -784,13 +806,18 @@ function renderDayViewByWeek(days){
         </div>
       </div>${n?`<div class="dnote" style="padding:4px 13px 8px;font-size:.63rem;color:var(--mu);font-style:italic">💬 ${n}</div>`:''}`;
     }).join('');
-    const b=document.createElement('div'); b.className='dblk';
-    b.innerHTML=`<div class="dblk-hdr">
-      <div class="dbig ${iW(c.wd)?'wknd':''}">${c.d}</div>
+    const cdkv = dk(c.y,c.m,c.d);
+    const isToday2 = cdkv===todayDk();
+    const b=document.createElement('div');
+    b.className='dblk'+(isToday2?' dblk-today':'');
+    b.innerHTML=`<div class="dblk-hdr" ${isToday2?'style="background:rgba(240,165,0,0.12);border-bottom:1px solid rgba(240,165,0,0.3)"':''}>
+      <div class="dbig ${iW(c.wd)?'wknd':''}" ${isToday2?'style="color:var(--ac)"':''}>${c.d}</div>
       <div class="dmeta"><div class="dn">${KD[c.wd]}</div><div class="dm">${MKA[c.m-1]}</div></div>
-      <div class="dcnt">${workers.length} მიმტ.</div>
+      ${isToday2?`<div style="margin-left:auto;background:var(--ac);color:#000;font-size:.65rem;font-weight:800;padding:3px 8px;border-radius:20px;">დღეს · ${nowTimeStr()}</div>`:`<div class="dcnt">${workers.length} მიმტ.</div>`}
     </div>${rows}`;
     vd.appendChild(b);
+    // auto scroll to today
+    if(isToday2) setTimeout(()=>b.scrollIntoView({behavior:'smooth',block:'nearest'}),300);
   });
 }
 
@@ -948,7 +975,7 @@ function renderAdminGrid(){
   WAITERS.forEach(w=>{
     const tr=document.createElement('tr');
     const td0=document.createElement('td');
-    td0.innerHTML=`<div class="cn2">${w.name.split(' ')[0]}</div><div class="cp2">${w.phone}</div>`;
+    td0.innerHTML=`<div class="cn2">${w.name}</div><div class="cp2">${w.phone}</div>`;
     tr.appendChild(td0);
 
     days.forEach(c=>{
@@ -961,9 +988,11 @@ function renderAdminGrid(){
       const shiftOpts=SHIFTS_OPT.map(s=>`<option value="${s}"${curS===s?' selected':''}>${s}</option>`).join('');
       const posOpts=Object.entries(POS_MAP).map(([k,v])=>`<option value="${k}"${curP===k?' selected':''}>${v}</option>`).join('');
 
+      const sClass = curS==='09:00'?'s-m':curS==='14:00'?'s-a':curS==='15:00'?'s-e':'s-o';
+      const pClass = curP?'s-'+curP:'s-o';
       td.innerHTML=`<div class="gcell">
-        <select class="gsel" data-n="${w.name}" data-dk="${dkv}" data-t="s">${shiftOpts}</select>
-        <select class="gsel" data-n="${w.name}" data-dk="${dkv}" data-t="p">${posOpts}</select>
+        <select class="gsel ${sClass}" data-n="${w.name}" data-dk="${dkv}" data-t="s" onchange="colorSel(this,'shift')">${shiftOpts}</select>
+        <select class="gsel ${pClass}" data-n="${w.name}" data-dk="${dkv}" data-t="p" onchange="colorSel(this,'pos')">${posOpts}</select>
         <input class="ginp" placeholder="შენიშვნა" value="${curN}" data-n="${w.name}" data-dk="${dkv}" data-t="n">
       </div>`;
       tr.appendChild(td);
@@ -1014,6 +1043,18 @@ async function saveGrid(){
     setSS('err','შეცდომა');
   }
   btn.disabled=false; btn.textContent='💾 შენახვა';
+}
+
+/* ── COLOR SELECT ── */
+function colorSel(sel, type){
+  sel.className = 'gsel';
+  if(type==='shift'){
+    const map = {'09:00':'s-m','14:00':'s-a','15:00':'s-e','OFF':'s-o'};
+    sel.classList.add(map[sel.value]||'s-o');
+  } else {
+    const map = {'H':'s-H','V':'s-V','A':'s-A','':'s-o'};
+    sel.classList.add(map[sel.value]||'s-o');
+  }
 }
 
 /* ── CALENDAR ── */
