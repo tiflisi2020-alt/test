@@ -18,6 +18,18 @@
   --V-b:rgba(20,200,130,.14);  --V-c:#34d399;
   --A-b:rgba(236,72,153,.14);  --A-c:#f472b6;
 }
+body.light{
+  --bg:#f1f5f9; --sf:#ffffff; --s2:#f8fafc; --s3:#e2e8f0;
+  --br:#e2e8f0; --br2:#cbd5e1;
+  --ac:#d97706; --ac2:#ea580c; --tx:#0f172a; --mu:#64748b;
+  --m-b:rgba(37,99,235,.1);   --m-c:#1d4ed8;
+  --a-b:rgba(180,120,0,.1);   --a-c:#92400e;
+  --e-b:rgba(180,60,20,.1);   --e-c:#9a3412;
+  --o-b:rgba(0,0,0,.04);      --o-c:#94a3b8;
+  --H-b:rgba(109,40,217,.1);  --H-c:#6d28d9;
+  --V-b:rgba(5,150,105,.1);   --V-c:#065f46;
+  --A-b:rgba(190,24,93,.1);   --A-c:#be185d;
+}
 *{box-sizing:border-box;margin:0;padding:0;}
 html{-webkit-text-size-adjust:100%;}
 body{background:var(--bg);color:var(--tx);font-family:'Noto Sans Georgian',sans-serif;min-height:100vh;padding-bottom:60px;}
@@ -253,6 +265,63 @@ body{background:var(--bg);color:var(--tx);font-family:'Noto Sans Georgian',sans-
   .scl .sc{font-size:.88rem;color:var(--tx);font-weight:700;}
 }
 #dtbl{display:none;}
+
+/* ── STATS ── */
+.stat-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:14px;}
+.stat-card{background:var(--s2);border-radius:10px;padding:12px 14px;border:1px solid var(--br);}
+.stat-card .sc-name{font-size:.78rem;font-weight:700;margin-bottom:8px;color:var(--tx);}
+.stat-bar-row{display:flex;align-items:center;gap:8px;margin-bottom:5px;}
+.stat-bar-label{font-size:.65rem;color:var(--mu);width:36px;flex-shrink:0;}
+.stat-bar-wrap{flex:1;background:var(--s3);border-radius:20px;height:7px;overflow:hidden;}
+.stat-bar-fill{height:100%;border-radius:20px;transition:width .4s;}
+.stat-bar-val{font-size:.65rem;font-weight:700;width:28px;text-align:right;flex-shrink:0;}
+.stat-total{font-size:.7rem;color:var(--mu);margin-top:6px;}
+.stat-month-nav{display:flex;align-items:center;gap:8px;margin-bottom:14px;}
+.stat-month-label{flex:1;text-align:center;font-size:.85rem;font-weight:800;}
+
+/* ── CALL BTN ── */
+.call-btn{background:var(--V-b);color:var(--V-c);border-radius:6px;padding:3px 7px;
+  font-size:.7rem;text-decoration:none;font-weight:700;flex-shrink:0;}
+.call-btn:hover{opacity:.85;}
+
+/* ── NOTIFICATION ── */
+.notif-wrap{background:var(--s2);border-radius:10px;padding:14px;margin-bottom:12px;}
+.notif-wrap h3{font-size:.78rem;font-weight:800;margin-bottom:10px;}
+.notif-status{font-size:.72rem;margin-bottom:10px;}
+.notif-status.ok{color:var(--V-c);}
+.notif-status.no{color:var(--mu);}
+.notif-status.err{color:#f87171;}
+.notif-time-row{display:flex;align-items:center;gap:8px;margin-bottom:10px;}
+.notif-time-row label{font-size:.72rem;color:var(--mu);white-space:nowrap;}
+.notif-time-inp{background:var(--s3);border:1px solid var(--br);border-radius:7px;
+  padding:6px 10px;color:var(--tx);font-family:inherit;font-size:.78rem;width:110px;outline:none;}
+.notif-time-inp:focus{border-color:var(--ac);}
+
+/* ── PRINT ── */
+@media print{
+  .hdr,.vtog,.wk-section,.sync-row,.abtn,.leg,#vw,#vd{display:none!important;}
+  body{background:#fff;color:#000;padding:0;}
+  #dtbl{display:block!important;}
+  .twrap{border:none;border-radius:0;max-width:100%;}
+  table{min-width:unset;width:100%;}
+  thead th{background:#f3f4f6!important;color:#374151!important;font-size:9px;padding:6px 4px;}
+  .thn{color:#111!important;font-size:11px;}
+  .thn.wknd{color:#dc2626!important;}
+  tbody tr{border-bottom:1px solid #e5e7eb!important;}
+  .tc{height:40px!important;font-size:9px!important;}
+  .tc.m{background:#dbeafe!important;color:#1d4ed8!important;}
+  .tc.a{background:#fef3c7!important;color:#92400e!important;}
+  .tc.e{background:#fee2e2!important;color:#991b1b!important;}
+  .tc.o{background:#f9fafb!important;color:#9ca3af!important;}
+  .tp{font-size:8px!important;padding:1px 4px!important;}
+  .scl{background:#f3f4f6!important;}
+  .sc{color:#111!important;}
+  .tn{font-size:10px;}
+  .tph{font-size:8px;}
+  td:first-child{padding:6px 8px!important;}
+  .print-hdr{display:block!important;text-align:center;padding:10px 0 14px;font-size:14px;font-weight:900;}
+}
+.print-hdr{display:none;}
 </style>
 </head>
 <body>
@@ -264,10 +333,14 @@ body{background:var(--bg);color:var(--tx);font-family:'Noto Sans Georgian',sans-
       <h1>მიმტანების <span>განრიგი</span></h1>
       <div class="hdr-sub" id="hdrSub">იტვირთება...</div>
     </div>
-    <button class="abtn" onclick="openAdmin()">
-      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>
-      Admin
-    </button>
+    <div style="display:flex;gap:6px;flex-shrink:0;">
+      <button class="abtn" onclick="toggleTheme()" id="themeBtn" title="თემა">🌙</button>
+      <button class="abtn" onclick="doPrint()" title="ბეჭდვა">🖨️</button>
+      <button class="abtn" onclick="openAdmin()">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>
+        Admin
+      </button>
+    </div>
   </div>
   <div class="leg">
     <div class="li"><div class="ld" style="background:var(--m-c)"></div>09:00</div>
@@ -305,6 +378,7 @@ body{background:var(--bg);color:var(--tx);font-family:'Noto Sans Georgian',sans-
 <!-- DAY VIEW -->
 <div id="vd" style="display:none"></div>
 <!-- DESKTOP TABLE -->
+<div class="print-hdr" id="printHdr">მიმტანების განრიგი</div>
 <div id="dtbl"><div class="twrap"><table><thead id="dth"></thead><tbody id="dtb"></tbody></table></div></div>
 
 <!-- LOGIN -->
@@ -327,8 +401,12 @@ body{background:var(--bg);color:var(--tx);font-family:'Noto Sans Georgian',sans-
     <div class="mhdr"><h2>⚙️ Admin პანელი</h2><button class="xbtn" onclick="cov('adminOv')">✕</button></div>
     <div class="mbody">
       <div class="atabs">
-        <button class="atab active" onclick="aTab('grid',this)">📋 კვირის ცხრილი</button>
+        <button class="atab active" onclick="aTab('grid',this)">📋 ცხრილი</button>
         <button class="atab" onclick="aTab('cal',this)">📅 კალენდარი</button>
+        <button class="atab" onclick="aTab('waiters',this)">👤 მიმტანები</button>
+        <button class="atab" onclick="aTab('copy',this)">🔄 კოპირება</button>
+        <button class="atab" onclick="aTab('stats',this)">📊 სტატისტიკა</button>
+        <button class="atab" onclick="aTab('notif',this)">🔔 შეტყობინება</button>
       </div>
 
       <!-- GRID TAB -->
@@ -357,6 +435,81 @@ body{background:var(--bg);color:var(--tx);font-family:'Noto Sans Georgian',sans-
         <div class="cal-grid" id="calGrid"></div>
         <div id="calDetail"></div>
       </div>
+
+      <!-- WAITERS TAB -->
+      <div id="aWaiters" style="display:none">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
+          <span style="font-size:.8rem;font-weight:800;">მიმტანების სია</span>
+          <button class="sbtn" style="padding:7px 14px;font-size:.72rem;" onclick="showAddWaiter()">+ დამატება</button>
+        </div>
+        <div id="waitersList"></div>
+        <div id="addWaiterForm" style="display:none;margin-top:14px;background:var(--s2);border-radius:10px;padding:14px;">
+          <div style="font-size:.78rem;font-weight:800;margin-bottom:10px;">ახალი მიმტანი</div>
+          <div style="display:flex;flex-direction:column;gap:8px;">
+            <input class="inp" id="newWName" placeholder="სახელი გვარი">
+            <input class="inp" id="newWPhone" placeholder="ტელეფონი (555 123 456)">
+            <div style="display:flex;gap:8px;">
+              <button class="sbtn" style="flex:1;" onclick="addWaiter()">✓ დამატება</button>
+              <button class="sbtn" style="flex:1;background:var(--s3);color:var(--tx);" onclick="document.getElementById('addWaiterForm').style.display='none'">გაუქმება</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- COPY TAB -->
+      <div id="aCopy" style="display:none">
+        <div style="font-size:.78rem;color:var(--mu);margin-bottom:14px;">კვირის განრიგის კოპირება ახალ კვირაზე</div>
+        <div style="display:flex;flex-direction:column;gap:10px;">
+          <div>
+            <div style="font-size:.72rem;font-weight:700;color:var(--mu);margin-bottom:6px;">საიდან კოპირება:</div>
+            <div class="ag-nav">
+              <button class="ag-nav-btn" onclick="copyFromWeek(-1)">◀</button>
+              <div class="ag-label" id="copyFromLabel">—</div>
+              <button class="ag-nav-btn" onclick="copyFromWeek(1)">▶</button>
+            </div>
+          </div>
+          <div>
+            <div style="font-size:.72rem;font-weight:700;color:var(--mu);margin-bottom:6px;">სად კოპირება:</div>
+            <div class="ag-nav">
+              <button class="ag-nav-btn" onclick="copyToWeek(-1)">◀</button>
+              <div class="ag-label" id="copyToLabel">—</div>
+              <button class="ag-nav-btn" onclick="copyToWeek(1)">▶</button>
+            </div>
+          </div>
+          <button class="sbtn" onclick="doCopyWeek()" style="margin-top:6px;">🔄 კოპირება</button>
+          <div id="copyStatus" style="font-size:.72rem;color:var(--V-c);text-align:center;"></div>
+        </div>
+      </div>
+
+      <!-- STATS TAB -->
+      <div id="aStats" style="display:none">
+        <div class="stat-month-nav">
+          <button class="ag-nav-btn" onclick="statMonth(-1)">◀</button>
+          <div class="stat-month-label" id="statMonthLabel">—</div>
+          <button class="ag-nav-btn" onclick="statMonth(1)">▶</button>
+        </div>
+        <div id="statsGrid"></div>
+      </div>
+
+      <!-- NOTIFICATIONS TAB -->
+      <div id="aNotif" style="display:none">
+        <div class="notif-wrap">
+          <h3>🔔 დღიური შეტყობინება</h3>
+          <div class="notif-status no" id="notifStatus">შეტყობინება გამორთულია</div>
+          <div class="notif-time-row">
+            <label>დრო:</label>
+            <input type="time" class="notif-time-inp" id="notifTime" value="08:00">
+          </div>
+          <button class="sbtn" style="width:100%;margin-bottom:8px;" onclick="enableNotif()">🔔 ჩართვა</button>
+          <button class="sbtn" style="width:100%;background:var(--s3);color:var(--tx);" onclick="disableNotif()">🔕 გამორთვა</button>
+        </div>
+        <div class="notif-wrap">
+          <h3>📋 დღევანდელი განრიგი</h3>
+          <div id="todayPreview"></div>
+          <button class="sbtn" style="width:100%;margin-top:10px;" onclick="sendTestNotif()">▶ ტესტი ახლავე</button>
+        </div>
+      </div>
+
     </div>
   </div>
 </div>
@@ -546,9 +699,12 @@ function renderWeek(){
       const s=getShift(w.name,c.y,c.m,c.d);
       const p=getPos(w.name,c.y,c.m,c.d);
       const short=w.name.split(' ')[0];
+      const tel2 = w.phone.replace(/\s/g,'');
       return `<div class="wk-entry" style="background:var(--${scls(s)}-b);color:var(--${scls(s)}-c)">
-        <span class="wk-ename">${short}</span>
-        ${p?`<span class="wk-epos" style="color:var(--${p}-c)">${POS_MAP[p]}</span>`:''}
+        <a href="tel:${tel2}" style="text-decoration:none;display:flex;align-items:center;justify-content:space-between;gap:2px;">
+          <span class="wk-ename" style="color:var(--${scls(s)}-c)">${short}</span>
+          ${p?`<span class="wk-epos" style="color:var(--${p}-c)">${POS_MAP[p]}</span>`:'📞'}
+        </a>
       </div>`;
     }).join('');
 
@@ -608,11 +764,13 @@ function renderDayView(){
       const s=getShift(w.name,c.y,c.m,c.d);
       const p=getPos(w.name,c.y,c.m,c.d);
       const n=getNote(w.name,c.y,c.m,c.d);
+      const tel = w.phone.replace(/\s/g,'');
       return `<div class="drow">
         <div class="drif"><div class="drn">${w.name}</div><div class="drp">${w.phone}</div></div>
         <div class="drr">
           ${p?`<span class="pc ${p}">${POS_FULL[p]}</span>`:''}
           <span class="drs ${scls(s)}">${lbl(s)}</span>
+          <a href="tel:${tel}" class="call-btn">📞</a>
         </div>
       </div>${n?`<div class="dnote" style="padding:4px 13px 8px;font-size:.63rem;color:var(--mu);font-style:italic">💬 ${n}</div>`:''}`;
     }).join('');
@@ -706,6 +864,9 @@ function cov(id){ document.getElementById(id).classList.remove('show'); }
 function openAdminPanel(){
   agOff=0; renderAdminGrid();
   const t=new Date(); calY=t.getFullYear(); calM=t.getMonth(); renderCal();
+  copyFromOff=0; copyToOff=1; updateCopyLabels();
+  renderWaitersList();
+  const nt=new Date(); statY=nt.getFullYear(); statM=nt.getMonth();
   document.getElementById('adminOv').classList.add('show');
 }
 function aTab(tab,btn){
@@ -713,6 +874,22 @@ function aTab(tab,btn){
   btn.classList.add('active');
   document.getElementById('aGrid').style.display=tab==='grid'?'block':'none';
   document.getElementById('aCal').style.display=tab==='cal'?'block':'none';
+  document.getElementById('aWaiters').style.display=tab==='waiters'?'block':'none';
+  document.getElementById('aCopy').style.display=tab==='copy'?'block':'none';
+  document.getElementById('aStats').style.display=tab==='stats'?'block':'none';
+  document.getElementById('aNotif').style.display=tab==='notif'?'block':'none';
+  if(tab==='waiters') renderWaitersList();
+  if(tab==='copy') updateCopyLabels();
+  if(tab==='stats') renderStats();
+  if(tab==='notif'){ renderTodayPreview(); 
+    const en=localStorage.getItem('notifEnabled');
+    const tv=localStorage.getItem('notifTime')||'08:00';
+    document.getElementById('notifTime').value=tv;
+    if(en==='1'&&Notification.permission==='granted'){
+      document.getElementById('notifStatus').className='notif-status ok';
+      document.getElementById('notifStatus').textContent='✓ ჩართულია · '+tv;
+    }
+  }
 }
 
 /* ── ADMIN GRID ── */
@@ -882,12 +1059,328 @@ function showCalDay(y,m,d){
 }
 
 /* ══════════════════════════════
+   WAITERS MANAGEMENT
+══════════════════════════════ */
+// Dynamic waiters list (starts from WAITERS, can be extended)
+let DYNAMIC_WAITERS = [...WAITERS];
+
+async function loadWaiters(){
+  try{
+    const rows = await sbq('waiters?select=name,phone&order=name');
+    if(rows && rows.length > 0){
+      DYNAMIC_WAITERS = rows.map(r=>({name:r.name, phone:r.phone, shifts:[]}));
+    }
+  }catch(e){
+    // table doesn't exist yet, use hardcoded
+    DYNAMIC_WAITERS = [...WAITERS];
+  }
+}
+
+function renderWaitersList(){
+  const list = document.getElementById('waitersList');
+  list.innerHTML = '';
+  DYNAMIC_WAITERS.forEach((w,i)=>{
+    const row = document.createElement('div');
+    row.style.cssText='display:flex;align-items:center;padding:9px 0;border-bottom:1px solid var(--br);gap:10px;';
+    row.innerHTML=`
+      <div style="flex:1;">
+        <div style="font-size:.82rem;font-weight:700;">${w.name}</div>
+        <div style="font-size:.68rem;color:var(--mu);">${w.phone}</div>
+      </div>
+      <a href="tel:${w.phone.replace(/\s/g,'')}" style="background:var(--V-b);color:var(--V-c);border:none;border-radius:7px;padding:5px 10px;font-size:.7rem;font-weight:700;text-decoration:none;">📞</a>
+      <button onclick="removeWaiter(${i})" style="background:rgba(248,113,113,.15);color:#f87171;border:none;border-radius:7px;padding:5px 10px;font-size:.7rem;font-weight:700;cursor:pointer;">✕</button>`;
+    list.appendChild(row);
+  });
+}
+
+function showAddWaiter(){
+  document.getElementById('addWaiterForm').style.display='block';
+  document.getElementById('newWName').focus();
+}
+
+function addWaiter(){
+  const name = document.getElementById('newWName').value.trim();
+  const phone = document.getElementById('newWPhone').value.trim();
+  if(!name){ alert('სახელი სავალდებულოა'); return; }
+  DYNAMIC_WAITERS.push({name, phone, shifts:[]});
+  document.getElementById('newWName').value='';
+  document.getElementById('newWPhone').value='';
+  document.getElementById('addWaiterForm').style.display='none';
+  renderWaitersList();
+}
+
+function removeWaiter(idx){
+  if(!confirm(DYNAMIC_WAITERS[idx].name+' — წაშლა?')) return;
+  DYNAMIC_WAITERS.splice(idx,1);
+  renderWaitersList();
+}
+
+/* ══════════════════════════════
+   COPY WEEK
+══════════════════════════════ */
+let copyFromOff = 0;
+let copyToOff = 1;
+
+function updateCopyLabels(){
+  const fd = weekDates(copyFromOff);
+  const td = weekDates(copyToOff);
+  document.getElementById('copyFromLabel').textContent = wkLabel(fd);
+  document.getElementById('copyToLabel').textContent = wkLabel(td);
+}
+
+function copyFromWeek(d){ copyFromOff+=d; updateCopyLabels(); }
+function copyToWeek(d){ copyToOff+=d; updateCopyLabels(); }
+
+async function doCopyWeek(){
+  const fromDays = weekDates(copyFromOff);
+  const toDays   = weekDates(copyToOff);
+  const status   = document.getElementById('copyStatus');
+  status.textContent = '⏳ კოპირება...';
+
+  const rows = [];
+  DYNAMIC_WAITERS.forEach(w=>{
+    fromDays.forEach((fd,i)=>{
+      const td = toDays[i];
+      const s  = getShift(w.name, fd.y, fd.m, fd.d);
+      const p  = getPos(w.name, fd.y, fd.m, fd.d);
+      const n  = getNote(w.name, fd.y, fd.m, fd.d);
+      if(s && s!=='OFF'){
+        rows.push({
+          waiter_name: w.name,
+          shift_date:  dk(td.y,td.m,td.d),
+          shift_time:  s,
+          position:    p||null,
+          notes:       n||null
+        });
+      }
+    });
+  });
+
+  if(!rows.length){ status.textContent='⚠️ წყაროს კვირაში მონაცემები არ არის'; return; }
+
+  try{
+    await upsertRows(rows);
+    rows.forEach(r=>{
+      DB[pk(r.waiter_name,r.shift_date)]={shift_time:r.shift_time,position:r.position||'',notes:r.notes||''};
+    });
+    status.textContent=`✓ ${rows.length} ჩანაწერი დაკოპირდა!`;
+    setSS('ok','შენახულია');
+    renderAll();
+  }catch(e){
+    status.textContent='⚠️ '+e.message.slice(0,50);
+  }
+}
+
+/* ══════════════════════════════
+   NOTIFICATIONS
+══════════════════════════════ */
+let notifTimer = null;
+
+function getTodayWorkers(){
+  const t = new Date();
+  const y=t.getFullYear(), m=t.getMonth()+1, d=t.getDate();
+  return DYNAMIC_WAITERS
+    .map(w=>({...w, s:getShift(w.name,y,m,d), p:getPos(w.name,y,m,d)}))
+    .filter(w=>w.s!=='OFF');
+}
+
+function renderTodayPreview(){
+  const workers = getTodayWorkers();
+  const el = document.getElementById('todayPreview');
+  if(!workers.length){
+    el.innerHTML='<div style="color:var(--mu);font-size:.78rem">დღეს არავინ მუშაობს</div>';
+    return;
+  }
+  el.innerHTML = workers.map(w=>`
+    <div style="display:flex;align-items:center;justify-content:space-between;padding:7px 0;border-bottom:1px solid var(--br);">
+      <div>
+        <div style="font-size:.8rem;font-weight:700;">${w.name}</div>
+        <div style="font-size:.67rem;color:var(--mu);">${w.s}${w.p?' · '+POS_FULL[w.p]:''}</div>
+      </div>
+      <a href="tel:${w.phone.replace(/\s/g,'')}" class="call-btn">📞</a>
+    </div>`).join('');
+}
+
+async function enableNotif(){
+  const statusEl = document.getElementById('notifStatus');
+  if(!('Notification' in window)){
+    statusEl.className='notif-status err';
+    statusEl.textContent='⚠️ ეს ბრაუზერი შეტყობინებებს არ უჭერს მხარს';
+    return;
+  }
+  const perm = await Notification.requestPermission();
+  if(perm !== 'granted'){
+    statusEl.className='notif-status err';
+    statusEl.textContent='❌ შეტყობინება უარყოფილია';
+    return;
+  }
+  const timeVal = document.getElementById('notifTime').value || '08:00';
+  localStorage.setItem('notifEnabled','1');
+  localStorage.setItem('notifTime', timeVal);
+  statusEl.className='notif-status ok';
+  statusEl.textContent='✓ ჩართულია · '+timeVal;
+  scheduleNotif(timeVal);
+}
+
+function disableNotif(){
+  localStorage.removeItem('notifEnabled');
+  localStorage.removeItem('notifTime');
+  if(notifTimer){ clearTimeout(notifTimer); notifTimer=null; }
+  const statusEl = document.getElementById('notifStatus');
+  statusEl.className='notif-status no';
+  statusEl.textContent='შეტყობინება გამორთულია';
+}
+
+function scheduleNotif(timeStr){
+  if(notifTimer){ clearTimeout(notifTimer); }
+  const [h,m] = timeStr.split(':').map(Number);
+  const now = new Date();
+  const next = new Date(now.getFullYear(), now.getMonth(), now.getDate(), h, m, 0, 0);
+  if(next <= now) next.setDate(next.getDate()+1);
+  const ms = next - now;
+  notifTimer = setTimeout(()=>{
+    fireNotif();
+    scheduleNotif(timeStr); // reschedule for next day
+  }, ms);
+}
+
+function fireNotif(){
+  const workers = getTodayWorkers();
+  if(!workers.length) return;
+  const names = workers.map(w=>w.name.split(' ')[0]).join(', ');
+  new Notification('📋 დღევანდელი განრიგი', {
+    body: `მუშაობს ${workers.length} მიმტანი: ${names}`,
+    icon: 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><text y=".9em" font-size="90">👨‍🍳</text></svg>'
+  });
+}
+
+function sendTestNotif(){
+  if(Notification.permission === 'granted'){
+    fireNotif();
+  } else {
+    Notification.requestPermission().then(p=>{
+      if(p==='granted') fireNotif();
+      else alert('შეტყობინება უარყოფილია');
+    });
+  }
+}
+
+function initNotif(){
+  const enabled = localStorage.getItem('notifEnabled');
+  const timeVal = localStorage.getItem('notifTime') || '08:00';
+  document.getElementById('notifTime').value = timeVal;
+  if(enabled === '1' && Notification.permission === 'granted'){
+    document.getElementById('notifStatus').className='notif-status ok';
+    document.getElementById('notifStatus').textContent='✓ ჩართულია · '+timeVal;
+    scheduleNotif(timeVal);
+  }
+}
+
+/* ══════════════════════════════
+   THEME
+══════════════════════════════ */
+function toggleTheme(){
+  const isLight = document.body.classList.toggle('light');
+  localStorage.setItem('theme', isLight ? 'light' : 'dark');
+  document.getElementById('themeBtn').textContent = isLight ? '☀️' : '🌙';
+}
+
+function initTheme(){
+  const saved = localStorage.getItem('theme');
+  if(saved === 'light'){
+    document.body.classList.add('light');
+    document.getElementById('themeBtn').textContent = '☀️';
+  }
+}
+
+/* ══════════════════════════════
+   PRINT
+══════════════════════════════ */
+function doPrint(){
+  // update print header with current range
+  const first = FCOLS[0], last = FCOLS[FCOLS.length-1];
+  document.getElementById('printHdr').textContent =
+    'მიმტანების განრიგი · ' + first.d + ' ' + MSH[first.m-1] + ' – ' + last.d + ' ' + MSH[last.m-1] + ' ' + last.y;
+  window.print();
+}
+
+/* ══════════════════════════════
+   STATISTICS
+══════════════════════════════ */
+let statY, statM;
+
+function statMonth(d){
+  statM += d;
+  if(statM < 0){ statM = 11; statY--; }
+  if(statM > 11){ statM = 0; statY++; }
+  renderStats();
+}
+
+function renderStats(){
+  document.getElementById('statMonthLabel').textContent = MKA[statM] + ' ' + statY;
+  const grid = document.getElementById('statsGrid');
+  grid.innerHTML = '';
+
+  // get all days in the month that have data
+  const dim = new Date(statY, statM+1, 0).getDate();
+  const monthDays = [];
+  for(let d=1; d<=dim; d++){
+    monthDays.push({y:statY, m:statM+1, d});
+  }
+
+  // count per waiter
+  const maxDays = monthDays.length;
+  const statContainer = document.createElement('div');
+  statContainer.className = 'stat-grid';
+
+  DYNAMIC_WAITERS.forEach(w=>{
+    let m09=0, m14=0, m15=0, totalDays=0;
+    monthDays.forEach(c=>{
+      const s = getShift(w.name, c.y, c.m, c.d);
+      if(s === '09:00'){ m09++; totalDays++; }
+      else if(s === '14:00'){ m14++; totalDays++; }
+      else if(s === '15:00'){ m15++; totalDays++; }
+    });
+
+    if(totalDays === 0) return; // skip if no data this month
+
+    const card = document.createElement('div');
+    card.className = 'stat-card';
+
+    const bars = [
+      {label:'09:00', val:m09, col:'var(--m-c)', bg:'var(--m-b)'},
+      {label:'14:00', val:m14, col:'var(--a-c)', bg:'var(--a-b)'},
+      {label:'15:00', val:m15, col:'var(--e-c)', bg:'var(--e-b)'},
+    ].filter(b=>b.val>0).map(b=>`
+      <div class="stat-bar-row">
+        <div class="stat-bar-label">${b.label}</div>
+        <div class="stat-bar-wrap"><div class="stat-bar-fill" style="width:${Math.round(b.val/maxDays*100)}%;background:${b.col}"></div></div>
+        <div class="stat-bar-val" style="color:${b.col}">${b.val}</div>
+      </div>`).join('');
+
+    card.innerHTML = `
+      <div class="sc-name">${w.name.split(' ')[0]} ${w.name.split(' ')[1]||''}</div>
+      ${bars}
+      <div class="stat-total">${totalDays} სამუშაო დღე</div>`;
+    statContainer.appendChild(card);
+  });
+
+  if(!statContainer.children.length){
+    grid.innerHTML = '<div style="color:var(--mu);font-size:.8rem;text-align:center;padding:20px 0;">ამ თვეში მონაცემები არ არის</div>';
+  } else {
+    grid.appendChild(statContainer);
+  }
+}
+
+/* ══════════════════════════════
    INIT
 ══════════════════════════════ */
 async function init(){
   renderAll();
   await loadDB();
   setInterval(loadDB, 30000);
+  initNotif();
+  initTheme();
 }
 init();
 </script>
