@@ -171,12 +171,13 @@ body{background:var(--bg);color:var(--tx);font-family:'Noto Sans Georgian',sans-
   padding:5px 11px;font-family:inherit;font-size:.8rem;color:var(--tx);cursor:pointer;transition:all .15s;}
 .ag-nav-btn:hover{border-color:var(--ac);}
 .ag-label{flex:1;text-align:center;font-size:.85rem;font-weight:800;}
-.ag-wrap{overflow-x:auto;border-radius:10px;border:1px solid var(--br);}
+.ag-wrap{overflow-x:auto;overflow-y:auto;max-height:60vh;border-radius:10px;border:1px solid var(--br);}
 .ag-table{width:100%;border-collapse:collapse;min-width:480px;}
+.ag-table thead{position:sticky;top:0;z-index:3;}
 .ag-table thead th{background:var(--s2);padding:8px 6px;font-size:.63rem;font-weight:700;
-  text-transform:uppercase;letter-spacing:.06em;color:var(--mu);border-bottom:1px solid var(--br);text-align:center;}
+  text-transform:uppercase;letter-spacing:.06em;color:var(--mu);border-bottom:2px solid var(--br);text-align:center;}
 .ag-table thead th:first-child{text-align:left;padding-left:10px;min-width:110px;
-  position:sticky;left:0;z-index:2;background:var(--s2);}
+  position:sticky;left:0;z-index:4;background:var(--s2);}
 .ag-table tbody td{padding:5px 4px;border-bottom:1px solid var(--br);vertical-align:middle;text-align:center;}
 .ag-table tbody td:first-child{text-align:left;padding-left:10px;
   position:sticky;left:0;z-index:1;background:var(--sf);border-right:1px solid var(--br);}
@@ -1650,8 +1651,9 @@ init();
 // Register Service Worker
 if('serviceWorker' in navigator){
   window.addEventListener('load', ()=>{
-    navigator.serviceWorker.register('sw.js')
-      .then(r => console.log('SW registered'))
+    const swUrl = location.pathname.replace(/\/[^\/]*$/, '/') + 'sw.js';
+    navigator.serviceWorker.register(swUrl)
+      .then(r => console.log('SW registered:', r.scope))
       .catch(e => console.log('SW error', e));
   });
 }
