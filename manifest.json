@@ -2,7 +2,7 @@
   "name": "მიმტანების განრიგი",
   "short_name": "განრიგი",
   "description": "რესტორნის მიმტანების სამუშაო განრიგი",
-  "start_url": "/",
+  "start_url": "/test/",
   "display": "standalone",
   "background_color": "#0d0f14",
   "theme_color": "#f0a500",

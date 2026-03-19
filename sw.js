@@ -1,7 +1,7 @@
 const CACHE = 'schedule-v1';
 const ASSETS = [
-  '/',
-  '/index.html'
+  '/test/',
+  '/test/index.html'
 ];
 
 self.addEventListener('install', e => {
