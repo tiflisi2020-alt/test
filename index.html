@@ -1076,12 +1076,13 @@ let DYNAMIC_WAITERS = [...WAITERS];
 
 async function loadWaiters(){
   try{
-    const rows = await sbq('waiters?select=name,phone&order=name');
+    const rows = await sbq('waiters?select=id,name,phone&order=position_order');
     if(rows && rows.length > 0){
-      DYNAMIC_WAITERS = rows.map(r=>({name:r.name, phone:r.phone, shifts:[]}));
+      DYNAMIC_WAITERS = rows.map(r=>({id:r.id, name:r.name, phone:r.phone, shifts:[]}));
+    } else {
+      DYNAMIC_WAITERS = [...WAITERS];
     }
   }catch(e){
-    // table doesn't exist yet, use hardcoded
     DYNAMIC_WAITERS = [...WAITERS];
   }
 }
@@ -1108,21 +1109,40 @@ function showAddWaiter(){
   document.getElementById('newWName').focus();
 }
 
-function addWaiter(){
+async function addWaiter(){
   const name = document.getElementById('newWName').value.trim();
   const phone = document.getElementById('newWPhone').value.trim();
   if(!name){ alert('სახელი სავალდებულოა'); return; }
-  DYNAMIC_WAITERS.push({name, phone, shifts:[]});
-  document.getElementById('newWName').value='';
-  document.getElementById('newWPhone').value='';
-  document.getElementById('addWaiterForm').style.display='none';
-  renderWaitersList();
+  try{
+    const res = await sbq('waiters', {
+      method:'POST',
+      body: JSON.stringify({name, phone, position_order: DYNAMIC_WAITERS.length+1})
+    });
+    const newW = res && res[0] ? res[0] : {name, phone};
+    DYNAMIC_WAITERS.push({id:newW.id, name:newW.name||name, phone:newW.phone||phone, shifts:[]});
+    document.getElementById('newWName').value='';
+    document.getElementById('newWPhone').value='';
+    document.getElementById('addWaiterForm').style.display='none';
+    renderWaitersList();
+    setSS('ok','მიმტანი დამატებულია');
+  }catch(e){
+    alert('შეცდომა: '+e.message);
+  }
 }
 
-function removeWaiter(idx){
-  if(!confirm(DYNAMIC_WAITERS[idx].name+' — წაშლა?')) return;
-  DYNAMIC_WAITERS.splice(idx,1);
-  renderWaitersList();
+async function removeWaiter(idx){
+  const w = DYNAMIC_WAITERS[idx];
+  if(!confirm(w.name+' — წაშლა?')) return;
+  try{
+    if(w.id){
+      await sbq('waiters?id=eq.'+w.id, {method:'DELETE'});
+    }
+    DYNAMIC_WAITERS.splice(idx,1);
+    renderWaitersList();
+    setSS('ok','მიმტანი წაიშალა');
+  }catch(e){
+    alert('შეცდომა: '+e.message);
+  }
 }
 
 /* ══════════════════════════════
@@ -1391,9 +1411,11 @@ function renderStats(){
    INIT
 ══════════════════════════════ */
 async function init(){
+  await loadWaiters();
   renderAll();
   await loadDB();
   setInterval(loadDB, 30000);
+  setInterval(loadWaiters, 60000);
   initNotif();
   initTheme();
 }
