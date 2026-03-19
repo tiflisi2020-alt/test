@@ -19,16 +19,16 @@
   --A-b:rgba(236,72,153,.14);  --A-c:#f472b6;
 }
 body.light{
-  --bg:#f1f5f9; --sf:#ffffff; --s2:#f8fafc; --s3:#e2e8f0;
-  --br:#e2e8f0; --br2:#cbd5e1;
-  --ac:#d97706; --ac2:#ea580c; --tx:#0f172a; --mu:#64748b;
-  --m-b:rgba(37,99,235,.1);   --m-c:#1d4ed8;
-  --a-b:rgba(180,120,0,.1);   --a-c:#92400e;
-  --e-b:rgba(180,60,20,.1);   --e-c:#9a3412;
-  --o-b:rgba(0,0,0,.04);      --o-c:#94a3b8;
-  --H-b:rgba(109,40,217,.1);  --H-c:#6d28d9;
-  --V-b:rgba(5,150,105,.1);   --V-c:#065f46;
-  --A-b:rgba(190,24,93,.1);   --A-c:#be185d;
+  --bg:#f5f0e8; --sf:#fdf8f0; --s2:#f0e9d8; --s3:#e8dcc8;
+  --br:#ddd0b8; --br2:#c8b99a;
+  --ac:#b8760a; --ac2:#c2440c; --tx:#2c1f0e; --mu:#8a7560;
+  --m-b:rgba(37,99,235,.1);   --m-c:#1e40af;
+  --a-b:rgba(180,110,0,.12);  --a-c:#7c4700;
+  --e-b:rgba(180,50,20,.1);   --e-c:#7f2010;
+  --o-b:rgba(100,80,50,.06);  --o-c:#9a8870;
+  --H-b:rgba(100,40,200,.1);  --H-c:#5b21b6;
+  --V-b:rgba(5,130,90,.1);    --V-c:#065f46;
+  --A-b:rgba(170,20,80,.1);   --A-c:#9d174d;
 }
 *{box-sizing:border-box;margin:0;padding:0;}
 html{-webkit-text-size-adjust:100%;}
@@ -185,7 +185,8 @@ body{background:var(--bg);color:var(--tx);font-family:'Noto Sans Georgian',sans-
 .th-w{font-size:.58rem;color:var(--mu);}
 .gsel{border:2px solid var(--br);border-radius:7px;
   padding:6px 4px;font-family:inherit;font-size:.72rem;font-weight:800;
-  cursor:pointer;outline:none;width:100%;transition:all .15s;text-align:center;}
+  cursor:pointer;outline:none;width:100%;transition:all .15s;text-align:center;
+  -webkit-appearance:none;-moz-appearance:none;appearance:none;}
 .gsel:focus{border-color:var(--ac);}
 .gsel.s-m{background:var(--m-b);color:var(--m-c);border-color:var(--m-c);}
 .gsel.s-a{background:var(--a-b);color:var(--a-c);border-color:var(--a-c);}
@@ -202,6 +203,34 @@ body{background:var(--bg);color:var(--tx);font-family:'Noto Sans Georgian',sans-
 .flash{animation:flashG .5s ease;}
 @keyframes flashG{0%{background:rgba(52,211,153,.25);}100%{background:transparent;}}
 .save-row{display:flex;align-items:center;justify-content:flex-end;margin-top:12px;gap:10px;}
+
+/* ── FILTER ── */
+.flt-wrap{background:var(--s2);border-radius:10px;padding:12px;margin-bottom:12px;display:flex;flex-direction:column;gap:8px;}
+.flt-row{display:flex;gap:8px;flex-wrap:wrap;align-items:flex-end;}
+.flt-group{display:flex;flex-direction:column;gap:4px;flex:1;min-width:100px;}
+.flt-label{font-size:.62rem;font-weight:700;color:var(--mu);text-transform:uppercase;letter-spacing:.05em;}
+.flt-sel{background:var(--s3);border:1px solid var(--br);border-radius:7px;
+  padding:7px 8px;color:var(--tx);font-family:inherit;font-size:.72rem;font-weight:600;
+  cursor:pointer;outline:none;width:100%;-webkit-appearance:none;appearance:none;}
+.flt-sel:focus{border-color:var(--ac);}
+.flt-inp{background:var(--s3);border:1px solid var(--br);border-radius:7px;
+  padding:7px 8px;color:var(--tx);font-family:inherit;font-size:.72rem;width:100%;outline:none;}
+.flt-inp:focus{border-color:var(--ac);}
+.flt-clear{background:rgba(248,113,113,.15);color:#f87171;border:1px solid rgba(248,113,113,.3);
+  border-radius:7px;padding:7px 12px;font-family:inherit;font-size:.72rem;font-weight:700;
+  cursor:pointer;white-space:nowrap;transition:all .15s;}
+.flt-clear:hover{background:rgba(248,113,113,.25);}
+.flt-chips{display:flex;gap:6px;flex-wrap:wrap;}
+.flt-chip{font-size:.65rem;font-weight:700;padding:3px 8px;border-radius:20px;cursor:pointer;
+  border:2px solid transparent;transition:all .15s;opacity:.5;}
+.flt-chip.active{opacity:1;border-color:currentColor;}
+.flt-chip.fc-m{background:var(--m-b);color:var(--m-c);}
+.flt-chip.fc-a{background:var(--a-b);color:var(--a-c);}
+.flt-chip.fc-e{background:var(--e-b);color:var(--e-c);}
+.flt-chip.fc-o{background:var(--o-b);color:var(--o-c);}
+.flt-chip.fc-H{background:var(--H-b);color:var(--H-c);}
+.flt-chip.fc-V{background:var(--V-b);color:var(--V-c);}
+.flt-chip.fc-A{background:var(--A-b);color:var(--A-c);}
 .sstt{font-size:.72rem;color:var(--V-c);}
 .sbtn{background:var(--V-c);color:#000;border:none;border-radius:8px;
   padding:9px 20px;font-family:inherit;font-size:.78rem;font-weight:800;cursor:pointer;transition:opacity .15s;}
@@ -425,6 +454,41 @@ body{background:var(--bg);color:var(--tx);font-family:'Noto Sans Georgian',sans-
           <button class="ag-nav-btn" onclick="agWeek(-1)">◀</button>
           <div class="ag-label" id="agLabel">—</div>
           <button class="ag-nav-btn" onclick="agWeek(1)">▶</button>
+        </div>
+        <!-- FILTER -->
+        <div class="flt-wrap">
+          <div class="flt-row">
+            <div class="flt-group">
+              <div class="flt-label">მიმტანი</div>
+              <select class="flt-sel" id="fltWaiter" onchange="applyFilter()">
+                <option value="">ყველა</option>
+              </select>
+            </div>
+            <div class="flt-group">
+              <div class="flt-label">თარიღი დან</div>
+              <input type="date" class="flt-inp" id="fltFrom" onchange="applyFilter()">
+            </div>
+            <div class="flt-group">
+              <div class="flt-label">თარიღი მდე</div>
+              <input type="date" class="flt-inp" id="fltTo" onchange="applyFilter()">
+            </div>
+            <button class="flt-clear" onclick="clearFilter()">✕ ფილტრის გასუფთავება</button>
+            <button class="flt-clear" style="background:rgba(248,113,113,.25);border-color:rgba(248,113,113,.5);" onclick="deleteFiltered()">🗑 არჩეულის წაშლა</button>
+          </div>
+          <div class="flt-label" style="margin-top:2px;">შიფტი</div>
+          <div class="flt-chips">
+            <span class="flt-chip fc-m active" onclick="toggleFltChip(this,'09:00')">09:00</span>
+            <span class="flt-chip fc-a active" onclick="toggleFltChip(this,'14:00')">14:00</span>
+            <span class="flt-chip fc-e active" onclick="toggleFltChip(this,'15:00')">15:00</span>
+            <span class="flt-chip fc-o active" onclick="toggleFltChip(this,'OFF')">OFF</span>
+          </div>
+          <div class="flt-label" style="margin-top:2px;">პოზიცია</div>
+          <div class="flt-chips">
+            <span class="flt-chip fc-H active" onclick="toggleFltChip(this,'H')">ჰოლი</span>
+            <span class="flt-chip fc-V active" onclick="toggleFltChip(this,'V')">ვერანდა</span>
+            <span class="flt-chip fc-A active" onclick="toggleFltChip(this,'A')">ანტრ.</span>
+            <span class="flt-chip fc-o active" onclick="toggleFltChip(this,'none')">პოზიციის გარეშე</span>
+          </div>
         </div>
         <div class="ag-wrap">
           <table class="ag-table" id="agTable"></table>
@@ -931,30 +995,13 @@ function aTab(tab,btn){
 
 /* ── ADMIN GRID ── */
 // Split FCOLS into weeks (Sun-Sat chunks)
-function getFcolWeeks(){
-  const weeks=[];
-  let week=[];
-  FCOLS.forEach((c,i)=>{
-    week.push(c);
-    if(c.wd===6||i===FCOLS.length-1){ weeks.push(week); week=[]; }
-  });
-  return weeks;
-}
-function agWeek(d){
-  const weeks=getFcolWeeks();
-  agOff=Math.max(0,Math.min(weeks.length-1,agOff+d));
-  renderAdminGrid();
-}
+function agWeek(d){ agOff+=d; renderAdminGrid(); }
 
 function renderAdminGrid(){
-  const weeks=getFcolWeeks();
-  const days=weeks[agOff]||weeks[0];
-  const first=days[0],last=days[days.length-1];
-  const label=first.m===last.m
-    ? first.d+'–'+last.d+' '+MSH[first.m-1]+' '+first.y
-    : first.d+' '+MSH[first.m-1]+' – '+last.d+' '+MSH[last.m-1]+' '+last.y;
-  document.getElementById('agLabel').textContent=label;
+  const days=weekDates(agOff);
+  document.getElementById('agLabel').textContent=wkLabel(days);
   document.getElementById('sstt').textContent='';
+  initFilter();
 
   const tbl=document.getElementById('agTable');
   tbl.innerHTML='';
@@ -1043,6 +1090,143 @@ async function saveGrid(){
     setSS('err','შეცდომა');
   }
   btn.disabled=false; btn.textContent='💾 შენახვა';
+}
+
+/* ── FILTER ── */
+let fltShifts = new Set(['09:00','14:00','15:00','OFF']);
+let fltPos    = new Set(['H','V','A','none']);
+
+function initFilter(){
+  const sel = document.getElementById('fltWaiter');
+  sel.innerHTML = '<option value="">ყველა</option>';
+  DYNAMIC_WAITERS.forEach(w=>{
+    const o = document.createElement('option');
+    o.value = w.name; o.textContent = w.name;
+    sel.appendChild(o);
+  });
+}
+
+function toggleFltChip(el, val){
+  const isShift = ['09:00','14:00','15:00','OFF'].includes(val);
+  const set = isShift ? fltShifts : fltPos;
+  if(set.has(val)){ set.delete(val); el.classList.remove('active'); }
+  else { set.add(val); el.classList.add('active'); }
+  applyFilter();
+}
+
+function applyFilter(){
+  const waiter  = document.getElementById('fltWaiter').value;
+  const fromVal = document.getElementById('fltFrom').value;
+  const toVal   = document.getElementById('fltTo').value;
+
+  const tbody = document.querySelector('#agTable tbody');
+  if(!tbody) return;
+
+  const rows  = tbody.querySelectorAll('tr');
+  const days  = weekDates(agOff);
+
+  rows.forEach(tr=>{
+    const cells = tr.querySelectorAll('td');
+    if(!cells.length) return;
+    const name = cells[0].querySelector('.cn2')?.textContent||'';
+
+    // waiter filter
+    if(waiter && name !== waiter){ tr.style.display='none'; return; }
+
+    // per-cell filters (date, shift, position)
+    let anyVisible = false;
+    cells.forEach((td,i)=>{
+      if(i===0) return;
+      const c = days[i-1];
+      if(!c){ td.style.opacity='1'; return; }
+      const dkv = dk(c.y,c.m,c.d);
+      const shiftSel = td.querySelector('[data-t="s"]');
+      const posSel   = td.querySelector('[data-t="p"]');
+      if(!shiftSel){ td.style.opacity='1'; anyVisible=true; return; }
+
+      const sVal = shiftSel.value;
+      const pVal = posSel ? posSel.value : '';
+
+      // date range
+      if(fromVal && dkv < fromVal){ td.style.opacity='.2'; return; }
+      if(toVal   && dkv > toVal  ){ td.style.opacity='.2'; return; }
+
+      // shift filter
+      if(!fltShifts.has(sVal)){ td.style.opacity='.2'; return; }
+
+      // position filter
+      const pMatch = pVal ? fltPos.has(pVal) : fltPos.has('none');
+      if(!pMatch){ td.style.opacity='.2'; return; }
+
+      td.style.opacity='1';
+      anyVisible = true;
+    });
+
+    tr.style.display = anyVisible ? '' : 'none';
+  });
+}
+
+function clearFilter(){
+  document.getElementById('fltWaiter').value = '';
+  document.getElementById('fltFrom').value   = '';
+  document.getElementById('fltTo').value     = '';
+  fltShifts = new Set(['09:00','14:00','15:00','OFF']);
+  fltPos    = new Set(['H','V','A','none']);
+  // reset chips
+  document.querySelectorAll('.flt-chip').forEach(c=>c.classList.add('active'));
+  // reset cell opacity
+  document.querySelectorAll('#agTable tbody td').forEach(td=>td.style.opacity='1');
+  document.querySelectorAll('#agTable tbody tr').forEach(tr=>tr.style.display='');
+}
+
+/* ── DELETE FILTERED ── */
+async function deleteFiltered(){
+  const waiter  = document.getElementById('fltWaiter').value;
+  const fromVal = document.getElementById('fltFrom').value;
+  const toVal   = document.getElementById('fltTo').value;
+
+  // collect visible cells
+  const toDelete = [];
+  const tbody = document.querySelector('#agTable tbody');
+  if(!tbody) return;
+
+  const days = weekDates(agOff);
+  tbody.querySelectorAll('tr').forEach(tr=>{
+    if(tr.style.display==='none') return;
+    const cells = tr.querySelectorAll('td');
+    const name = cells[0]?.querySelector('.cn2')?.textContent||'';
+    cells.forEach((td,i)=>{
+      if(i===0) return;
+      if(td.style.opacity==='0.2'||td.style.opacity==='.2') return;
+      const shiftSel = td.querySelector('[data-t="s"]');
+      if(!shiftSel) return;
+      const dkv = shiftSel.dataset.dk;
+      toDelete.push({waiter_name: name, shift_date: dkv});
+    });
+  });
+
+  if(!toDelete.length){
+    alert('წასაშლელი მონაცემები არ არის');
+    return;
+  }
+
+  const msg = `${toDelete.length} ჩანაწერი წაიშლება. დარწმუნებული ხარ?`;
+  if(!confirm(msg)) return;
+
+  setSS('spin','წაშლა...');
+  let deleted = 0;
+  for(const r of toDelete){
+    try{
+      await sbq('waiter_positions?waiter_name=eq.'+encodeURIComponent(r.waiter_name)+'&shift_date=eq.'+r.shift_date,
+        {method:'DELETE'});
+      delete DB[pk(r.waiter_name, r.shift_date)];
+      deleted++;
+    }catch(e){ console.warn(e); }
+  }
+
+  setSS('ok', deleted+' ჩანაწერი წაიშალა');
+  renderAdminGrid();
+  renderAll();
 }
 
 /* ── COLOR SELECT ── */
