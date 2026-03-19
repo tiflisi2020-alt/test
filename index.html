@@ -963,7 +963,16 @@ function cov(id){ document.getElementById(id).classList.remove('show'); }
    ADMIN PANEL
 ══════════════════════════════ */
 function openAdminPanel(){
-  agOff=0; renderAdminGrid();
+  // find the week offset that contains the first FCOLS date (Mar 22)
+  const firstCol = FCOLS[0];
+  const firstDk = dk(firstCol.y, firstCol.m, firstCol.d);
+  // search from -8 to +8 weeks to find the right offset
+  agOff = 0;
+  for(let i=-8; i<=8; i++){
+    const days = weekDates(i);
+    if(days.some(c=>dk(c.y,c.m,c.d)===firstDk)){ agOff=i; break; }
+  }
+  renderAdminGrid();
   const t=new Date(); calY=t.getFullYear(); calM=t.getMonth(); renderCal();
   copyFromOff=0; copyToOff=1; updateCopyLabels();
   renderWaitersList();
