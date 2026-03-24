@@ -1,7 +1,7 @@
 {
-  "name": "მიმტანების განრიგი",
+  "name": "რესტორნის განრიგები",
   "short_name": "განრიგი",
-  "description": "რესტორნის მიმტანების სამუშაო განრიგი",
+  "description": "რესტორნის განყოფილებების სამუშაო განრიგები",
   "start_url": "/test/index.html",
   "scope": "/test/",
   "display": "standalone",

@@ -3,1658 +3,182 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
-<title>მიმტანების განრიგი</title>
+<title>რესტორნის განრიგები</title>
 <link rel="manifest" href="manifest.json">
 <meta name="theme-color" content="#f0a500">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="განრიგი">
 <link rel="apple-touch-icon" href="icon-192.png">
-<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Georgian:wght@300;400;600;700;900&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Georgian:wght@400;600;700;900&display=swap" rel="stylesheet">
 <style>
 :root{
-  --bg:#0d0f14; --sf:#161920; --s2:#1c1f28; --s3:#22262f;
-  --br:#252830; --br2:#2e3240;
+  --bg:#0d0f14; --sf:#161920; --s2:#1c1f28; --br:#252830;
   --ac:#f0a500; --ac2:#e05c2a; --tx:#e8eaf0; --mu:#5a5f70;
-  --m-b:rgba(96,180,255,.14);  --m-c:#60b4ff;
-  --a-b:rgba(240,165,0,.14);   --a-c:#f0a500;
-  --e-b:rgba(224,92,42,.14);   --e-c:#e05c2a;
-  --o-b:rgba(255,255,255,.03); --o-c:#3a3f52;
-  --H-b:rgba(120,80,255,.16);  --H-c:#a78bfa;
-  --V-b:rgba(20,200,130,.14);  --V-c:#34d399;
-  --A-b:rgba(236,72,153,.14);  --A-c:#f472b6;
 }
 body.light{
-  --bg:#f5f0e8; --sf:#fdf8f0; --s2:#f0e9d8; --s3:#e8dcc8;
-  --br:#ddd0b8; --br2:#c8b99a;
+  --bg:#f5f0e8; --sf:#fdf8f0; --s2:#f0e9d8; --br:#ddd0b8;
   --ac:#b8760a; --ac2:#c2440c; --tx:#2c1f0e; --mu:#8a7560;
-  --m-b:rgba(37,99,235,.1);   --m-c:#1e40af;
-  --a-b:rgba(180,110,0,.12);  --a-c:#7c4700;
-  --e-b:rgba(180,50,20,.1);   --e-c:#7f2010;
-  --o-b:rgba(100,80,50,.06);  --o-c:#9a8870;
-  --H-b:rgba(100,40,200,.1);  --H-c:#5b21b6;
-  --V-b:rgba(5,130,90,.1);    --V-c:#065f46;
-  --A-b:rgba(170,20,80,.1);   --A-c:#9d174d;
 }
 *{box-sizing:border-box;margin:0;padding:0;}
 html{-webkit-text-size-adjust:100%;}
-body{background:var(--bg);color:var(--tx);font-family:'Noto Sans Georgian',sans-serif;min-height:100vh;padding-bottom:60px;}
-
-/* ── HEADER ── */
-.hdr{background:var(--sf);border-bottom:1px solid var(--br);padding:14px 16px 10px;position:sticky;top:0;z-index:90;box-shadow:0 2px 12px rgba(0,0,0,.4);}
-.hdr-top{display:flex;align-items:center;justify-content:space-between;gap:10px;}
-.hdr h1{font-size:1.15rem;font-weight:900;letter-spacing:-.3px;}
-.hdr h1 span{color:var(--ac);}
-.hdr-sub{font-size:.68rem;color:var(--mu);margin-top:2px;text-transform:uppercase;letter-spacing:.07em;}
-.leg{display:flex;gap:10px;flex-wrap:wrap;margin-top:8px;}
-.li{display:flex;align-items:center;gap:5px;font-size:.66rem;color:var(--mu);}
-.ld{width:7px;height:7px;border-radius:50%;}
-.sync-row{display:flex;align-items:center;gap:6px;margin-top:5px;}
-.sd{width:7px;height:7px;border-radius:50%;flex-shrink:0;}
-.sd.ok{background:#34d399;} .sd.spin{background:var(--ac);animation:blink 1s infinite;} .sd.err{background:#f87171;}
-@keyframes blink{0%,100%{opacity:1;}50%{opacity:.3;}}
-.st{font-size:.63rem;color:var(--mu);}
-.abtn{background:var(--s2);border:1px solid var(--br);color:var(--mu);padding:7px 11px;
-  border-radius:8px;font-family:inherit;font-size:.72rem;font-weight:700;cursor:pointer;
-  display:flex;align-items:center;gap:5px;white-space:nowrap;transition:all .15s;flex-shrink:0;}
-.abtn:hover{border-color:var(--ac);color:var(--ac);}
-
-/* ── WEEK GRID ── */
-.wk-section{padding:10px 10px 0;}
-.wk-nav{display:flex;align-items:center;gap:8px;margin-bottom:8px;}
-.wk-nav-btn{background:var(--s2);border:1px solid var(--br);border-radius:8px;
-  padding:6px 13px;font-family:inherit;font-size:.75rem;font-weight:700;color:var(--tx);cursor:pointer;transition:all .15s;}
-.wk-nav-btn:hover{border-color:var(--ac);}
-.wk-label{flex:1;text-align:center;font-size:.82rem;font-weight:800;color:var(--tx);}
-.wk-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:4px;}
-.wk-col{background:var(--sf);border:1px solid var(--br);border-radius:10px;overflow:hidden;}
-.wk-col.today{border-color:var(--ac);}
-.wk-col.today .wk-col-hdr{background:rgba(240,165,0,.1);}
-.wk-col-hdr{padding:6px 4px 4px;text-align:center;background:var(--s2);}
-.wk-dn{font-size:.55rem;font-weight:700;text-transform:uppercase;color:var(--mu);letter-spacing:.04em;}
-.wk-dd{font-size:1.05rem;font-weight:900;line-height:1.1;}
-.wk-dd.wknd{color:var(--ac2);}
-.wk-dm{font-size:.52rem;color:var(--mu);}
-.wk-entries{padding:4px 3px;display:flex;flex-direction:column;gap:3px;min-height:40px;}
-.wk-entry{border-radius:6px;padding:3px 4px;font-size:.6rem;font-weight:700;line-height:1.3;}
-.wk-ename{display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
-.wk-epos{font-size:.52rem;opacity:.85;}
-.wk-empty{font-size:.58rem;color:var(--mu);text-align:center;padding:6px 0;}
-
-/* ── VIEW TOGGLE ── */
-.vtog{display:flex;gap:8px;padding:10px 12px;background:var(--bg);border-bottom:1px solid var(--br);margin-top:8px;}
-.vbtn{flex:1;padding:8px;border-radius:8px;border:1px solid var(--br);background:var(--sf);
-  color:var(--mu);font-family:inherit;font-size:.73rem;font-weight:700;cursor:pointer;transition:all .15s;}
-.vbtn.active{background:var(--ac);color:#000;border-color:var(--ac);}
-
-/* ── WAITER CARDS ── */
-#vw{padding:10px 10px 0;}
-.wcard{margin-bottom:8px;border-radius:12px;border:1px solid var(--br);overflow:hidden;background:var(--sf);}
-.wcard-hdr{display:flex;align-items:center;padding:11px 13px;background:var(--s2);cursor:pointer;-webkit-tap-highlight-color:transparent;gap:10px;}
-.wi{flex:1;min-width:0;}
-.wn{font-size:.88rem;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
-.wp{font-size:.7rem;color:var(--mu);margin-top:1px;}
-.wbdg{display:flex;gap:4px;flex-shrink:0;flex-wrap:wrap;justify-content:flex-end;max-width:120px;}
-.bdg{font-size:.6rem;font-weight:700;padding:2px 5px;border-radius:20px;}
-.bdg.m{background:var(--m-b);color:var(--m-c);}
-.bdg.a{background:var(--a-b);color:var(--a-c);}
-.bdg.e{background:var(--e-b);color:var(--e-c);}
-.chv{width:16px;height:16px;color:var(--mu);flex-shrink:0;transition:transform .2s;}
-.wcard.open .chv{transform:rotate(180deg);}
-.wshifts{display:none;padding:8px;gap:5px;flex-wrap:wrap;}
-.wcard.open .wshifts{display:flex;}
-.chip{display:flex;flex-direction:column;align-items:center;gap:1px;flex:1;min-width:40px;max-width:54px;padding:5px 2px;border-radius:8px;}
-.chip .cd{font-size:.55rem;font-weight:700;color:var(--mu);text-transform:uppercase;}
-.chip .cn{font-size:.8rem;font-weight:900;line-height:1;}
-.chip .ct{font-size:.57rem;font-weight:700;}
-.chip .cp{font-size:.52rem;font-weight:800;padding:1px 4px;border-radius:7px;margin-top:1px;}
-.chip.wknd .cd{color:var(--ac2);}
-.chip.m{background:var(--m-b);} .chip.m .cn,.chip.m .ct{color:var(--m-c);}
-.chip.a{background:var(--a-b);} .chip.a .cn,.chip.a .ct{color:var(--a-c);}
-.chip.e{background:var(--e-b);} .chip.e .cn,.chip.e .ct{color:var(--e-c);}
-.chip.o{background:var(--o-b);} .chip.o .cn,.chip.o .ct{color:var(--o-c);}
-
-/* ── DAY VIEW ── */
-#vd{padding:10px;}
-.dblk{margin-bottom:8px;border-radius:12px;border:1px solid var(--br);overflow:hidden;background:var(--sf);}
-.dblk-hdr{display:flex;align-items:center;gap:10px;padding:9px 13px;background:var(--s2);}
-.dbig{font-size:1.4rem;font-weight:900;line-height:1;}
-.dbig.wknd{color:var(--ac2);}
-.dmeta .dn{font-size:.68rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--mu);}
-.dmeta .dm{font-size:.62rem;color:var(--mu);}
-.dcnt{margin-left:auto;font-size:.66rem;color:var(--mu);}
-.drow{display:flex;align-items:center;padding:8px 13px;border-top:1px solid var(--br);gap:8px;}
-.drif{flex:1;min-width:0;}
-.drn{font-size:.82rem;font-weight:600;}
-.drp{font-size:.67rem;color:var(--mu);}
-.drr{display:flex;gap:5px;align-items:center;flex-shrink:0;flex-wrap:wrap;}
-.drs{font-size:.68rem;font-weight:700;padding:3px 8px;border-radius:20px;}
-.drs.m{background:var(--m-b);color:var(--m-c);}
-.drs.a{background:var(--a-b);color:var(--a-c);}
-.drs.e{background:var(--e-b);color:var(--e-c);}
-.drs.o{background:var(--o-b);color:var(--o-c);}
-.pc{font-size:.68rem;font-weight:800;padding:3px 8px;border-radius:20px;}
-.pc.H{background:var(--H-b);color:var(--H-c);}
-.pc.V{background:var(--V-b);color:var(--V-c);}
-.pc.A{background:var(--A-b);color:var(--A-c);}
-.dnote{font-size:.65rem;color:var(--mu);font-style:italic;padding:2px 13px 7px;border-top:none;}
-
-/* ── OVERLAYS ── */
-.ov{display:none;position:fixed;inset:0;background:rgba(0,0,0,.78);z-index:200;
-  align-items:flex-start;justify-content:center;padding:12px;overflow-y:auto;}
-.ov.show{display:flex;}
-.modal{background:var(--sf);border:1px solid var(--br);border-radius:16px;width:100%;max-width:520px;margin:auto;}
-.mhdr{display:flex;align-items:center;justify-content:space-between;padding:13px 18px;
-  border-bottom:1px solid var(--br);position:sticky;top:0;background:var(--sf);z-index:1;border-radius:16px 16px 0 0;}
-.mhdr h2{font-size:.93rem;font-weight:800;}
-.xbtn{background:none;border:none;color:var(--mu);font-size:1.2rem;cursor:pointer;padding:4px;line-height:1;}
-.mbody{padding:16px 18px;}
-
-/* LOGIN */
-.lform{display:flex;flex-direction:column;gap:12px;}
-.inp{background:var(--s2);border:1px solid var(--br);border-radius:8px;
-  padding:10px 13px;color:var(--tx);font-family:inherit;font-size:.85rem;width:100%;outline:none;}
-.inp:focus{border-color:var(--ac);}
-.btn-p{background:var(--ac);color:#000;border:none;border-radius:8px;
-  padding:11px;font-family:inherit;font-size:.85rem;font-weight:800;cursor:pointer;width:100%;}
-.errmsg{color:#f87171;font-size:.75rem;text-align:center;min-height:18px;}
-
-/* ADMIN TABS */
-.atabs{display:flex;gap:6px;margin-bottom:16px;}
-.atab{flex:1;padding:8px;border-radius:8px;border:1px solid var(--br);background:var(--s2);
-  color:var(--mu);font-family:inherit;font-size:.72rem;font-weight:700;cursor:pointer;transition:all .15s;}
-.atab.active{background:var(--ac);color:#000;border-color:var(--ac);}
-
-/* ADMIN GRID */
-.ag-nav{display:flex;align-items:center;gap:8px;margin-bottom:12px;}
-.ag-nav-btn{background:var(--s2);border:1px solid var(--br);border-radius:7px;
-  padding:5px 11px;font-family:inherit;font-size:.8rem;color:var(--tx);cursor:pointer;transition:all .15s;}
-.ag-nav-btn:hover{border-color:var(--ac);}
-.ag-label{flex:1;text-align:center;font-size:.85rem;font-weight:800;}
-.ag-wrap{overflow-x:auto;overflow-y:auto;max-height:60vh;border-radius:10px;border:1px solid var(--br);}
-.ag-table{width:100%;border-collapse:collapse;min-width:480px;}
-.ag-table thead{position:sticky;top:0;z-index:3;}
-.ag-table thead th{background:var(--s2);padding:8px 6px;font-size:.63rem;font-weight:700;
-  text-transform:uppercase;letter-spacing:.06em;color:var(--mu);border-bottom:2px solid var(--br);text-align:center;}
-.ag-table thead th:first-child{text-align:left;padding-left:10px;min-width:110px;
-  position:sticky;left:0;z-index:4;background:var(--s2);}
-.ag-table tbody td{padding:5px 4px;border-bottom:1px solid var(--br);vertical-align:middle;text-align:center;}
-.ag-table tbody td:first-child{text-align:left;padding-left:10px;
-  position:sticky;left:0;z-index:1;background:var(--sf);border-right:1px solid var(--br);}
-.ag-table tbody tr:hover td:first-child{background:var(--s2);}
-.ag-table tbody tr:last-child td{border-bottom:none;}
-.ag-table tbody tr:hover td{background:rgba(255,255,255,.015);}
-.cn2{font-size:.78rem;font-weight:800;}
-.cp2{font-size:.62rem;color:var(--mu);}
-.th-date{display:flex;flex-direction:column;align-items:center;gap:1px;}
-.th-d{font-size:.9rem;font-weight:900;color:var(--tx);}
-.th-d.wknd{color:var(--ac2);}
-.th-w{font-size:.58rem;color:var(--mu);}
-.gsel{border:2px solid var(--br);border-radius:7px;
-  padding:6px 4px;font-family:inherit;font-size:.72rem;font-weight:800;
-  cursor:pointer;outline:none;width:100%;transition:all .15s;text-align:center;
-  -webkit-appearance:none;-moz-appearance:none;appearance:none;}
-.gsel:focus{border-color:var(--ac);}
-.gsel.s-m{background:var(--m-b);color:var(--m-c);border-color:var(--m-c);}
-.gsel.s-a{background:var(--a-b);color:var(--a-c);border-color:var(--a-c);}
-.gsel.s-e{background:var(--e-b);color:var(--e-c);border-color:var(--e-c);}
-.gsel.s-o{background:var(--o-b);color:var(--o-c);border-color:var(--br);}
-.gsel.s-H{background:var(--H-b);color:var(--H-c);border-color:var(--H-c);}
-.gsel.s-V{background:var(--V-b);color:var(--V-c);border-color:var(--V-c);}
-.gsel.s-A{background:var(--A-b);color:var(--A-c);border-color:var(--A-c);}
-.ginp{background:var(--s2);border:1px solid var(--br);border-radius:6px;
-  padding:4px 5px;color:var(--tx);font-family:inherit;font-size:.63rem;width:100%;outline:none;}
-.ginp:focus{border-color:var(--ac);}
-.gcell{display:flex;flex-direction:column;gap:3px;padding:2px;}
-.off-cell{color:var(--o-c);font-size:.65rem;font-weight:600;text-align:center;padding:4px 0;}
-.flash{animation:flashG .5s ease;}
-@keyframes flashG{0%{background:rgba(52,211,153,.25);}100%{background:transparent;}}
-.save-row{display:flex;align-items:center;justify-content:flex-end;margin-top:12px;gap:10px;}
-
-/* ── FILTER ── */
-.flt-wrap{background:var(--s2);border-radius:10px;padding:12px;margin-bottom:12px;display:flex;flex-direction:column;gap:8px;}
-.flt-row{display:flex;gap:8px;flex-wrap:wrap;align-items:flex-end;}
-.flt-group{display:flex;flex-direction:column;gap:4px;flex:1;min-width:100px;}
-.flt-label{font-size:.62rem;font-weight:700;color:var(--mu);text-transform:uppercase;letter-spacing:.05em;}
-.flt-sel{background:var(--s3);border:1px solid var(--br);border-radius:7px;
-  padding:7px 8px;color:var(--tx);font-family:inherit;font-size:.72rem;font-weight:600;
-  cursor:pointer;outline:none;width:100%;-webkit-appearance:none;appearance:none;}
-.flt-sel:focus{border-color:var(--ac);}
-.flt-inp{background:var(--s3);border:1px solid var(--br);border-radius:7px;
-  padding:7px 8px;color:var(--tx);font-family:inherit;font-size:.72rem;width:100%;outline:none;}
-.flt-inp:focus{border-color:var(--ac);}
-.flt-clear{background:rgba(248,113,113,.15);color:#f87171;border:1px solid rgba(248,113,113,.3);
-  border-radius:7px;padding:7px 12px;font-family:inherit;font-size:.72rem;font-weight:700;
-  cursor:pointer;white-space:nowrap;transition:all .15s;}
-.flt-clear:hover{background:rgba(248,113,113,.25);}
-.flt-chips{display:flex;gap:6px;flex-wrap:wrap;}
-.flt-chip{font-size:.65rem;font-weight:700;padding:3px 8px;border-radius:20px;cursor:pointer;
-  border:2px solid transparent;transition:all .15s;opacity:.5;}
-.flt-chip.active{opacity:1;border-color:currentColor;}
-.flt-chip.fc-m{background:var(--m-b);color:var(--m-c);}
-.flt-chip.fc-a{background:var(--a-b);color:var(--a-c);}
-.flt-chip.fc-e{background:var(--e-b);color:var(--e-c);}
-.flt-chip.fc-o{background:var(--o-b);color:var(--o-c);}
-.flt-chip.fc-H{background:var(--H-b);color:var(--H-c);}
-.flt-chip.fc-V{background:var(--V-b);color:var(--V-c);}
-.flt-chip.fc-A{background:var(--A-b);color:var(--A-c);}
-.sstt{font-size:.72rem;color:var(--V-c);}
-.sbtn{background:var(--V-c);color:#000;border:none;border-radius:8px;
-  padding:9px 20px;font-family:inherit;font-size:.78rem;font-weight:800;cursor:pointer;transition:opacity .15s;}
-.sbtn:hover{opacity:.9;}
-.sbtn:disabled{opacity:.5;cursor:not-allowed;}
-
-/* CALENDAR */
-.cal-nav{display:flex;align-items:center;gap:8px;margin-bottom:10px;}
-.cal-nav-btn{background:var(--s2);border:1px solid var(--br);border-radius:7px;
-  padding:5px 11px;font-family:inherit;font-size:.8rem;color:var(--tx);cursor:pointer;}
-.cal-mo{flex:1;text-align:center;font-size:.85rem;font-weight:800;}
-.cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:3px;margin-bottom:14px;}
-.cc{text-align:center;padding:6px 2px;border-radius:7px;font-size:.75rem;font-weight:600;
-  cursor:pointer;border:2px solid transparent;transition:all .12s;position:relative;user-select:none;}
-.cc.head{color:var(--mu);font-size:.63rem;font-weight:700;text-transform:uppercase;cursor:default;padding:3px;}
-.cc.other{color:var(--mu);opacity:.35;cursor:default;}
-.cc.wknd-c{color:var(--ac2);}
-.cc.today-c{border-color:var(--ac);}
-.cc.has-dot::after{content:'';width:5px;height:5px;border-radius:50%;background:var(--V-c);
-  position:absolute;bottom:2px;left:50%;transform:translateX(-50%);}
-.cc:not(.head):not(.other):hover{background:var(--s3);}
-.cc.active-c{background:rgba(240,165,0,.15);border-color:var(--ac);}
-.cal-detail{background:var(--s2);border-radius:10px;padding:12px 14px;}
-.cal-detail-ttl{font-size:.8rem;font-weight:800;margin-bottom:10px;color:var(--tx);}
-.cal-drow{display:flex;align-items:center;padding:7px 0;border-bottom:1px solid var(--br);gap:8px;}
-.cal-drow:last-child{border-bottom:none;}
-.cal-dn{flex:1;font-size:.8rem;font-weight:600;}
-.cal-dr{display:flex;gap:5px;align-items:center;flex-wrap:wrap;}
-
-/* DESKTOP */
+body{
+  font-family:'Noto Sans Georgian',sans-serif;
+  background:var(--bg);
+  color:var(--tx);
+  min-height:100vh;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  padding:24px 16px 32px;
+}
+@supports ((-webkit-backdrop-filter:blur(1px)) or (backdrop-filter:blur(1px))){
+  body{
+    background:
+      radial-gradient(ellipse 120% 70% at 50% -15%, rgba(240,165,0,.09), transparent 55%),
+      radial-gradient(ellipse 80% 50% at 100% 40%, rgba(96,180,255,.06), transparent 45%),
+      var(--bg);
+  }
+  .tbtn,.card{
+    -webkit-backdrop-filter:blur(16px);
+    backdrop-filter:blur(16px);
+  }
+  .tbtn{background:color-mix(in srgb,var(--s2) 68%,transparent);}
+  body.light .tbtn{background:color-mix(in srgb,var(--s2) 78%,transparent);}
+  .card{background:color-mix(in srgb,var(--sf) 65%,transparent);}
+  body.light .card{background:color-mix(in srgb,var(--sf) 75%,transparent);}
+}
+.topbar{
+  width:100%;max-width:420px;
+  display:flex;justify-content:flex-end;margin-bottom:8px;
+}
+.tbtn{
+  background:var(--s2);border:1px solid var(--br);color:var(--mu);
+  padding:8px 12px;border-radius:10px;font-family:inherit;font-size:.85rem;
+  cursor:pointer;font-weight:700;
+}
+.tbtn:hover{border-color:var(--ac);color:var(--ac);}
+.hero{
+  text-align:center;margin-bottom:28px;max-width:420px;
+}
+.hero h1{
+  font-size:1.35rem;font-weight:900;letter-spacing:-.3px;line-height:1.25;
+}
+.hero h1 span{color:var(--ac);}
+.hero p{
+  margin-top:10px;font-size:.78rem;color:var(--mu);line-height:1.5;
+}
+.cards{
+  width:100%;max-width:420px;
+  display:flex;flex-direction:column;gap:12px;
+}
+.card{
+  text-decoration:none;color:inherit;
+  background:var(--sf);
+  border:1px solid var(--br);
+  border-radius:16px;
+  padding:18px 20px;
+  display:flex;align-items:center;gap:16px;
+  transition:border-color .15s, transform .12s, box-shadow .15s;
+  -webkit-tap-highlight-color:transparent;
+}
+.card:hover,.card:focus-visible{
+  border-color:var(--ac);
+  box-shadow:0 4px 24px rgba(0,0,0,.2);
+}
+.card:active{transform:scale(.99);}
+.card-ico{
+  width:52px;height:52px;border-radius:14px;
+  display:flex;align-items:center;justify-content:center;
+  font-size:1.65rem;flex-shrink:0;
+}
+.card-txt{flex:1;min-width:0;}
+.card-txt strong{
+  display:block;font-size:.95rem;font-weight:800;margin-bottom:4px;
+}
+.card-txt span{
+  font-size:.68rem;color:var(--mu);line-height:1.35;
+}
+.card-arr{color:var(--mu);font-size:1.1rem;flex-shrink:0;}
+.c-w .card-ico{background:rgba(240,165,0,.14);}
+.c-ch .card-ico{background:rgba(52,211,153,.14);}
+.c-ca .card-ico{background:rgba(96,180,255,.14);}
+.c-ho .card-ico{background:rgba(244,114,182,.14);}
+.foot{
+  margin-top:auto;padding-top:36px;
+  font-size:.65rem;color:var(--mu);text-align:center;max-width:360px;line-height:1.4;
+}
 @media(min-width:720px){
-  body{padding:24px 16px 60px;}
-  .hdr{position:static;border-radius:14px 14px 0 0;border:1px solid var(--br);border-bottom:none;
-    max-width:1340px;margin:0 auto;padding:18px 22px 14px;box-shadow:none;}
-  .hdr h1{font-size:1.6rem;}
-  .wk-section{max-width:1340px;margin:0 auto;padding:0;border:1px solid var(--br);border-top:none;
-    border-bottom:none;background:var(--sf);}
-  .wk-nav{padding:12px 16px 0;}
-  .wk-grid{padding:8px 16px 12px;gap:6px;}
-  .wk-col{min-height:130px;}
-  .wk-entry{font-size:.66rem;}
-  .vtog{display:none;}
-  #vw,#vd{display:none!important;}
-  #dtbl{display:block;}
-  .twrap{max-width:1340px;margin:0 auto;overflow-x:auto;border:1px solid var(--br);
-    border-top:none;border-radius:0 0 14px 14px;background:var(--sf);}
-  table{width:100%;border-collapse:collapse;min-width:940px;}
-  thead th{background:var(--bg);padding:8px 5px;font-size:.62rem;font-weight:700;
-    letter-spacing:.07em;text-transform:uppercase;color:var(--mu);border-bottom:1px solid var(--br);text-align:center;}
-  thead th:first-child{text-align:left;padding-left:16px;min-width:185px;}
-  .thn{font-size:.93rem;font-weight:900;color:var(--tx);display:block;}
-  .thn.wknd{color:var(--ac2);}
-  tbody tr{border-bottom:1px solid var(--br);}
-  tbody tr:last-child{border-bottom:none;}
-  tbody tr:hover{background:rgba(255,255,255,.02);}
-  td{padding:0;text-align:center;vertical-align:middle;}
-  td:first-child{text-align:left;padding:9px 10px 9px 16px;}
-  .tn{font-size:.82rem;font-weight:600;}
-  .tph{font-size:.68rem;color:var(--mu);margin-top:1px;}
-  .tc{display:flex;flex-direction:column;align-items:center;justify-content:center;
-    height:54px;font-size:.7rem;font-weight:700;gap:3px;}
-  .tc.m{background:var(--m-b);color:var(--m-c);}
-  .tc.a{background:var(--a-b);color:var(--a-c);}
-  .tc.e{background:var(--e-b);color:var(--e-c);}
-  .tc.o{background:var(--o-b);color:var(--o-c);font-size:.6rem;letter-spacing:.07em;}
-  .tp{font-size:.58rem;font-weight:800;padding:2px 5px;border-radius:7px;}
-  .srow td{padding:0;}
-  .scl{height:30px;display:flex;align-items:center;justify-content:center;
-    font-size:.64rem;color:var(--mu);background:var(--bg);border-top:1px solid var(--br);
-    flex-direction:column;gap:1px;}
-  .scl .sc{font-size:.88rem;color:var(--tx);font-weight:700;}
+  body{padding:40px 24px;}
+  .hero h1{font-size:1.75rem;}
+  .cards{max-width:520px;}
 }
-#dtbl{display:none;}
-
-/* ── STATS ── */
-.stat-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:14px;}
-.stat-card{background:var(--s2);border-radius:10px;padding:12px 14px;border:1px solid var(--br);}
-.stat-card .sc-name{font-size:.78rem;font-weight:700;margin-bottom:8px;color:var(--tx);}
-.stat-bar-row{display:flex;align-items:center;gap:8px;margin-bottom:5px;}
-.stat-bar-label{font-size:.65rem;color:var(--mu);width:36px;flex-shrink:0;}
-.stat-bar-wrap{flex:1;background:var(--s3);border-radius:20px;height:7px;overflow:hidden;}
-.stat-bar-fill{height:100%;border-radius:20px;transition:width .4s;}
-.stat-bar-val{font-size:.65rem;font-weight:700;width:28px;text-align:right;flex-shrink:0;}
-.stat-total{font-size:.7rem;color:var(--mu);margin-top:6px;}
-.stat-month-nav{display:flex;align-items:center;gap:8px;margin-bottom:14px;}
-.stat-month-label{flex:1;text-align:center;font-size:.85rem;font-weight:800;}
-
-/* ── CALL BTN ── */
-.call-btn{background:var(--V-b);color:var(--V-c);border-radius:6px;padding:3px 7px;
-  font-size:.7rem;text-decoration:none;font-weight:700;flex-shrink:0;}
-.call-btn:hover{opacity:.85;}
-
-/* ── NOTIFICATION ── */
-.notif-wrap{background:var(--s2);border-radius:10px;padding:14px;margin-bottom:12px;}
-.notif-wrap h3{font-size:.78rem;font-weight:800;margin-bottom:10px;}
-.notif-status{font-size:.72rem;margin-bottom:10px;}
-.notif-status.ok{color:var(--V-c);}
-.notif-status.no{color:var(--mu);}
-.notif-status.err{color:#f87171;}
-.notif-time-row{display:flex;align-items:center;gap:8px;margin-bottom:10px;}
-.notif-time-row label{font-size:.72rem;color:var(--mu);white-space:nowrap;}
-.notif-time-inp{background:var(--s3);border:1px solid var(--br);border-radius:7px;
-  padding:6px 10px;color:var(--tx);font-family:inherit;font-size:.78rem;width:110px;outline:none;}
-.notif-time-inp:focus{border-color:var(--ac);}
-
-/* ── PRINT ── */
-@media print{
-  .hdr,.vtog,.wk-section,.sync-row,.abtn,.leg,#vw,#vd{display:none!important;}
-  body{background:#fff;color:#000;padding:0;}
-  #dtbl{display:block!important;}
-  .twrap{border:none;border-radius:0;max-width:100%;}
-  table{min-width:unset;width:100%;}
-  thead th{background:#f3f4f6!important;color:#374151!important;font-size:9px;padding:6px 4px;}
-  .thn{color:#111!important;font-size:11px;}
-  .thn.wknd{color:#dc2626!important;}
-  tbody tr{border-bottom:1px solid #e5e7eb!important;}
-  .tc{height:40px!important;font-size:9px!important;}
-  .tc.m{background:#dbeafe!important;color:#1d4ed8!important;}
-  .tc.a{background:#fef3c7!important;color:#92400e!important;}
-  .tc.e{background:#fee2e2!important;color:#991b1b!important;}
-  .tc.o{background:#f9fafb!important;color:#9ca3af!important;}
-  .tp{font-size:8px!important;padding:1px 4px!important;}
-  .scl{background:#f3f4f6!important;}
-  .sc{color:#111!important;}
-  .tn{font-size:10px;}
-  .tph{font-size:8px;}
-  td:first-child{padding:6px 8px!important;}
-  .print-hdr{display:block!important;text-align:center;padding:10px 0 14px;font-size:14px;font-weight:900;}
-}
-.print-hdr{display:none;}
 </style>
 </head>
 <body>
 
-<!-- HEADER -->
-<div class="hdr">
-  <div class="hdr-top">
-    <div>
-      <h1>მიმტანების <span>განრიგი</span></h1>
-      <div class="hdr-sub" id="hdrSub">იტვირთება...</div>
+<div class="topbar">
+  <button type="button" class="tbtn" id="themeBtn" onclick="toggleTheme()" title="თემა">🌙</button>
+</div>
+
+<header class="hero">
+  <h1>კეთილი იყოს თქვენი <span>მობრძანება</span></h1>
+  <p>აირჩიეთ განყოფილება — განრიგის სანახავად გადავიდით შესაბამის გვერდზე.</p>
+</header>
+
+<nav class="cards" aria-label="განრიგების არჩევა">
+  <a href="waiters.html" class="card c-w">
+    <div class="card-ico" aria-hidden="true">🍽️</div>
+    <div class="card-txt">
+      <strong>მიმტანების განრიგი</strong>
+      <span>სამუშაო დღეები, შიფტები, პოზიციები და სინქრონიზაცია</span>
     </div>
-    <div style="display:flex;gap:6px;flex-shrink:0;">
-      <button class="abtn" onclick="toggleTheme()" id="themeBtn" title="თემა">🌙</button>
-      <button class="abtn" onclick="doPrint()" title="ბეჭდვა">🖨️</button>
-      <button class="abtn" onclick="openAdmin()">
-        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>
-        Admin
-      </button>
+    <span class="card-arr" aria-hidden="true">›</span>
+  </a>
+  <a href="chefs.html" class="card c-ch">
+    <div class="card-ico" aria-hidden="true">👨‍🍳</div>
+    <div class="card-txt">
+      <strong>მზარეულების განრიგი</strong>
+      <span>კვირის ხედი, ადმინ ცხრილი, კალენდარი, სტატისტიკა, შეტყობინება — პოზიციების გარეშე</span>
     </div>
-  </div>
-  <div class="leg">
-    <div class="li"><div class="ld" style="background:var(--m-c)"></div>09:00</div>
-    <div class="li"><div class="ld" style="background:var(--a-c)"></div>14:00</div>
-    <div class="li"><div class="ld" style="background:var(--e-c)"></div>15:00</div>
-    <div class="li"><div class="ld" style="background:#3a3f52;border:1px solid #3a3f52"></div>OFF</div>
-    <div class="li"><div class="ld" style="background:var(--H-c)"></div>ჰოლი</div>
-    <div class="li"><div class="ld" style="background:var(--V-c)"></div>ვერანდა</div>
-    <div class="li"><div class="ld" style="background:var(--A-c)"></div>ანტრ.</div>
-  </div>
-  <div class="sync-row">
-    <span class="sd spin" id="sd"></span>
-    <span class="st" id="st">სინქრონიზაცია...</span>
-  </div>
-</div>
-
-<!-- WEEK GRID -->
-<div class="wk-section">
-  <div class="wk-nav">
-    <button class="wk-nav-btn" onclick="shiftWeek(-1)">◀</button>
-    <div class="wk-label" id="wkLabel">—</div>
-    <button class="wk-nav-btn" onclick="shiftWeek(1)">▶</button>
-  </div>
-  <div class="wk-grid" id="wkGrid"></div>
-</div>
-
-<!-- VIEW TOGGLE (mobile) -->
-<div class="vtog">
-  <button class="vbtn active" onclick="sview('w',this)">მიმტანით</button>
-  <button class="vbtn" onclick="sview('d',this)">დღით</button>
-</div>
-
-<!-- WAITER CARDS -->
-<div id="vw"></div>
-<!-- DAY VIEW -->
-<div id="vd" style="display:none"></div>
-<!-- DESKTOP TABLE -->
-<div class="print-hdr" id="printHdr">მიმტანების განრიგი</div>
-<div id="dtbl"><div class="twrap"><table><thead id="dth"></thead><tbody id="dtb"></tbody></table></div></div>
-
-<!-- LOGIN -->
-<div class="ov" id="loginOv">
-  <div class="modal">
-    <div class="mhdr"><h2>🔐 Admin შესვლა</h2><button class="xbtn" onclick="cov('loginOv')">✕</button></div>
-    <div class="mbody">
-      <div class="lform">
-        <input type="password" class="inp" id="passInp" placeholder="პაროლი" onkeydown="if(event.key==='Enter')doLogin()">
-        <button class="btn-p" onclick="doLogin()">შესვლა</button>
-        <div class="errmsg" id="lerr"></div>
-      </div>
+    <span class="card-arr">›</span>
+  </a>
+  <a href="cashier.html" class="card c-ca">
+    <div class="card-ico" aria-hidden="true">💳</div>
+    <div class="card-txt">
+      <strong>მოლარე</strong>
+      <span>ლამზირა, მადონა, მარიამ — ცვლები 10:00 და 18:00, გრაფიკი 2×1</span>
     </div>
-  </div>
-</div>
-
-<!-- ADMIN -->
-<div class="ov" id="adminOv">
-  <div class="modal">
-    <div class="mhdr"><h2>⚙️ Admin პანელი</h2><button class="xbtn" onclick="cov('adminOv')">✕</button></div>
-    <div class="mbody">
-      <div class="atabs">
-        <button class="atab active" onclick="aTab('grid',this)">📋 ცხრილი</button>
-        <button class="atab" onclick="aTab('cal',this)">📅 კალენდარი</button>
-        <button class="atab" onclick="aTab('waiters',this)">👤 მიმტანები</button>
-        <button class="atab" onclick="aTab('copy',this)">🔄 კოპირება</button>
-        <button class="atab" onclick="aTab('stats',this)">📊 სტატისტიკა</button>
-        <button class="atab" onclick="aTab('notif',this)">🔔 შეტყობინება</button>
-      </div>
-
-      <!-- GRID TAB -->
-      <div id="aGrid">
-        <div class="ag-nav">
-          <button class="ag-nav-btn" onclick="agWeek(-1)">◀</button>
-          <div class="ag-label" id="agLabel">—</div>
-          <button class="ag-nav-btn" onclick="agWeek(1)">▶</button>
-        </div>
-        <!-- FILTER -->
-        <div class="flt-wrap">
-          <div class="flt-row">
-            <div class="flt-group">
-              <div class="flt-label">მიმტანი</div>
-              <select class="flt-sel" id="fltWaiter" onchange="applyFilter()">
-                <option value="">ყველა</option>
-              </select>
-            </div>
-            <div class="flt-group">
-              <div class="flt-label">თარიღი დან</div>
-              <input type="date" class="flt-inp" id="fltFrom" onchange="applyFilter()">
-            </div>
-            <div class="flt-group">
-              <div class="flt-label">თარიღი მდე</div>
-              <input type="date" class="flt-inp" id="fltTo" onchange="applyFilter()">
-            </div>
-            <button class="flt-clear" onclick="clearFilter()">✕ ფილტრის გასუფთავება</button>
-            <button class="flt-clear" style="background:rgba(248,113,113,.25);border-color:rgba(248,113,113,.5);" onclick="deleteFiltered()">🗑 არჩეულის წაშლა</button>
-          </div>
-          <div class="flt-label" style="margin-top:2px;">შიფტი</div>
-          <div class="flt-chips">
-            <span class="flt-chip fc-m active" onclick="toggleFltChip(this,'09:00')">09:00</span>
-            <span class="flt-chip fc-a active" onclick="toggleFltChip(this,'14:00')">14:00</span>
-            <span class="flt-chip fc-e active" onclick="toggleFltChip(this,'15:00')">15:00</span>
-            <span class="flt-chip fc-o active" onclick="toggleFltChip(this,'OFF')">OFF</span>
-          </div>
-          <div class="flt-label" style="margin-top:2px;">პოზიცია</div>
-          <div class="flt-chips">
-            <span class="flt-chip fc-H active" onclick="toggleFltChip(this,'H')">ჰოლი</span>
-            <span class="flt-chip fc-V active" onclick="toggleFltChip(this,'V')">ვერანდა</span>
-            <span class="flt-chip fc-A active" onclick="toggleFltChip(this,'A')">ანტრ.</span>
-            <span class="flt-chip fc-o active" onclick="toggleFltChip(this,'none')">პოზიციის გარეშე</span>
-          </div>
-        </div>
-        <div class="ag-wrap">
-          <table class="ag-table" id="agTable"></table>
-        </div>
-        <div class="save-row">
-          <span class="sstt" id="sstt"></span>
-          <button class="sbtn" id="saveBtn" onclick="saveGrid()">💾 შენახვა</button>
-        </div>
-      </div>
-
-      <!-- CAL TAB -->
-      <div id="aCal" style="display:none">
-        <div class="cal-nav">
-          <button class="cal-nav-btn" onclick="calMove(-1)">◀</button>
-          <div class="cal-mo" id="calMo">—</div>
-          <button class="cal-nav-btn" onclick="calMove(1)">▶</button>
-        </div>
-        <div class="cal-grid" id="calGrid"></div>
-        <div id="calDetail"></div>
-      </div>
-
-      <!-- WAITERS TAB -->
-      <div id="aWaiters" style="display:none">
-        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
-          <span style="font-size:.8rem;font-weight:800;">მიმტანების სია</span>
-          <button class="sbtn" style="padding:7px 14px;font-size:.72rem;" onclick="showAddWaiter()">+ დამატება</button>
-        </div>
-        <div id="waitersList"></div>
-        <div id="addWaiterForm" style="display:none;margin-top:14px;background:var(--s2);border-radius:10px;padding:14px;">
-          <div style="font-size:.78rem;font-weight:800;margin-bottom:10px;">ახალი მიმტანი</div>
-          <div style="display:flex;flex-direction:column;gap:8px;">
-            <input class="inp" id="newWName" placeholder="სახელი გვარი">
-            <input class="inp" id="newWPhone" placeholder="ტელეფონი (555 123 456)">
-            <div style="display:flex;gap:8px;">
-              <button class="sbtn" style="flex:1;" onclick="addWaiter()">✓ დამატება</button>
-              <button class="sbtn" style="flex:1;background:var(--s3);color:var(--tx);" onclick="document.getElementById('addWaiterForm').style.display='none'">გაუქმება</button>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- COPY TAB -->
-      <div id="aCopy" style="display:none">
-        <div style="font-size:.78rem;color:var(--mu);margin-bottom:14px;">კვირის განრიგის კოპირება ახალ კვირაზე</div>
-        <div style="display:flex;flex-direction:column;gap:10px;">
-          <div>
-            <div style="font-size:.72rem;font-weight:700;color:var(--mu);margin-bottom:6px;">საიდან კოპირება:</div>
-            <div class="ag-nav">
-              <button class="ag-nav-btn" onclick="copyFromWeek(-1)">◀</button>
-              <div class="ag-label" id="copyFromLabel">—</div>
-              <button class="ag-nav-btn" onclick="copyFromWeek(1)">▶</button>
-            </div>
-          </div>
-          <div>
-            <div style="font-size:.72rem;font-weight:700;color:var(--mu);margin-bottom:6px;">სად კოპირება:</div>
-            <div class="ag-nav">
-              <button class="ag-nav-btn" onclick="copyToWeek(-1)">◀</button>
-              <div class="ag-label" id="copyToLabel">—</div>
-              <button class="ag-nav-btn" onclick="copyToWeek(1)">▶</button>
-            </div>
-          </div>
-          <button class="sbtn" onclick="doCopyWeek()" style="margin-top:6px;">🔄 კოპირება</button>
-          <div id="copyStatus" style="font-size:.72rem;color:var(--V-c);text-align:center;"></div>
-        </div>
-      </div>
-
-      <!-- STATS TAB -->
-      <div id="aStats" style="display:none">
-        <div class="stat-month-nav">
-          <button class="ag-nav-btn" onclick="statMonth(-1)">◀</button>
-          <div class="stat-month-label" id="statMonthLabel">—</div>
-          <button class="ag-nav-btn" onclick="statMonth(1)">▶</button>
-        </div>
-        <div id="statsGrid"></div>
-      </div>
-
-      <!-- NOTIFICATIONS TAB -->
-      <div id="aNotif" style="display:none">
-        <div class="notif-wrap">
-          <h3>🔔 დღიური შეტყობინება</h3>
-          <div class="notif-status no" id="notifStatus">შეტყობინება გამორთულია</div>
-          <div class="notif-time-row">
-            <label>დრო:</label>
-            <input type="time" class="notif-time-inp" id="notifTime" value="08:00">
-          </div>
-          <button class="sbtn" style="width:100%;margin-bottom:8px;" onclick="enableNotif()">🔔 ჩართვა</button>
-          <button class="sbtn" style="width:100%;background:var(--s3);color:var(--tx);" onclick="disableNotif()">🔕 გამორთვა</button>
-        </div>
-        <div class="notif-wrap">
-          <h3>📋 დღევანდელი განრიგი</h3>
-          <div id="todayPreview"></div>
-          <button class="sbtn" style="width:100%;margin-top:10px;" onclick="sendTestNotif()">▶ ტესტი ახლავე</button>
-        </div>
-      </div>
-
+    <span class="card-arr">›</span>
+  </a>
+  <a href="hostess.html" class="card c-ho">
+    <div class="card-ico" aria-hidden="true">✨</div>
+    <div class="card-txt">
+      <strong>ჰოსტესი</strong>
+      <span>მარიამი და ანა — ცვლა 14:00–00:00, გრაფიკი 2×2</span>
     </div>
-  </div>
-</div>
+    <span class="card-arr">›</span>
+  </a>
+</nav>
+
+<p class="foot">თუ აპი დაინსტალირებული გაქვთ, მთავარი გვერდი ყოველთვის აქედან იწყება.</p>
 
 <script>
-/* ══════════════════════════════
-   CONSTANTS
-══════════════════════════════ */
-const SB  = 'https://bbroknpeebjuilycutjd.supabase.co';
-const KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJicm9rbnBlZWJqdWlseWN1dGpkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzM4NTk0NjksImV4cCI6MjA4OTQzNTQ2OX0.7rlaolshlMLtFObv6ViaifiSNkiYofiCRm8q2SiJns8';
-const PASS = '151515';
-
-const KD  = ['კვ','ორ','სამ','ოთხ','ხუთ','პარ','შაბ'];
-const MKA = ['იანვარი','თებერვალი','მარტი','აპრილი','მაისი','ივნისი',
-             'ივლისი','აგვისტო','სექტემბერი','ოქტომბერი','ნოემბერი','დეკემბერი'];
-const MSH = ['იან','თებ','მარ','აპრ','მაი','ივნ','ივლ','აგვ','სექ','ოქტ','ნოე','დეკ'];
-
-const SHIFTS_OPT = ['09:00','14:00','15:00','OFF'];
-const POS_MAP = {'':'—','H':'ჰოლი','V':'ვერანდა','A':'ანტრ.'};
-const POS_FULL = {'':'—','H':'ჰოლი','V':'ვერანდა','A':'ანტრესოლი'};
-
-/* hardcoded Mar 22 – Apr 4 (Sun–Sat) */
-const FCOLS = [
-  {y:2026,m:3,d:22,wd:0},{y:2026,m:3,d:23,wd:1},{y:2026,m:3,d:24,wd:2},
-  {y:2026,m:3,d:25,wd:3},{y:2026,m:3,d:26,wd:4},{y:2026,m:3,d:27,wd:5},
-  {y:2026,m:3,d:28,wd:6},{y:2026,m:3,d:29,wd:0},{y:2026,m:3,d:30,wd:1},
-  {y:2026,m:3,d:31,wd:2},{y:2026,m:4,d:1,wd:3},{y:2026,m:4,d:2,wd:4},
-  {y:2026,m:4,d:3,wd:5},{y:2026,m:4,d:4,wd:6}
-];
-const WAITERS = [
-  {name:'ლაშა სვანიძე',   phone:'558 667 748', shifts:['14:00','14:00','OFF','09:00','14:00','OFF','14:00','14:00','OFF','14:00','14:00','OFF','14:00','14:00']},
-  {name:'ირაკლი ბერიძე', phone:'557 613 585', shifts:['14:00','OFF','09:00','14:00','OFF','OFF','14:00','14:00','OFF','09:00','14:00','OFF','09:00','14:00']},
-  {name:'კახი კახაძე',    phone:'514 280 066', shifts:['OFF','09:00','14:00','OFF','09:00','14:00','OFF','09:00','14:00','OFF','09:00','14:00','OFF','09:00']},
-  {name:'დეა ჟღენტი',    phone:'579 047 426', shifts:['OFF','09:00','14:00','OFF','09:00','09:00','OFF','OFF','09:00','OFF','09:00','14:00','OFF','14:00']},
-  {name:'ლუკა არძენაძე', phone:'599 400 361', shifts:['09:00','OFF','OFF','14:00','14:00','OFF','09:00','14:00','OFF','OFF','14:00','14:00','OFF','09:00']},
-  {name:'ბაჩი რომანაძე',  phone:'555 664 576', shifts:['14:00','14:00','OFF','09:00','14:00','14:00','OFF','OFF','09:00','14:00','OFF','09:00','14:00','OFF']},
-  {name:'რატი ტაკიძე',   phone:'571 181 397', shifts:['14:00','14:00','OFF','14:00','14:00','14:00','OFF','09:00','OFF','09:00','OFF','09:00','14:00','OFF']},
-  {name:'ნატა შარაბიძე',  phone:'555 867 676', shifts:['09:00','OFF','15:00','OFF','OFF','OFF','09:00','14:00','OFF','15:00','OFF','15:00','OFF','14:00']},
-  {name:'ხვიჩა შარაძე',  phone:'597 041 719', shifts:['OFF','OFF','09:00','14:00','09:00','14:00','OFF','14:00','14:00','14:00','OFF','OFF','09:00','OFF']},
-  {name:'ლუკა გოგუაძე',  phone:'558 474 651', shifts:['OFF','14:00','14:00','OFF','OFF','14:00','14:00','OFF','14:00','OFF','OFF','OFF','14:00','OFF']}
-];
-
-/* ══════════════════════════════
-   STATE
-══════════════════════════════ */
-// cache: "name|YYYY-MM-DD" → {shift_time, position, notes}
-let DB = {};
-let wkOff = 0;   // public week offset
-let agOff = 0;   // admin grid week offset
-let calY, calM, selCalDk = null;
-
-/* ══════════════════════════════
-   UTILS
-══════════════════════════════ */
-const dk  = (y,m,d) => `${y}-${String(m).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
-const pk  = (name,datekey) => `${name}|${datekey}`;
-const iW  = wd => wd===0||wd===6;
-function scls(v){
-  if(!v||v==='OFF')return'o';
-  if(v==='09:00')return'm'; if(v==='14:00')return'a'; if(v==='15:00')return'e';
-  return'o';
-}
-function lbl(v){return(!v||v==='OFF')?'OFF':v;}
-
-function weekDates(off){
-  const t=new Date(), wd=t.getDay();
-  const sun=new Date(t); sun.setDate(t.getDate()-wd+off*7);
-  return Array.from({length:7},(_,i)=>{
-    const d=new Date(sun); d.setDate(sun.getDate()+i);
-    return {y:d.getFullYear(),m:d.getMonth()+1,d:d.getDate(),wd:d.getDay()};
-  });
-}
-
-function wkLabel(days){
-  const f=days[0],l=days[6];
-  if(f.m===l.m) return `${f.d}–${l.d} ${MSH[f.m-1]} ${f.y}`;
-  return `${f.d} ${MSH[f.m-1]} – ${l.d} ${MSH[l.m-1]} ${l.y}`;
-}
-
-function todayDk(){
-  const t=new Date();
-  return dk(t.getFullYear(),t.getMonth()+1,t.getDate());
-}
-
-function nowTimeStr(){
-  const t=new Date();
-  return String(t.getHours()).padStart(2,'0')+':'+String(t.getMinutes()).padStart(2,'0');
-}
-
-// get shift for a waiter on a date (DB overrides hardcoded)
-function getShift(name,y,m,d){
-  const key=pk(name,dk(y,m,d));
-  // DB entry exists and has explicit shift_time
-  if(DB[key] && DB[key].shift_time && DB[key].shift_time!=='') return DB[key].shift_time;
-  // fallback to hardcoded FCOLS
-  const i=FCOLS.findIndex(c=>c.y===y&&c.m===m&&c.d===d);
-  if(i>=0){ const w=WAITERS.find(ww=>ww.name===name); return w?w.shifts[i]:'OFF'; }
-  return 'OFF';
-}
-function getPos(name,y,m,d){ return DB[pk(name,dk(y,m,d))]?.position||''; }
-function getNote(name,y,m,d){ return DB[pk(name,dk(y,m,d))]?.notes||''; }
-
-/* ══════════════════════════════
-   SUPABASE
-══════════════════════════════ */
-async function sbq(path,opts={}){
-  const h={
-    'apikey':KEY,
-    'Authorization':'Bearer '+KEY,
-    'Content-Type':'application/json',
-    'Prefer':'return=representation'
-  };
-  if(opts.headers) Object.assign(h, opts.headers);
-  const r=await fetch(SB+'/rest/v1/'+path,{...opts, headers:h});
-  const t=await r.text();
-  if(!r.ok) throw new Error(t);
-  return t?JSON.parse(t):null;
-}
-
-async function loadDB(){
-  setSS('spin','ჩატვირთვა...');
-  try{
-    const rows=await sbq('waiter_positions?select=waiter_name,shift_date,shift_time,position,notes');
-    DB={};
-    (rows||[]).forEach(r=>{
-      DB[pk(r.waiter_name,r.shift_date)]={
-        shift_time:r.shift_time||'',
-        position:r.position||'',
-        notes:r.notes||''
-      };
-    });
-    setSS('ok','სინქრონიზებულია');
-    renderAll();
-  }catch(e){
-    setSS('err','შეცდომა: '+e.message.slice(0,40));
-  }
-}
-
-async function upsertRows(rows){
-  // Send one row at a time to avoid bulk duplicate issues
-  const results = [];
-  for(const row of rows){
-    try{
-      // Try UPDATE first
-      const existing = await sbq(
-        'waiter_positions?waiter_name=eq.'+encodeURIComponent(row.waiter_name)+'&shift_date=eq.'+row.shift_date
-      );
-      if(existing && existing.length > 0){
-        // UPDATE
-        await sbq(
-          'waiter_positions?waiter_name=eq.'+encodeURIComponent(row.waiter_name)+'&shift_date=eq.'+row.shift_date,
-          {method:'PATCH', body:JSON.stringify({shift_time:row.shift_time, position:row.position, notes:row.notes})}
-        );
-      } else {
-        // INSERT
-        await sbq('waiter_positions',{method:'POST', body:JSON.stringify(row)});
-      }
-      results.push(row);
-    }catch(e){
-      console.warn('row error:', row, e.message);
-    }
-  }
-  return results;
-}
-
-function setSS(state,txt){
-  document.getElementById('sd').className='sd '+state;
-  document.getElementById('st').textContent=txt;
-}
-
-/* ══════════════════════════════
-   RENDER: WEEK GRID (public)
-══════════════════════════════ */
-function shiftWeek(d){ wkOff+=d; renderWeek(); renderViewsByWeek(); }
-
-function renderViewsByWeek(){
-  // Re-render waiter cards and day view for current wkOff week
-  renderCardsByWeek(weekDates(wkOff));
-  renderDayViewByWeek(weekDates(wkOff));
-}
-
-function renderWeek(){
-  const days=weekDates(wkOff);
-  const tdk=todayDk();
-  document.getElementById('wkLabel').textContent=wkLabel(days);
-  document.getElementById('hdrSub').textContent=wkLabel(days);
-
-  const g=document.getElementById('wkGrid');
-  g.innerHTML='';
-  days.forEach(c=>{
-    const cdkv=dk(c.y,c.m,c.d);
-    const isT=cdkv===tdk;
-    const col=document.createElement('div');
-    col.className='wk-col'+(isT?' today':'');
-
-    const workers=WAITERS.filter(w=>getShift(w.name,c.y,c.m,c.d)!=='OFF');
-    const entries=workers.map(w=>{
-      const s=getShift(w.name,c.y,c.m,c.d);
-      const p=getPos(w.name,c.y,c.m,c.d);
-      const short=w.name.split(' ')[0];
-      const tel2 = w.phone.replace(/\s/g,'');
-      return `<div class="wk-entry" style="background:var(--${scls(s)}-b);color:var(--${scls(s)}-c)">
-        <a href="tel:${tel2}" style="text-decoration:none;display:flex;align-items:center;justify-content:space-between;gap:2px;">
-          <span class="wk-ename" style="color:var(--${scls(s)}-c)">${short}</span>
-          ${p?`<span class="wk-epos" style="color:var(--${p}-c)">${POS_MAP[p]}</span>`:'📞'}
-        </a>
-      </div>`;
-    }).join('');
-
-    col.innerHTML=`<div class="wk-col-hdr">
-      <div class="wk-dn">${KD[c.wd]}</div>
-      <div class="wk-dd ${iW(c.wd)?'wknd':''}">${c.d}</div>
-      <div class="wk-dm">${MSH[c.m-1]}</div>
-    </div>
-    <div class="wk-entries">${entries||'<div class="wk-empty">—</div>'}</div>`;
-    g.appendChild(col);
-  });
-}
-
-/* ══════════════════════════════
-   RENDER: WAITER CARDS
-══════════════════════════════ */
-function renderCards(){ renderCardsByWeek(weekDates(wkOff)); }
-
-function renderCardsByWeek(days){
-  const vw=document.getElementById('vw');
-  const opens=new Set([...vw.querySelectorAll('.wcard.open')].map(c=>c.dataset.n));
-  vw.innerHTML='';
-  DYNAMIC_WAITERS.forEach(w=>{
-    let m=0,a=0,e=0;
-    days.forEach(c=>{
-      const s=getShift(w.name,c.y,c.m,c.d);
-      if(s==='09:00')m++;else if(s==='14:00')a++;else if(s==='15:00')e++;
-    });
-    const bdgs=[m?`<span class="bdg m">09×${m}</span>`:'',a?`<span class="bdg a">14×${a}</span>`:'',e?`<span class="bdg e">15×${e}</span>`:''  ].join('');
-    const chips=days.map((c)=>{
-      const s=getShift(w.name,c.y,c.m,c.d);
-      const p=getPos(w.name,c.y,c.m,c.d);
-      return `<div class="chip ${scls(s)} ${iW(c.wd)?'wknd':''}">
-        <span class="cd">${KD[c.wd]}</span><span class="cn">${c.d}</span>
-        <span class="ct">${lbl(s)}</span>
-        ${p?`<span class="cp" style="background:var(--${p}-b);color:var(--${p}-c)">${POS_MAP[p]}</span>`:''}
-      </div>`;
-    }).join('');
-    const card=document.createElement('div');
-    card.className='wcard'+(opens.has(w.name)?' open':'');
-    card.dataset.n=w.name;
-    card.innerHTML=`<div class="wcard-hdr" onclick="tog(this)">
-      <div class="wi"><div class="wn">${w.name}</div><div class="wp">${w.phone}</div></div>
-      <div class="wbdg">${bdgs}</div>
-      <svg class="chv" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
-    </div><div class="wshifts">${chips}</div>`;
-    vw.appendChild(card);
-  });
-}
-
-/* ══════════════════════════════
-   RENDER: DAY VIEW
-══════════════════════════════ */
-function renderDayView(){
-  const days = weekDates(wkOff);
-  const tdk = todayDk();
-  // if viewing current week, start from today; otherwise show full week
-  const todayIdx = days.findIndex(c=>dk(c.y,c.m,c.d)===tdk);
-  const filtered = (wkOff===0 && todayIdx>=0) ? days.slice(todayIdx) : days;
-  renderDayViewByWeek(filtered);
-}
-
-function renderDayViewByWeek(days){
-  const vd=document.getElementById('vd'); vd.innerHTML='';
-  days.forEach((c)=>{
-    const workers=DYNAMIC_WAITERS.filter(w=>getShift(w.name,c.y,c.m,c.d)!=='OFF');
-    const rows=workers.map(w=>{
-      const s=getShift(w.name,c.y,c.m,c.d);
-      const p=getPos(w.name,c.y,c.m,c.d);
-      const n=getNote(w.name,c.y,c.m,c.d);
-      const tel=w.phone.replace(/\s/g,'');
-      return `<div class="drow">
-        <div class="drif"><div class="drn">${w.name}</div><div class="drp">${w.phone}</div></div>
-        <div class="drr">
-          ${p?`<span class="pc ${p}">${POS_FULL[p]}</span>`:''}
-          <span class="drs ${scls(s)}">${lbl(s)}</span>
-          <a href="tel:${tel}" class="call-btn">📞</a>
-        </div>
-      </div>${n?`<div class="dnote" style="padding:4px 13px 8px;font-size:.63rem;color:var(--mu);font-style:italic">💬 ${n}</div>`:''}`;
-    }).join('');
-    const cdkv = dk(c.y,c.m,c.d);
-    const isToday2 = cdkv===todayDk();
-    const b=document.createElement('div');
-    b.className='dblk'+(isToday2?' dblk-today':'');
-    b.innerHTML=`<div class="dblk-hdr" ${isToday2?'style="background:rgba(240,165,0,0.12);border-bottom:1px solid rgba(240,165,0,0.3)"':''}>
-      <div class="dbig ${iW(c.wd)?'wknd':''}" ${isToday2?'style="color:var(--ac)"':''}>${c.d}</div>
-      <div class="dmeta"><div class="dn">${KD[c.wd]}</div><div class="dm">${MKA[c.m-1]}</div></div>
-      ${isToday2?`<div style="margin-left:auto;background:var(--ac);color:#000;font-size:.65rem;font-weight:800;padding:3px 8px;border-radius:20px;">დღეს · ${nowTimeStr()}</div>`:`<div class="dcnt">${workers.length} მიმტ.</div>`}
-    </div>${rows}`;
-    vd.appendChild(b);
-    // auto scroll to today
-    if(isToday2) setTimeout(()=>b.scrollIntoView({behavior:'smooth',block:'nearest'}),300);
-  });
-}
-
-/* ══════════════════════════════
-   RENDER: DESKTOP TABLE
-══════════════════════════════ */
-function renderTable(){
-  const dth=document.getElementById('dth'),dtb=document.getElementById('dtb');
-  dth.innerHTML='';dtb.innerHTML='';
-  const hr=document.createElement('tr');
-  const t0=document.createElement('th');t0.textContent='მიმტანი';hr.appendChild(t0);
-  FCOLS.forEach(c=>{
-    const th=document.createElement('th');
-    th.innerHTML=`<span class="thn ${iW(c.wd)?'wknd':''}">${c.d}</span>${KD[c.wd]}`;
-    hr.appendChild(th);
-  });
-  dth.appendChild(hr);
-  WAITERS.forEach(w=>{
-    const tr=document.createElement('tr');
-    const td0=document.createElement('td');
-    td0.innerHTML=`<div class="tn">${w.name}</div><div class="tph">${w.phone}</div>`;
-    tr.appendChild(td0);
-    FCOLS.forEach((col,i)=>{
-      const s=getShift(w.name,col.y,col.m,col.d);
-      const p=getPos(w.name,col.y,col.m,col.d);
-      const td=document.createElement('td');
-      const d=document.createElement('div'); d.className='tc '+scls(s);
-      d.innerHTML=lbl(s)+(p?`<span class="tp" style="background:var(--${p}-b);color:var(--${p}-c)">${POS_MAP[p]}</span>`:'');
-      td.appendChild(d); tr.appendChild(td);
-    });
-    dtb.appendChild(tr);
-  });
-  // stats
-  const sr=document.createElement('tr'); sr.className='srow';
-  const sd0=document.createElement('td');
-  const sc0=document.createElement('div'); sc0.className='scl'; sc0.innerHTML='<span>სულ</span>';
-  sd0.appendChild(sc0); sr.appendChild(sd0);
-  FCOLS.forEach((c,i)=>{
-    const n=WAITERS.filter(w=>getShift(w.name,c.y,c.m,c.d)!=='OFF').length;
-    const td=document.createElement('td');
-    const d=document.createElement('div'); d.className='scl';
-    d.innerHTML=`<span class="sc">${n}</span><span>მიმტ.</span>`;
-    td.appendChild(d); sr.appendChild(td);
-  });
-  dtb.appendChild(sr);
-}
-
-function renderAll(){ renderWeek(); renderCards(); renderDayView(); renderTable(); }
-
-function tog(h){ h.parentElement.classList.toggle('open'); }
-function sview(v,btn){
-  document.querySelectorAll('.vbtn').forEach(b=>b.classList.remove('active'));
-  btn.classList.add('active');
-  document.getElementById('vw').style.display=v==='w'?'block':'none';
-  document.getElementById('vd').style.display=v==='d'?'block':'none';
-}
-
-/* ══════════════════════════════
-   AUTH
-══════════════════════════════ */
-function openAdmin(){
-  if(sessionStorage.getItem('aok')==='1'){openAdminPanel();return;}
-  document.getElementById('passInp').value='';
-  document.getElementById('lerr').textContent='';
-  document.getElementById('loginOv').classList.add('show');
-  setTimeout(()=>document.getElementById('passInp').focus(),150);
-}
-function doLogin(){
-  if(document.getElementById('passInp').value===PASS){
-    sessionStorage.setItem('aok','1');
-    cov('loginOv'); openAdminPanel();
-  }else{
-    document.getElementById('lerr').textContent='არასწორი პაროლი ❌';
-  }
-}
-function cov(id){ document.getElementById(id).classList.remove('show'); }
-
-/* ══════════════════════════════
-   ADMIN PANEL
-══════════════════════════════ */
-function openAdminPanel(){
-  // find the week offset that contains the first FCOLS date (Mar 22)
-  const firstCol = FCOLS[0];
-  const firstDk = dk(firstCol.y, firstCol.m, firstCol.d);
-  // search from -8 to +8 weeks to find the right offset
-  agOff = 0;
-  for(let i=-8; i<=8; i++){
-    const days = weekDates(i);
-    if(days.some(c=>dk(c.y,c.m,c.d)===firstDk)){ agOff=i; break; }
-  }
-  renderAdminGrid();
-  const t=new Date(); calY=t.getFullYear(); calM=t.getMonth(); renderCal();
-  copyFromOff=0; copyToOff=1; updateCopyLabels();
-  renderWaitersList();
-  const nt=new Date(); statY=nt.getFullYear(); statM=nt.getMonth();
-  document.getElementById('adminOv').classList.add('show');
-}
-function aTab(tab,btn){
-  document.querySelectorAll('.atab').forEach(b=>b.classList.remove('active'));
-  btn.classList.add('active');
-  document.getElementById('aGrid').style.display=tab==='grid'?'block':'none';
-  document.getElementById('aCal').style.display=tab==='cal'?'block':'none';
-  document.getElementById('aWaiters').style.display=tab==='waiters'?'block':'none';
-  document.getElementById('aCopy').style.display=tab==='copy'?'block':'none';
-  document.getElementById('aStats').style.display=tab==='stats'?'block':'none';
-  document.getElementById('aNotif').style.display=tab==='notif'?'block':'none';
-  if(tab==='waiters') renderWaitersList();
-  if(tab==='copy') updateCopyLabels();
-  if(tab==='stats') renderStats();
-  if(tab==='notif'){ renderTodayPreview(); 
-    const en=localStorage.getItem('notifEnabled');
-    const tv=localStorage.getItem('notifTime')||'08:00';
-    document.getElementById('notifTime').value=tv;
-    if(en==='1'&&Notification.permission==='granted'){
-      document.getElementById('notifStatus').className='notif-status ok';
-      document.getElementById('notifStatus').textContent='✓ ჩართულია · '+tv;
-    }
-  }
-}
-
-/* ── ADMIN GRID ── */
-// Split FCOLS into weeks (Sun-Sat chunks)
-function agWeek(d){ agOff+=d; renderAdminGrid(); }
-
-function renderAdminGrid(){
-  const days=weekDates(agOff);
-  document.getElementById('agLabel').textContent=wkLabel(days);
-  document.getElementById('sstt').textContent='';
-  initFilter();
-
-  const tbl=document.getElementById('agTable');
-  tbl.innerHTML='';
-
-  // thead
-  const thead=document.createElement('thead');
-  const hr=document.createElement('tr');
-  const th0=document.createElement('th'); th0.textContent='მიმტანი'; hr.appendChild(th0);
-  days.forEach(c=>{
-    const th=document.createElement('th');
-    th.innerHTML=`<div class="th-date"><span class="th-d ${iW(c.wd)?'wknd':''}">${c.d}</span><span class="th-w">${KD[c.wd]}</span></div>`;
-    hr.appendChild(th);
-  });
-  thead.appendChild(hr); tbl.appendChild(thead);
-
-  // tbody
-  const tbody=document.createElement('tbody');
-  WAITERS.forEach(w=>{
-    const tr=document.createElement('tr');
-    const td0=document.createElement('td');
-    td0.innerHTML=`<div class="cn2">${w.name}</div><div class="cp2">${w.phone}</div>`;
-    tr.appendChild(td0);
-
-    days.forEach(c=>{
-      const dkv=dk(c.y,c.m,c.d);
-      const curS=getShift(w.name,c.y,c.m,c.d);
-      const curP=getPos(w.name,c.y,c.m,c.d);
-      const curN=getNote(w.name,c.y,c.m,c.d);
-      const td=document.createElement('td');
-
-      const shiftOpts=SHIFTS_OPT.map(s=>`<option value="${s}"${curS===s?' selected':''}>${s}</option>`).join('');
-      const posOpts=Object.entries(POS_MAP).map(([k,v])=>`<option value="${k}"${curP===k?' selected':''}>${v}</option>`).join('');
-
-      const sClass = curS==='09:00'?'s-m':curS==='14:00'?'s-a':curS==='15:00'?'s-e':'s-o';
-      const pClass = curP?'s-'+curP:'s-o';
-      td.innerHTML=`<div class="gcell">
-        <select class="gsel ${sClass}" data-n="${w.name}" data-dk="${dkv}" data-t="s" onchange="colorSel(this,'shift')">${shiftOpts}</select>
-        <select class="gsel ${pClass}" data-n="${w.name}" data-dk="${dkv}" data-t="p" onchange="colorSel(this,'pos')">${posOpts}</select>
-        <input class="ginp" placeholder="შენიშვნა" value="${curN}" data-n="${w.name}" data-dk="${dkv}" data-t="n">
-      </div>`;
-      tr.appendChild(td);
-    });
-    tbody.appendChild(tr);
-  });
-  tbl.appendChild(tbody);
-}
-
-async function saveGrid(){
-  const btn=document.getElementById('saveBtn');
-  const sstt=document.getElementById('sstt');
-  btn.disabled=true; btn.textContent='⏳...'; sstt.textContent='';
-
-  // collect all values from the grid
-  const map={};
-  document.querySelectorAll('#agTable .gsel, #agTable .ginp').forEach(el=>{
-    const key=pk(el.dataset.n, el.dataset.dk);
-    if(!map[key]) map[key]={waiter_name:el.dataset.n, shift_date:el.dataset.dk};
-    if(el.dataset.t==='s') map[key].shift_time=el.value;
-    if(el.dataset.t==='p') map[key].position=el.value||null;
-    if(el.dataset.t==='n') map[key].notes=el.value||null;
-  });
-
-  const rows=Object.values(map);
-  if(!rows.length){ btn.disabled=false; btn.textContent='💾 შენახვა'; return; }
-
-  try{
-    await upsertRows(rows);
-    // update local cache
-    rows.forEach(r=>{
-      DB[pk(r.waiter_name,r.shift_date)]={
-        shift_time:r.shift_time||'',
-        position:r.position||'',
-        notes:r.notes||''
-      };
-    });
-    // flash
-    document.querySelectorAll('#agTable tbody tr').forEach(tr=>{
-      tr.classList.add('flash');
-      setTimeout(()=>tr.classList.remove('flash'),500);
-    });
-    sstt.textContent='✓ შენახულია';
-    setSS('ok','შენახულია');
-    renderAll();
-  }catch(e){
-    sstt.textContent='⚠️ '+e.message.slice(0,50);
-    setSS('err','შეცდომა');
-  }
-  btn.disabled=false; btn.textContent='💾 შენახვა';
-}
-
-/* ── FILTER ── */
-let fltShifts = new Set(['09:00','14:00','15:00','OFF']);
-let fltPos    = new Set(['H','V','A','none']);
-
-function initFilter(){
-  const sel = document.getElementById('fltWaiter');
-  sel.innerHTML = '<option value="">ყველა</option>';
-  DYNAMIC_WAITERS.forEach(w=>{
-    const o = document.createElement('option');
-    o.value = w.name; o.textContent = w.name;
-    sel.appendChild(o);
-  });
-}
-
-function toggleFltChip(el, val){
-  const isShift = ['09:00','14:00','15:00','OFF'].includes(val);
-  const set = isShift ? fltShifts : fltPos;
-  if(set.has(val)){ set.delete(val); el.classList.remove('active'); }
-  else { set.add(val); el.classList.add('active'); }
-  applyFilter();
-}
-
-function applyFilter(){
-  const waiter  = document.getElementById('fltWaiter').value;
-  const fromVal = document.getElementById('fltFrom').value;
-  const toVal   = document.getElementById('fltTo').value;
-
-  const tbody = document.querySelector('#agTable tbody');
-  if(!tbody) return;
-
-  const rows  = tbody.querySelectorAll('tr');
-  const days  = weekDates(agOff);
-
-  rows.forEach(tr=>{
-    const cells = tr.querySelectorAll('td');
-    if(!cells.length) return;
-    const name = cells[0].querySelector('.cn2')?.textContent||'';
-
-    // waiter filter
-    if(waiter && name !== waiter){ tr.style.display='none'; return; }
-
-    // per-cell filters (date, shift, position)
-    let anyVisible = false;
-    cells.forEach((td,i)=>{
-      if(i===0) return;
-      const c = days[i-1];
-      if(!c){ td.style.opacity='1'; return; }
-      const dkv = dk(c.y,c.m,c.d);
-      const shiftSel = td.querySelector('[data-t="s"]');
-      const posSel   = td.querySelector('[data-t="p"]');
-      if(!shiftSel){ td.style.opacity='1'; anyVisible=true; return; }
-
-      const sVal = shiftSel.value;
-      const pVal = posSel ? posSel.value : '';
-
-      // date range
-      if(fromVal && dkv < fromVal){ td.style.opacity='.2'; return; }
-      if(toVal   && dkv > toVal  ){ td.style.opacity='.2'; return; }
-
-      // shift filter
-      if(!fltShifts.has(sVal)){ td.style.opacity='.2'; return; }
-
-      // position filter
-      const pMatch = pVal ? fltPos.has(pVal) : fltPos.has('none');
-      if(!pMatch){ td.style.opacity='.2'; return; }
-
-      td.style.opacity='1';
-      anyVisible = true;
-    });
-
-    tr.style.display = anyVisible ? '' : 'none';
-  });
-}
-
-function clearFilter(){
-  document.getElementById('fltWaiter').value = '';
-  document.getElementById('fltFrom').value   = '';
-  document.getElementById('fltTo').value     = '';
-  fltShifts = new Set(['09:00','14:00','15:00','OFF']);
-  fltPos    = new Set(['H','V','A','none']);
-  // reset chips
-  document.querySelectorAll('.flt-chip').forEach(c=>c.classList.add('active'));
-  // reset cell opacity
-  document.querySelectorAll('#agTable tbody td').forEach(td=>td.style.opacity='1');
-  document.querySelectorAll('#agTable tbody tr').forEach(tr=>tr.style.display='');
-}
-
-/* ── DELETE FILTERED ── */
-async function deleteFiltered(){
-  // collect all visible selects directly — use data-n attribute
-  const toDelete = [];
-  document.querySelectorAll('#agTable tbody tr').forEach(tr=>{
-    if(tr.style.display==='none') return;
-    tr.querySelectorAll('td').forEach(td=>{
-      if(td.style.opacity==='0.2'||td.style.opacity==='.2') return;
-      const shiftSel = td.querySelector('[data-t="s"]');
-      if(!shiftSel) return;
-      const name = shiftSel.dataset.n;
-      const dkv  = shiftSel.dataset.dk;
-      if(name && dkv) toDelete.push({waiter_name: name, shift_date: dkv});
-    });
-  });
-
-  if(!toDelete.length){ alert('წასაშლელი მონაცემები არ არის'); return; }
-
-  if(!confirm(toDelete.length+' ჩანაწერი წაიშლება. დარწმუნებული ხარ?')) return;
-
-  setSS('spin','წაშლა...');
-  let deleted = 0;
-  for(const r of toDelete){
-    try{
-      await sbq('waiter_positions?waiter_name=eq.'+encodeURIComponent(r.waiter_name)+'&shift_date=eq.'+r.shift_date,
-        {method:'DELETE'});
-      delete DB[pk(r.waiter_name, r.shift_date)];
-      deleted++;
-    }catch(e){ console.warn(e); }
-  }
-
-  setSS('ok', deleted+' ჩანაწერი წაიშალა');
-  renderAdminGrid();
-  renderAll();
-}
-
-/* ── COLOR SELECT ── */
-function colorSel(sel, type){
-  sel.className = 'gsel';
-  if(type==='shift'){
-    const map = {'09:00':'s-m','14:00':'s-a','15:00':'s-e','OFF':'s-o'};
-    sel.classList.add(map[sel.value]||'s-o');
-  } else {
-    const map = {'H':'s-H','V':'s-V','A':'s-A','':'s-o'};
-    sel.classList.add(map[sel.value]||'s-o');
-  }
-}
-
-/* ── CALENDAR ── */
-function calMove(d){ calM+=d; if(calM<0){calM=11;calY--;}if(calM>11){calM=0;calY++;} renderCal(); }
-
-function renderCal(){
-  document.getElementById('calMo').textContent=`${MKA[calM]} ${calY}`;
-  const g=document.getElementById('calGrid'); g.innerHTML='';
-  KD.forEach(d=>{const c=document.createElement('div');c.className='cc head';c.textContent=d;g.appendChild(c);});
-  const firstWd=new Date(calY,calM,1).getDay();
-  const dim=new Date(calY,calM+1,0).getDate();
-  const tdk2=todayDk();
-  for(let i=0;i<firstWd;i++){const c=document.createElement('div');c.className='cc other';g.appendChild(c);}
-  for(let day=1;day<=dim;day++){
-    const wd=new Date(calY,calM,day).getDay();
-    const dkv=dk(calY,calM+1,day);
-    const isT=dkv===tdk2;
-    const hasDot=Object.keys(DB).some(k=>k.includes('|'+dkv)&&(DB[k].position||DB[k].notes));
-    const c=document.createElement('div');
-    c.className='cc'+(iW(wd)?' wknd-c':'')+(isT?' today-c':'')+(hasDot?' has-dot':'')+(selCalDk===dkv?' active-c':'');
-    c.textContent=day;
-    c.onclick=()=>{selCalDk=dkv; renderCal(); showCalDay(calY,calM+1,day);};
-    g.appendChild(c);
-  }
-}
-
-function showCalDay(y,m,d){
-  const dkv=dk(y,m,d);
-  const det=document.getElementById('calDetail');
-  const wd=new Date(y,m-1,d).getDay();
-  const workers=WAITERS.map(w=>({...w,s:getShift(w.name,y,m,d),p:getPos(w.name,y,m,d),n:getNote(w.name,y,m,d)}))
-    .filter(w=>w.s!=='OFF');
-
-  if(!workers.length){
-    det.innerHTML=`<div class="cal-detail"><div class="cal-detail-ttl">${d} ${MKA[m-1]} · ${KD[wd]}</div>
-      <div style="color:var(--mu);font-size:.78rem">მუშა მიმტანი არ არის</div></div>`;
-    return;
-  }
-
-  const rows=workers.map(w=>`<div class="cal-drow">
-    <div class="cal-dn">${w.name}</div>
-    <div class="cal-dr">
-      ${w.p?`<span class="pc ${w.p}">${POS_FULL[w.p]}</span>`:''}
-      <span class="drs ${scls(w.s)}">${w.s}</span>
-      ${w.n?`<span style="font-size:.62rem;color:var(--mu);font-style:italic">💬 ${w.n}</span>`:''}
-    </div>
-  </div>`).join('');
-
-  det.innerHTML=`<div class="cal-detail">
-    <div class="cal-detail-ttl">${d} ${MKA[m-1]} · ${KD[wd]} · ${workers.length} მიმტ.</div>
-    ${rows}
-  </div>`;
-}
-
-/* ══════════════════════════════
-   WAITERS MANAGEMENT
-══════════════════════════════ */
-// Dynamic waiters list (starts from WAITERS, can be extended)
-let DYNAMIC_WAITERS = [...WAITERS];
-
-async function loadWaiters(){
-  try{
-    const rows = await sbq('waiters?select=id,name,phone&order=position_order');
-    if(rows && rows.length > 0){
-      DYNAMIC_WAITERS = rows.map(r=>({id:r.id, name:r.name, phone:r.phone, shifts:[]}));
-    } else {
-      DYNAMIC_WAITERS = [...WAITERS];
-    }
-  }catch(e){
-    DYNAMIC_WAITERS = [...WAITERS];
-  }
-}
-
-function renderWaitersList(){
-  const list = document.getElementById('waitersList');
-  list.innerHTML = '';
-  DYNAMIC_WAITERS.forEach((w,i)=>{
-    const row = document.createElement('div');
-    row.style.cssText='display:flex;align-items:center;padding:9px 0;border-bottom:1px solid var(--br);gap:10px;';
-    row.innerHTML=`
-      <div style="flex:1;">
-        <div style="font-size:.82rem;font-weight:700;">${w.name}</div>
-        <div style="font-size:.68rem;color:var(--mu);">${w.phone}</div>
-      </div>
-      <a href="tel:${w.phone.replace(/\s/g,'')}" style="background:var(--V-b);color:var(--V-c);border:none;border-radius:7px;padding:5px 10px;font-size:.7rem;font-weight:700;text-decoration:none;">📞</a>
-      <button onclick="removeWaiter(${i})" style="background:rgba(248,113,113,.15);color:#f87171;border:none;border-radius:7px;padding:5px 10px;font-size:.7rem;font-weight:700;cursor:pointer;">✕</button>`;
-    list.appendChild(row);
-  });
-}
-
-function showAddWaiter(){
-  document.getElementById('addWaiterForm').style.display='block';
-  document.getElementById('newWName').focus();
-}
-
-async function addWaiter(){
-  const name = document.getElementById('newWName').value.trim();
-  const phone = document.getElementById('newWPhone').value.trim();
-  if(!name){ alert('სახელი სავალდებულოა'); return; }
-  try{
-    const res = await sbq('waiters', {
-      method:'POST',
-      body: JSON.stringify({name, phone, position_order: DYNAMIC_WAITERS.length+1})
-    });
-    const newW = res && res[0] ? res[0] : {name, phone};
-    DYNAMIC_WAITERS.push({id:newW.id, name:newW.name||name, phone:newW.phone||phone, shifts:[]});
-    document.getElementById('newWName').value='';
-    document.getElementById('newWPhone').value='';
-    document.getElementById('addWaiterForm').style.display='none';
-    renderWaitersList();
-    setSS('ok','მიმტანი დამატებულია');
-  }catch(e){
-    alert('შეცდომა: '+e.message);
-  }
-}
-
-async function removeWaiter(idx){
-  const w = DYNAMIC_WAITERS[idx];
-  if(!confirm(w.name+' — წაშლა?')) return;
-  try{
-    if(w.id){
-      await sbq('waiters?id=eq.'+w.id, {method:'DELETE'});
-    }
-    DYNAMIC_WAITERS.splice(idx,1);
-    renderWaitersList();
-    setSS('ok','მიმტანი წაიშალა');
-  }catch(e){
-    alert('შეცდომა: '+e.message);
-  }
-}
-
-/* ══════════════════════════════
-   COPY WEEK
-══════════════════════════════ */
-let copyFromOff = 0;
-let copyToOff = 1;
-
-function updateCopyLabels(){
-  const fd = weekDates(copyFromOff);
-  const td = weekDates(copyToOff);
-  document.getElementById('copyFromLabel').textContent = wkLabel(fd);
-  document.getElementById('copyToLabel').textContent = wkLabel(td);
-}
-
-function copyFromWeek(d){ copyFromOff+=d; updateCopyLabels(); }
-function copyToWeek(d){ copyToOff+=d; updateCopyLabels(); }
-
-async function doCopyWeek(){
-  const fromDays = weekDates(copyFromOff);
-  const toDays   = weekDates(copyToOff);
-  const status   = document.getElementById('copyStatus');
-  status.textContent = '⏳ კოპირება...';
-
-  const rows = [];
-  DYNAMIC_WAITERS.forEach(w=>{
-    fromDays.forEach((fd,i)=>{
-      const td = toDays[i];
-      const s  = getShift(w.name, fd.y, fd.m, fd.d);
-      const p  = getPos(w.name, fd.y, fd.m, fd.d);
-      const n  = getNote(w.name, fd.y, fd.m, fd.d);
-      if(s && s!=='OFF'){
-        rows.push({
-          waiter_name: w.name,
-          shift_date:  dk(td.y,td.m,td.d),
-          shift_time:  s,
-          position:    p||null,
-          notes:       n||null
-        });
-      }
-    });
-  });
-
-  if(!rows.length){ status.textContent='⚠️ წყაროს კვირაში მონაცემები არ არის'; return; }
-
-  try{
-    await upsertRows(rows);
-    rows.forEach(r=>{
-      DB[pk(r.waiter_name,r.shift_date)]={shift_time:r.shift_time,position:r.position||'',notes:r.notes||''};
-    });
-    status.textContent=`✓ ${rows.length} ჩანაწერი დაკოპირდა!`;
-    setSS('ok','შენახულია');
-    renderAll();
-  }catch(e){
-    status.textContent='⚠️ '+e.message.slice(0,50);
-  }
-}
-
-/* ══════════════════════════════
-   NOTIFICATIONS
-══════════════════════════════ */
-let notifTimer = null;
-
-function getTodayWorkers(){
-  const t = new Date();
-  const y=t.getFullYear(), m=t.getMonth()+1, d=t.getDate();
-  return DYNAMIC_WAITERS
-    .map(w=>({...w, s:getShift(w.name,y,m,d), p:getPos(w.name,y,m,d)}))
-    .filter(w=>w.s!=='OFF');
-}
-
-function renderTodayPreview(){
-  const workers = getTodayWorkers();
-  const el = document.getElementById('todayPreview');
-  if(!workers.length){
-    el.innerHTML='<div style="color:var(--mu);font-size:.78rem">დღეს არავინ მუშაობს</div>';
-    return;
-  }
-  el.innerHTML = workers.map(w=>`
-    <div style="display:flex;align-items:center;justify-content:space-between;padding:7px 0;border-bottom:1px solid var(--br);">
-      <div>
-        <div style="font-size:.8rem;font-weight:700;">${w.name}</div>
-        <div style="font-size:.67rem;color:var(--mu);">${w.s}${w.p?' · '+POS_FULL[w.p]:''}</div>
-      </div>
-      <a href="tel:${w.phone.replace(/\s/g,'')}" class="call-btn">📞</a>
-    </div>`).join('');
-}
-
-async function enableNotif(){
-  const statusEl = document.getElementById('notifStatus');
-  if(!('Notification' in window)){
-    const isIOS = /iP(hone|ad|od)/.test(navigator.userAgent);
-    statusEl.className='notif-status err';
-    if(isIOS){
-      statusEl.innerHTML='📱 iPhone-ზე:<br>1. Safari-ში გახსენი საიტი<br>2. Share → <b>Add to Home Screen</b><br>3. Home Screen-დან გახსენი → მუშაობს!';
-    } else {
-      statusEl.textContent='⚠️ ეს ბრაუზერი შეტყობინებებს არ უჭერს მხარს';
-    }
-    return;
-  }
-  const perm = await Notification.requestPermission();
-  if(perm !== 'granted'){
-    statusEl.className='notif-status err';
-    statusEl.textContent='❌ შეტყობინება უარყოფილია';
-    return;
-  }
-  const timeVal = document.getElementById('notifTime').value || '08:00';
-  localStorage.setItem('notifEnabled','1');
-  localStorage.setItem('notifTime', timeVal);
-  statusEl.className='notif-status ok';
-  statusEl.textContent='✓ ჩართულია · '+timeVal;
-  scheduleNotif(timeVal);
-}
-
-function disableNotif(){
-  localStorage.removeItem('notifEnabled');
-  localStorage.removeItem('notifTime');
-  if(notifTimer){ clearTimeout(notifTimer); notifTimer=null; }
-  const statusEl = document.getElementById('notifStatus');
-  statusEl.className='notif-status no';
-  statusEl.textContent='შეტყობინება გამორთულია';
-}
-
-function scheduleNotif(timeStr){
-  if(notifTimer){ clearTimeout(notifTimer); }
-  const [h,m] = timeStr.split(':').map(Number);
-  const now = new Date();
-  const next = new Date(now.getFullYear(), now.getMonth(), now.getDate(), h, m, 0, 0);
-  if(next <= now) next.setDate(next.getDate()+1);
-  const ms = next - now;
-  notifTimer = setTimeout(()=>{
-    fireNotif();
-    scheduleNotif(timeStr); // reschedule for next day
-  }, ms);
-}
-
-function fireNotif(){
-  const workers = getTodayWorkers();
-  if(!workers.length) return;
-  const names = workers.map(w=>w.name.split(' ')[0]).join(', ');
-  new Notification('📋 დღევანდელი განრიგი', {
-    body: `მუშაობს ${workers.length} მიმტანი: ${names}`,
-    icon: 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><text y=".9em" font-size="90">👨‍🍳</text></svg>'
-  });
-}
-
-function sendTestNotif(){
-  if(Notification.permission === 'granted'){
-    fireNotif();
-  } else {
-    Notification.requestPermission().then(p=>{
-      if(p==='granted') fireNotif();
-      else alert('შეტყობინება უარყოფილია');
-    });
-  }
-}
-
-function initNotif(){
-  const enabled = localStorage.getItem('notifEnabled');
-  const timeVal = localStorage.getItem('notifTime') || '08:00';
-  document.getElementById('notifTime').value = timeVal;
-  if(enabled === '1' && Notification.permission === 'granted'){
-    document.getElementById('notifStatus').className='notif-status ok';
-    document.getElementById('notifStatus').textContent='✓ ჩართულია · '+timeVal;
-    scheduleNotif(timeVal);
-  }
-}
-
-/* ══════════════════════════════
-   THEME
-══════════════════════════════ */
 function toggleTheme(){
-  const isLight = document.body.classList.toggle('light');
-  localStorage.setItem('theme', isLight ? 'light' : 'dark');
-  document.getElementById('themeBtn').textContent = isLight ? '☀️' : '🌙';
+  const light = document.body.classList.toggle('light');
+  localStorage.setItem('theme', light ? 'light' : 'dark');
+  document.getElementById('themeBtn').textContent = light ? '☀️' : '🌙';
 }
-
-function initTheme(){
-  const saved = localStorage.getItem('theme');
-  if(saved === 'light'){
+(function(){
+  if(localStorage.getItem('theme')==='light'){
     document.body.classList.add('light');
     document.getElementById('themeBtn').textContent = '☀️';
   }
-}
-
-/* ══════════════════════════════
-   PRINT
-══════════════════════════════ */
-function doPrint(){
-  // update print header with current range
-  const first = FCOLS[0], last = FCOLS[FCOLS.length-1];
-  document.getElementById('printHdr').textContent =
-    'მიმტანების განრიგი · ' + first.d + ' ' + MSH[first.m-1] + ' – ' + last.d + ' ' + MSH[last.m-1] + ' ' + last.y;
-  window.print();
-}
-
-/* ══════════════════════════════
-   STATISTICS
-══════════════════════════════ */
-let statY, statM;
-
-function statMonth(d){
-  statM += d;
-  if(statM < 0){ statM = 11; statY--; }
-  if(statM > 11){ statM = 0; statY++; }
-  renderStats();
-}
-
-function renderStats(){
-  document.getElementById('statMonthLabel').textContent = MKA[statM] + ' ' + statY;
-  const grid = document.getElementById('statsGrid');
-  grid.innerHTML = '';
-
-  // get all days in the month that have data
-  const dim = new Date(statY, statM+1, 0).getDate();
-  const monthDays = [];
-  for(let d=1; d<=dim; d++){
-    monthDays.push({y:statY, m:statM+1, d});
-  }
-
-  // count per waiter
-  const maxDays = monthDays.length;
-  const statContainer = document.createElement('div');
-  statContainer.className = 'stat-grid';
-
-  DYNAMIC_WAITERS.forEach(w=>{
-    let m09=0, m14=0, m15=0, totalDays=0;
-    monthDays.forEach(c=>{
-      const s = getShift(w.name, c.y, c.m, c.d);
-      if(s === '09:00'){ m09++; totalDays++; }
-      else if(s === '14:00'){ m14++; totalDays++; }
-      else if(s === '15:00'){ m15++; totalDays++; }
-    });
-
-    if(totalDays === 0) return; // skip if no data this month
-
-    const card = document.createElement('div');
-    card.className = 'stat-card';
-
-    const bars = [
-      {label:'09:00', val:m09, col:'var(--m-c)', bg:'var(--m-b)'},
-      {label:'14:00', val:m14, col:'var(--a-c)', bg:'var(--a-b)'},
-      {label:'15:00', val:m15, col:'var(--e-c)', bg:'var(--e-b)'},
-    ].filter(b=>b.val>0).map(b=>`
-      <div class="stat-bar-row">
-        <div class="stat-bar-label">${b.label}</div>
-        <div class="stat-bar-wrap"><div class="stat-bar-fill" style="width:${Math.round(b.val/maxDays*100)}%;background:${b.col}"></div></div>
-        <div class="stat-bar-val" style="color:${b.col}">${b.val}</div>
-      </div>`).join('');
-
-    card.innerHTML = `
-      <div class="sc-name">${w.name.split(' ')[0]} ${w.name.split(' ')[1]||''}</div>
-      ${bars}
-      <div class="stat-total">${totalDays} სამუშაო დღე</div>`;
-    statContainer.appendChild(card);
-  });
-
-  if(!statContainer.children.length){
-    grid.innerHTML = '<div style="color:var(--mu);font-size:.8rem;text-align:center;padding:20px 0;">ამ თვეში მონაცემები არ არის</div>';
-  } else {
-    grid.appendChild(statContainer);
-  }
-}
-
-/* ══════════════════════════════
-   INIT
-══════════════════════════════ */
-async function init(){
-  await loadWaiters();
-  renderAll();
-  await loadDB();
-  setInterval(loadDB, 30000);
-  setInterval(loadWaiters, 60000);
-  initNotif();
-  initTheme();
-}
-init();
-
-// Register Service Worker
+})();
 if('serviceWorker' in navigator){
   window.addEventListener('load', ()=>{
-    const swUrl = location.pathname.replace(/\/[^\/]*$/, '/') + 'sw.js';
-    navigator.serviceWorker.register(swUrl)
-      .then(r => console.log('SW registered:', r.scope))
-      .catch(e => console.log('SW error', e));
+    const swUrl = location.pathname.replace(/\/[^/]*$/, '/') + 'sw.js';
+    navigator.serviceWorker.register(swUrl).catch(()=>{});
   });
 }
 </script>

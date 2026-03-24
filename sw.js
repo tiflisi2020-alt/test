@@ -1,7 +1,12 @@
-const CACHE = 'schedule-v2';
+const CACHE = 'schedule-v6';
 const ASSETS = [
   '/test/',
   '/test/index.html',
+  '/test/waiters.html',
+  '/test/chefs.html',
+  '/test/cashier.html',
+  '/test/hostess.html',
+  '/test/manifest.json',
   '/test/icon-192.png',
   '/test/icon-512.png'
 ];
