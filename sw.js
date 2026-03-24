@@ -1,4 +1,4 @@
-const CACHE = 'schedule-v7';
+const CACHE = 'schedule-v8';
 const ASSETS = [
   '/test/',
   '/test/index.html',
