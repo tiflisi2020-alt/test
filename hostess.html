@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
 <title>ჰოსტესის განრიგი</title>
 <link rel="manifest" href="manifest.json">
-<meta name="theme-color" content="#f0a500">
+<meta name="theme-color" content="#b8523d">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="განრიგი">
@@ -13,25 +13,25 @@
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Georgian:wght@300;400;600;700;900&display=swap" rel="stylesheet">
 <style>
 :root{
-  --bg:#0d0f14; --sf:#161920; --s2:#1c1f28; --s3:#22262f;
-  --br:#252830; --br2:#2e3240;
-  --ac:#f0a500; --ac2:#e05c2a; --tx:#e8eaf0; --mu:#5a5f70;
-  --m-b:rgba(96,180,255,.14);  --m-c:#60b4ff;
-  --a-b:rgba(240,165,0,.14);   --a-c:#f0a500;
-  --e-b:rgba(224,92,42,.14);   --e-c:#e05c2a;
-  --o-b:rgba(255,255,255,.03); --o-c:#3a3f52;
+  --bg:#120d0b; --sf:#1a1310; --s2:#221a16; --s3:#2a201b;
+  --br:#3d2822; --br2:#4a322b;
+  --ac:#d4af37; --ac2:#b8523d; --tx:#f2ebe6; --mu:#9a8a82;
+  --m-b:rgba(100,145,175,.14);  --m-c:#6a9eb5;
+  --a-b:rgba(212,175,55,.16);   --a-c:#d4af37;
+  --e-b:rgba(184,82,61,.18);   --e-c:#b8523d;
+  --o-b:rgba(255,255,255,.04); --o-c:#5c4a42;
   --H-b:rgba(120,80,255,.16);  --H-c:#a78bfa;
   --V-b:rgba(20,200,130,.14);  --V-c:#34d399;
   --A-b:rgba(236,72,153,.14);  --A-c:#f472b6;
 }
 body.light{
-  --bg:#f5f0e8; --sf:#fdf8f0; --s2:#f0e9d8; --s3:#e8dcc8;
-  --br:#ddd0b8; --br2:#c8b99a;
-  --ac:#b8760a; --ac2:#c2440c; --tx:#2c1f0e; --mu:#8a7560;
-  --m-b:rgba(37,99,235,.1);   --m-c:#1e40af;
-  --a-b:rgba(180,110,0,.12);  --a-c:#7c4700;
-  --e-b:rgba(180,50,20,.1);   --e-c:#7f2010;
-  --o-b:rgba(100,80,50,.06);  --o-c:#9a8870;
+  --bg:#faf4ee; --sf:#fff9f4; --s2:#f2ebe4; --s3:#ebe2d9;
+  --br:#dccbc0; --br2:#cbb8aa;
+  --ac:#9a7220; --ac2:#8f3d32; --tx:#1f1410; --mu:#6d5c54;
+  --m-b:rgba(60,100,130,.1);   --m-c:#2d5a72;
+  --a-b:rgba(160,120,30,.12);  --a-c:#7a5a10;
+  --e-b:rgba(140,55,40,.1);   --e-c:#6b2a20;
+  --o-b:rgba(90,70,60,.06);  --o-c:#7a6a60;
   --H-b:rgba(100,40,200,.1);  --H-c:#5b21b6;
   --V-b:rgba(5,130,90,.1);    --V-c:#065f46;
   --A-b:rgba(170,20,80,.1);   --A-c:#9d174d;
@@ -44,8 +44,8 @@ body{background:var(--bg);color:var(--tx);font-family:'Noto Sans Georgian',sans-
 @supports ((-webkit-backdrop-filter:blur(1px)) or (backdrop-filter:blur(1px))){
   body{
     background:
-      radial-gradient(ellipse 120% 70% at 50% -15%, rgba(240,165,0,.09), transparent 55%),
-      radial-gradient(ellipse 80% 50% at 100% 40%, rgba(96,180,255,.06), transparent 45%),
+      radial-gradient(ellipse 120% 70% at 50% -15%, rgba(212,175,55,.11), transparent 55%),
+      radial-gradient(ellipse 80% 50% at 100% 40%, rgba(184,82,61,.08), transparent 45%),
       var(--bg);
   }
   .hdr,.modal,.wk-col,.wcard,.dblk,.flt-wrap,.cal-detail,.notif-wrap,.stat-card,.ag-wrap,.twrap{
@@ -95,7 +95,7 @@ body{background:var(--bg);color:var(--tx);font-family:'Noto Sans Georgian',sans-
 .wk-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:4px;}
 .wk-col{background:var(--sf);border:1px solid var(--br);border-radius:10px;overflow:hidden;}
 .wk-col.today{border-color:var(--ac);}
-.wk-col.today .wk-col-hdr{background:rgba(240,165,0,.1);}
+.wk-col.today .wk-col-hdr{background:rgba(212,175,55,.1);}
 .wk-col-hdr{padding:6px 4px 4px;text-align:center;background:var(--s2);}
 .wk-dn{font-size:.55rem;font-weight:700;text-transform:uppercase;color:var(--mu);letter-spacing:.04em;}
 .wk-dd{font-size:1.05rem;font-weight:900;line-height:1.1;}
@@ -285,7 +285,7 @@ body{background:var(--bg);color:var(--tx);font-family:'Noto Sans Georgian',sans-
 .cc.has-dot::after{content:'';width:5px;height:5px;border-radius:50%;background:var(--V-c);
   position:absolute;bottom:2px;left:50%;transform:translateX(-50%);}
 .cc:not(.head):not(.other):hover{background:var(--s3);}
-.cc.active-c{background:rgba(240,165,0,.15);border-color:var(--ac);}
+.cc.active-c{background:rgba(212,175,55,.15);border-color:var(--ac);}
 .cal-detail{background:var(--s2);border-radius:10px;padding:12px 14px;}
 .cal-detail-ttl{font-size:.8rem;font-weight:800;margin-bottom:10px;color:var(--tx);}
 .cal-drow{display:flex;align-items:center;padding:7px 0;border-bottom:1px solid var(--br);gap:8px;}
@@ -885,7 +885,7 @@ function renderDayViewByWeek(days){
     const isToday2 = cdkv===todayDk();
     const b=document.createElement('div');
     b.className='dblk'+(isToday2?' dblk-today':'');
-    b.innerHTML=`<div class="dblk-hdr" ${isToday2?'style="background:rgba(240,165,0,0.12);border-bottom:1px solid rgba(240,165,0,0.3)"':''}>
+    b.innerHTML=`<div class="dblk-hdr" ${isToday2?'style="background:rgba(212,175,55,0.12);border-bottom:1px solid rgba(212,175,55,0.3)"':''}>
       <div class="dbig ${iW(c.wd)?'wknd':''}" ${isToday2?'style="color:var(--ac)"':''}>${c.d}</div>
       <div class="dmeta"><div class="dn">${KD[c.wd]}</div><div class="dm">${MKA[c.m-1]}</div></div>
       ${isToday2?`<div style="margin-left:auto;background:var(--ac);color:#000;font-size:.65rem;font-weight:800;padding:3px 8px;border-radius:20px;">დღეს · ${nowTimeStr()}</div>`:`<div class="dcnt">${workers.length} ჰოსტესი</div>`}

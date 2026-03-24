@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
 <title>რესტორნის განრიგები</title>
 <link rel="manifest" href="manifest.json">
-<meta name="theme-color" content="#f0a500">
+<meta name="theme-color" content="#b8523d">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="განრიგი">
@@ -13,12 +13,12 @@
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Georgian:wght@400;600;700;900&display=swap" rel="stylesheet">
 <style>
 :root{
-  --bg:#0d0f14; --sf:#161920; --s2:#1c1f28; --br:#252830;
-  --ac:#f0a500; --ac2:#e05c2a; --tx:#e8eaf0; --mu:#5a5f70;
+  --bg:#120d0b; --sf:#1a1310; --s2:#221a16; --br:#3d2822;
+  --ac:#d4af37; --ac2:#b8523d; --tx:#f2ebe6; --mu:#9a8a82;
 }
 body.light{
-  --bg:#f5f0e8; --sf:#fdf8f0; --s2:#f0e9d8; --br:#ddd0b8;
-  --ac:#b8760a; --ac2:#c2440c; --tx:#2c1f0e; --mu:#8a7560;
+  --bg:#faf4ee; --sf:#fff9f4; --s2:#f2ebe4; --br:#dccbc0;
+  --ac:#9a7220; --ac2:#8f3d32; --tx:#1f1410; --mu:#6d5c54;
 }
 *{box-sizing:border-box;margin:0;padding:0;}
 html{-webkit-text-size-adjust:100%;}
@@ -35,8 +35,8 @@ body{
 @supports ((-webkit-backdrop-filter:blur(1px)) or (backdrop-filter:blur(1px))){
   body{
     background:
-      radial-gradient(ellipse 120% 70% at 50% -15%, rgba(240,165,0,.09), transparent 55%),
-      radial-gradient(ellipse 80% 50% at 100% 40%, rgba(96,180,255,.06), transparent 45%),
+      radial-gradient(ellipse 120% 70% at 50% -15%, rgba(212,175,55,.11), transparent 55%),
+      radial-gradient(ellipse 80% 50% at 100% 40%, rgba(184,82,61,.08), transparent 45%),
       var(--bg);
   }
   .tbtn,.card{
@@ -58,6 +58,21 @@ body{
   cursor:pointer;font-weight:700;
 }
 .tbtn:hover{border-color:var(--ac);color:var(--ac);}
+.logo-wrap{
+  width:100%;max-width:320px;margin:0 auto 20px;
+  display:flex;justify-content:center;align-items:center;
+  min-height:72px;
+}
+.logo-wrap canvas{
+  display:block;max-width:100%;height:auto;
+  filter:drop-shadow(0 4px 20px rgba(0,0,0,.35));
+}
+body.light .logo-wrap canvas{filter:drop-shadow(0 2px 12px rgba(80,40,30,.12));}
+.logo-fallback{
+  font-size:1.5rem;font-weight:900;letter-spacing:.06em;color:var(--ac);
+  text-decoration:none;border-bottom:2px solid var(--ac2);padding-bottom:2px;
+}
+.logo-fallback:hover{color:var(--ac2);}
 .hero{
   text-align:center;margin-bottom:28px;max-width:420px;
 }
@@ -100,10 +115,10 @@ body{
   font-size:.68rem;color:var(--mu);line-height:1.35;
 }
 .card-arr{color:var(--mu);font-size:1.1rem;flex-shrink:0;}
-.c-w .card-ico{background:rgba(240,165,0,.14);}
-.c-ch .card-ico{background:rgba(52,211,153,.14);}
-.c-ca .card-ico{background:rgba(96,180,255,.14);}
-.c-ho .card-ico{background:rgba(244,114,182,.14);}
+.c-w .card-ico{background:rgba(212,175,55,.2);}
+.c-ch .card-ico{background:rgba(184,82,61,.16);}
+.c-ca .card-ico{background:rgba(212,175,55,.14);}
+.c-ho .card-ico{background:rgba(184,82,61,.14);}
 .foot{
   margin-top:auto;padding-top:36px;
   font-size:.65rem;color:var(--mu);text-align:center;max-width:360px;line-height:1.4;
@@ -119,6 +134,10 @@ body{
 
 <div class="topbar">
   <button type="button" class="tbtn" id="themeBtn" onclick="toggleTheme()" title="თემა">🌙</button>
+</div>
+
+<div class="logo-wrap" id="logoWrap">
+  <canvas id="tiflisiLogo" width="1" height="1" role="img" aria-label="Restaurant Tiflisi ლოგო"></canvas>
 </div>
 
 <header class="hero">
@@ -174,6 +193,39 @@ function toggleTheme(){
     document.body.classList.add('light');
     document.getElementById('themeBtn').textContent = '☀️';
   }
+})();
+
+(function(){
+  const PDFJS='https://cdn.jsdelivr.net/npm/pdfjs-dist@4.8.69/build/pdf.min.mjs';
+  const WORKER='https://cdn.jsdelivr.net/npm/pdfjs-dist@4.8.69/build/pdf.worker.min.mjs';
+  const canvas=document.getElementById('tiflisiLogo');
+  const wrap=document.getElementById('logoWrap');
+  if(!canvas||!wrap) return;
+  (async function(){
+    try{
+      const m=await import(PDFJS);
+      const lib=(m.default&&typeof m.default.getDocument==='function')?m.default:m;
+      lib.GlobalWorkerOptions.workerSrc=WORKER;
+      const url=new URL('assets/logo-tiflisi.pdf',location.href).href;
+      const pdf=await lib.getDocument({url}).promise;
+      const page=await pdf.getPage(1);
+      const baseVp=page.getViewport({scale:1});
+      const dpr=Math.min(window.devicePixelRatio||1,2);
+      const targetW=Math.min(280,wrap.clientWidth||280);
+      const scale=(targetW/baseVp.width)*dpr;
+      const viewport=page.getViewport({scale});
+      const ctx=canvas.getContext('2d');
+      canvas.width=viewport.width;
+      canvas.height=viewport.height;
+      canvas.style.width=(viewport.width/dpr)+'px';
+      canvas.style.height=(viewport.height/dpr)+'px';
+      const task=page.render({canvasContext:ctx,viewport});
+      await task.promise;
+    }catch(err){
+      console.warn('Logo PDF:',err);
+      wrap.innerHTML='<a class="logo-fallback" href="assets/logo-tiflisi.pdf">ტიფლისი — ლოგო</a>';
+    }
+  })();
 })();
 if('serviceWorker' in navigator){
   window.addEventListener('load', ()=>{

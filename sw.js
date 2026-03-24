@@ -1,4 +1,4 @@
-const CACHE = 'schedule-v6';
+const CACHE = 'schedule-v7';
 const ASSETS = [
   '/test/',
   '/test/index.html',
@@ -8,7 +8,8 @@ const ASSETS = [
   '/test/hostess.html',
   '/test/manifest.json',
   '/test/icon-192.png',
-  '/test/icon-512.png'
+  '/test/icon-512.png',
+  '/test/assets/logo-tiflisi.pdf'
 ];
 
 self.addEventListener('install', e => {
