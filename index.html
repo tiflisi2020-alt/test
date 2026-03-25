@@ -118,11 +118,19 @@ body.light .logo-wrap canvas{filter:drop-shadow(0 2px 10px rgba(60,35,28,.1));}
 .card-arr{color:var(--mu);font-size:1.1rem;flex-shrink:0;}
 .c-w .card-ico{background:rgba(212,175,55,.2);}
 .c-ch .card-ico{background:rgba(184,82,61,.16);}
+.c-cl .card-ico{background:rgba(45,180,140,.22);}
 .c-ca .card-ico{background:rgba(212,175,55,.14);}
 .c-ho .card-ico{background:rgba(184,82,61,.14);}
+body.light .c-cl .card-ico{background:rgba(6,95,70,.14);}
+@keyframes footIn{
+  from{opacity:0;transform:translateY(8px);}
+  to{opacity:1;transform:none;}
+}
 .foot{
   margin-top:auto;padding-top:36px;
   font-size:.65rem;color:var(--mu);text-align:center;max-width:360px;line-height:1.4;
+  animation:footIn .45s ease backwards;
+  animation-delay:.78s;
 }
 @media(min-width:720px){
   body{padding:40px 24px;}
@@ -162,6 +170,14 @@ body.light .logo-wrap canvas{filter:drop-shadow(0 2px 10px rgba(60,35,28,.1));}
       <span>კვირის ხედი, ადმინ ცხრილი, კალენდარი, სტატისტიკა, შეტყობინება — პოზიციების გარეშე</span>
     </div>
     <span class="card-arr">›</span>
+  </a>
+  <a href="cleaning.html" class="card c-cl">
+    <div class="card-ico" aria-hidden="true">🧹</div>
+    <div class="card-txt">
+      <strong>დალაგება · დასუფთავება</strong>
+      <span>იგივე ფუნქციონალი რაც მზარეულებზე — ცხრილი, კალენდარი, ჯგუფი, კოპირება, სტატისტიკა, შეტყობინება</span>
+    </div>
+    <span class="card-arr" aria-hidden="true">›</span>
   </a>
   <a href="cashier.html" class="card c-ca">
     <div class="card-ico" aria-hidden="true">💳</div>

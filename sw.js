@@ -1,9 +1,10 @@
-const CACHE = 'schedule-v8';
+const CACHE = 'schedule-v12';
 const ASSETS = [
   '/test/',
   '/test/index.html',
   '/test/waiters.html',
   '/test/chefs.html',
+  '/test/cleaning.html',
   '/test/cashier.html',
   '/test/hostess.html',
   '/test/manifest.json',
