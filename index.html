@@ -204,6 +204,13 @@ body.light .chat-msgs{background:color-mix(in srgb,var(--bg) 35%,var(--sf));}
 body.light .chat-err{color:#b91c1c;}
 .chat-empty{color:var(--mu);font-size:.75rem;text-align:center;padding:16px 8px;}
 .chat-poll{font-size:.6rem;color:var(--mu);margin-top:8px;text-align:right;}
+.chat-toolbar{display:flex;justify-content:flex-end;align-items:center;margin:-4px 0 10px;}
+.chat-clear{
+  font:inherit;font-size:.62rem;color:var(--mu);background:transparent;border:none;
+  cursor:pointer;text-decoration:underline;padding:4px 0;
+}
+.chat-clear:hover{color:var(--ac2);}
+.chat-clear:disabled{opacity:.45;cursor:not-allowed;}
 </style>
 </head>
 <body>
@@ -268,6 +275,9 @@ body.light .chat-err{color:#b91c1c;}
   <div class="chat-card">
     <h2 class="chat-h"><span aria-hidden="true">💬</span> საერთო ჩატი</h2>
     <p class="chat-sub">ერთი ჩატი ყველა განყოფილებისთვის. შეტყობინებები ინახება Supabase-ში — გაუშვით SQL ცხრილი თუ ჯერ არ გაქვთ.</p>
+    <div class="chat-toolbar">
+      <button type="button" class="chat-clear" id="chatClear" title="საჭიროა ადმინის PIN">ჩატის გასუფთავება</button>
+    </div>
     <div class="chat-msgs" id="chatMsgs" role="log" aria-live="polite" aria-relevant="additions"></div>
     <form class="chat-form" id="chatForm" onsubmit="return false;">
       <input type="text" id="chatAuthor" name="author" maxlength="40" placeholder="თქვენი სახელი" autocomplete="nickname" aria-label="სახელი">
@@ -298,6 +308,7 @@ function toggleTheme(){
 (function(){
   const SB  = 'https://bbroknpeebjuilycutjd.supabase.co';
   const KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJicm9rbnBlZWJqdWlseWN1dGpkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzM4NTk0NjksImV4cCI6MjA4OTQzNTQ2OX0.7rlaolshlMLtFObv6ViaifiSNkiYofiCRm8q2SiJns8';
+  const CHAT_ADMIN_PASS = '151515';
   const LS_AUTHOR = 'mainChatAuthor';
   const PATH = 'main_chat_messages?select=id,author,body,created_at&order=created_at.desc&limit=100';
 
@@ -305,6 +316,7 @@ function toggleTheme(){
   const elAuthor = document.getElementById('chatAuthor');
   const elBody = document.getElementById('chatBody');
   const elSend = document.getElementById('chatSend');
+  const elClear = document.getElementById('chatClear');
   const elErr = document.getElementById('chatErr');
   const elPoll = document.getElementById('chatPollNote');
   if(!elMsgs||!elAuthor||!elBody||!elSend) return;
@@ -405,6 +417,35 @@ function toggleTheme(){
   }
 
   elSend.addEventListener('click', sendMsg);
+
+  async function clearChat(){
+    const pin = window.prompt('ადმინის PIN:');
+    if(pin === null) return;
+    if(String(pin).trim() !== CHAT_ADMIN_PASS){
+      showErr('PIN არასწორია.');
+      return;
+    }
+    if(!window.confirm('ყველა შეტყობინება წაიშლება. გაგრძელება?')) return;
+    showErr('');
+    elClear.disabled = true;
+    try{
+      const r = await sbFetch('main_chat_messages?id=neq.-1', {
+        method: 'DELETE',
+        headers: { 'Prefer': 'return=minimal' }
+      });
+      if(!r.ok){
+        const t = await r.text();
+        throw new Error(t || r.status);
+      }
+      lastSig = '';
+      await loadMsgs();
+    }catch(e){
+      showErr(e.message || 'გასუფთავება ვერ მოხერხდა.');
+    }finally{
+      elClear.disabled = false;
+    }
+  }
+  if(elClear) elClear.addEventListener('click', clearChat);
 
   let pollId = null;
   function startPoll(){
