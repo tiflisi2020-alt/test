@@ -1,0 +1,10 @@
+{
+  "name": "tiflisi-schedules",
+  "private": true,
+  "scripts": {
+    "dev": "serve . --config serve.json -l 3000"
+  },
+  "devDependencies": {
+    "serve": "^14.2.4"
+  }
+}

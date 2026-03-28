@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
 <title>მზარეულების განრიგი</title>
+<link rel="icon" href="icon-192.png" type="image/png">
 <link rel="manifest" href="manifest.json">
 <meta name="theme-color" content="#b8523d">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -549,14 +550,26 @@ body{background:var(--bg);color:var(--tx);font-family:'Noto Sans Georgian',sans-
             </div>
           </div>
         </div>
+        <div id="editChefForm" style="display:none;margin-top:14px;background:var(--s2);border-radius:10px;padding:14px;border:1px solid var(--ac);">
+          <div style="font-size:.78rem;font-weight:800;margin-bottom:10px;">✎ მზარეულის რედაქტირება</div>
+          <input type="hidden" id="editChefIdx" value="-1">
+          <div style="display:flex;flex-direction:column;gap:8px;">
+            <input class="inp" id="editChefName" placeholder="სახელი გვარი">
+            <input class="inp" id="editChefPhone" placeholder="ტელეფონი (555 123 456)">
+            <div style="display:flex;gap:8px;">
+              <button class="sbtn" style="flex:1;" type="button" onclick="saveEditChef()">💾 შენახვა</button>
+              <button class="sbtn" style="flex:1;background:var(--s3);color:var(--tx);" type="button" onclick="hideEditChef()">გაუქმება</button>
+            </div>
+          </div>
+        </div>
       </div>
 
       <div id="aShifts" style="display:none">
-        <p style="font-size:.74rem;color:var(--mu);margin-bottom:10px;line-height:1.45;">თითო ხაზზე ერთი ცვლის ვარიანტი. ჩართეთ <code>OFF</code> უქმისთვის. ინახება ამ მოწყობილობაზე (localStorage).</p>
-        <textarea id="shiftEditorTa" class="inp" style="width:100%;min-height:160px;font-family:ui-monospace,monospace;font-size:.8rem;resize:vertical;" spellcheck="false" aria-label="ცვლების სია"></textarea>
+        <p style="font-size:.74rem;color:var(--mu);margin-bottom:10px;line-height:1.45;">თითო ხაზზე ერთი ცვლის ტექსტი — რასაც თვითონ ჩაწერ. ქარხნული სია არ არის; ინახება ამ მოწყობილობაზე (localStorage).</p>
+        <textarea id="shiftEditorTa" class="inp" style="width:100%;min-height:160px;font-family:ui-monospace,monospace;font-size:.8rem;resize:vertical;" spellcheck="false" aria-label="ცვლების სია" placeholder="მაგალითი:&#10;10:00&#10;14:00&#10;OFF"></textarea>
         <div style="display:flex;flex-wrap:wrap;gap:8px;margin-top:12px;">
           <button type="button" class="sbtn" onclick="saveShiftEditor()">💾 შენახვა და განახლება</button>
-          <button type="button" class="sbtn" style="background:var(--s3);color:var(--tx);" onclick="resetShiftEditorDefaults()">↺ ქარხნულზე</button>
+          <button type="button" class="sbtn" style="background:var(--s3);color:var(--tx);" onclick="clearShiftEditorList()">✕ სიის გასუფთავება</button>
         </div>
         <p id="shiftEditorSt" style="font-size:.68rem;color:var(--V-c);margin-top:10px;min-height:1.2em;"></p>
       </div>
@@ -638,30 +651,34 @@ const MKA = ['იანვარი','თებერვალი','მარტ
              'ივლისი','აგვისტო','სექტემბერი','ოქტომბერი','ნოემბერი','დეკემბერი'];
 const MSH = ['იან','თებ','მარ','აპრ','მაი','ივნ','ივლ','აგვ','სექ','ოქტ','ნოე','დეკ'];
 
-const SHIFTS_OPT_DEFAULT = ['10:00','14:00','15:00','OFF'];
 const SHIFTS_LS_KEY = 'tiflisi_shifts_chefs';
 function getShiftsOpt(){
   try{
     const raw = localStorage.getItem(SHIFTS_LS_KEY);
-    if(!raw) return SHIFTS_OPT_DEFAULT.slice();
+    if(!raw) return [];
     const a = JSON.parse(raw);
-    if(!Array.isArray(a) || !a.length) return SHIFTS_OPT_DEFAULT.slice();
+    if(!Array.isArray(a)) return [];
     const seen = new Set();
     const out = [];
     for(const x of a){
-      let s = String(x).trim();
-      if(s === '09:00') s = '10:00';
+      const s = String(x).trim();
       if(!s || s.length > 36 || seen.has(s)) continue;
       seen.add(s); out.push(s);
     }
-    return out.length ? out : SHIFTS_OPT_DEFAULT.slice();
-  }catch(_){ return SHIFTS_OPT_DEFAULT.slice(); }
+    return out;
+  }catch(_){ return []; }
 }
 function setShiftsOpt(arr){
   localStorage.setItem(SHIFTS_LS_KEY, JSON.stringify(arr));
 }
-function resetShiftsOpt(){
-  localStorage.removeItem(SHIFTS_LS_KEY);
+function shiftSelectOptions(currentVal){
+  const base = getShiftsOpt();
+  const v = (currentVal != null && String(currentVal).trim() !== '') ? String(currentVal).trim() : '';
+  if(v && base.indexOf(v) === -1) return base.concat([v]);
+  return base.slice();
+}
+function shiftTypeFilterOn(){
+  return getShiftsOpt().length > 0;
 }
 function gselShiftClass(val){
   if(!val || val === 'OFF') return 's-o';
@@ -785,6 +802,7 @@ async function loadDB(){
 
 async function upsertRows(rows){
   const results = [];
+  const fails = [];
   for(const row of rows){
     try{
       const existing = await sbq(
@@ -801,8 +819,10 @@ async function upsertRows(rows){
       results.push(row);
     }catch(e){
       console.warn('row error:', row, e.message);
+      fails.push(e.message);
     }
   }
+  if(fails.length) throw new Error(fails.length+'/'+rows.length+' ჩანაწერი ვერ შეინახა');
   return results;
 }
 
@@ -1048,13 +1068,20 @@ function aTab(tab,btn){
   if(tab==='chefs') renderChefsList();
   if(tab==='copy') updateCopyLabels();
   if(tab==='stats') renderStats();
-  if(tab==='notif'){ renderTodayPreview(); 
+  if(tab==='notif'){ renderTodayPreview();
     const en=localStorage.getItem('notifEnabled_chefs');
     const tv=localStorage.getItem('notifTime_chefs')||'08:00';
+    const ns=document.getElementById('notifStatus');
     document.getElementById('notifTime').value=tv;
     if(en==='1'&&Notification.permission==='granted'){
-      document.getElementById('notifStatus').className='notif-status ok';
-      document.getElementById('notifStatus').textContent='✓ ჩართულია · '+tv;
+      ns.className='notif-status ok';
+      ns.textContent='✓ ჩართულია · '+tv;
+    }else if(typeof Notification!=='undefined'&&Notification.permission==='denied'){
+      ns.className='notif-status err';
+      ns.textContent='❌ შეტყობინება დაბლოკილია ბრაუზერში';
+    }else{
+      ns.className='notif-status no';
+      ns.textContent='შეტყობინება გამორთულია';
     }
   }
   if(tab==='shifts'){
@@ -1102,7 +1129,7 @@ function renderAdminGrid(){
       const curN=getNote(w.name,c.y,c.m,c.d);
       const td=document.createElement('td');
 
-      const shiftOpts=getShiftsOpt().map(s=>`<option value="${s.replace(/"/g,'&quot;')}"${curS===s?' selected':''}>${s.replace(/</g,'&lt;')}</option>`).join('');
+      const shiftOpts=shiftSelectOptions(curS).map(s=>`<option value="${s.replace(/"/g,'&quot;')}"${curS===s?' selected':''}>${s.replace(/</g,'&lt;')}</option>`).join('');
 
       const sClass = gselShiftClass(curS);
       td.innerHTML=`<div class="gcell">
@@ -1165,6 +1192,14 @@ function renderShiftFilterChips(){
   if(!wrap) return;
   wrap.innerHTML = '';
   const opts = getShiftsOpt();
+  if(opts.length === 0){
+    fltShifts = new Set();
+    const hint = document.createElement('span');
+    hint.style.cssText = 'font-size:.68rem;color:var(--mu);line-height:1.4;';
+    hint.textContent = 'ცვლის ტიპები ჯერ არაა — ჩაწერე «⏱ ცვლები» ტაბში და შეინახე.';
+    wrap.appendChild(hint);
+    return;
+  }
   fltShifts = new Set(opts);
   opts.forEach(s=>{
     const span = document.createElement('span');
@@ -1188,7 +1223,6 @@ function saveShiftEditor(){
   const st = document.getElementById('shiftEditorSt');
   if(!ta) return;
   const lines = ta.value.split(/\r?\n/).map(l=>l.trim()).filter(Boolean);
-  if(!lines.length){ if(st) st.textContent = 'მინიმუმ ერთი ვარიანტი საჭიროა.'; return; }
   if(lines.length > 24){ if(st) st.textContent = 'არაუმეტეს 24 ხაზი.'; return; }
   setShiftsOpt(lines);
   fltShifts = new Set(getShiftsOpt());
@@ -1197,15 +1231,15 @@ function saveShiftEditor(){
   renderAll();
   if(st) st.textContent = '✓ შენახულია. ცხრილი განახლდა.';
 }
-function resetShiftEditorDefaults(){
-  resetShiftsOpt();
+function clearShiftEditorList(){
+  localStorage.removeItem(SHIFTS_LS_KEY);
   fillShiftEditorTa();
-  fltShifts = new Set(getShiftsOpt());
+  fltShifts = new Set();
   renderShiftFilterChips();
   renderAdminGrid();
   renderAll();
   const st = document.getElementById('shiftEditorSt');
-  if(st) st.textContent = 'ქარხნული სია აღდგა.';
+  if(st) st.textContent = 'სია გასუფთავდა. ჩაწერე შენი ვარიანტები და შეინახე.';
 }
 
 function initFilter(){
@@ -1250,7 +1284,7 @@ function applyFilter(){
       if(fromVal && dkv < fromVal){ td.style.opacity='.2'; return; }
       if(toVal   && dkv > toVal  ){ td.style.opacity='.2'; return; }
 
-      if(!fltShifts.has(sVal)){ td.style.opacity='.2'; return; }
+      if(shiftTypeFilterOn() && !fltShifts.has(sVal)){ td.style.opacity='.2'; return; }
 
       td.style.opacity='1';
       anyVisible = true;
@@ -1368,6 +1402,10 @@ function showCalDay(y,m,d){
 ══════════════════════════════ */
 let DYNAMIC_CHEFS = [...CHEFS];
 
+function escHtml(s){
+  return String(s??'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/"/g,'&quot;');
+}
+
 async function loadChefs(){
   try{
     const rows = await sbq('chefs?select=id,name,phone&order=position_order');
@@ -1389,18 +1427,95 @@ function renderChefsList(){
     row.style.cssText='display:flex;align-items:center;padding:9px 0;border-bottom:1px solid var(--br);gap:10px;';
     row.innerHTML=`
       <div style="flex:1;">
-        <div style="font-size:.82rem;font-weight:700;">${w.name}</div>
-        <div style="font-size:.68rem;color:var(--mu);">${w.phone}</div>
+        <div style="font-size:.82rem;font-weight:700;">${escHtml(w.name)}</div>
+        <div style="font-size:.68rem;color:var(--mu);">${escHtml(w.phone)}</div>
       </div>
-      <a href="tel:${w.phone.replace(/\s/g,'')}" style="background:var(--V-b);color:var(--V-c);border:none;border-radius:7px;padding:5px 10px;font-size:.7rem;font-weight:700;text-decoration:none;">📞</a>
-      <button onclick="removeChef(${i})" style="background:rgba(248,113,113,.15);color:#f87171;border:none;border-radius:7px;padding:5px 10px;font-size:.7rem;font-weight:700;cursor:pointer;">✕</button>`;
+      <a href="tel:${String(w.phone).replace(/\s/g,'').replace(/[^0-9+]/g,'')}" style="background:var(--V-b);color:var(--V-c);border:none;border-radius:7px;padding:5px 10px;font-size:.7rem;font-weight:700;text-decoration:none;">📞</a>
+      <button type="button" onclick="showEditChef(${i})" style="background:var(--s3);color:var(--tx);border:1px solid var(--br);border-radius:7px;padding:5px 10px;font-size:.7rem;font-weight:700;cursor:pointer;">✎</button>
+      <button type="button" onclick="removeChef(${i})" style="background:rgba(248,113,113,.15);color:#f87171;border:none;border-radius:7px;padding:5px 10px;font-size:.7rem;font-weight:700;cursor:pointer;">✕</button>`;
     list.appendChild(row);
   });
 }
 
+function rekeyChefCache(oldName, newName){
+  if(oldName === newName) return;
+  const pfx = oldName + '|';
+  for(const k of Object.keys(DB)){
+    if(k.startsWith(pfx)){
+      DB[newName + '|' + k.slice(pfx.length)] = DB[k];
+      delete DB[k];
+    }
+  }
+}
+async function migrateChefPositions(oldName, newName){
+  if(oldName === newName) return;
+  const rows = await sbq('chef_positions?chef_name=eq.'+encodeURIComponent(oldName)+'&select=chef_name,shift_date,shift_time,notes');
+  if(!rows || !rows.length) return;
+  await sbq('chef_positions?chef_name=eq.'+encodeURIComponent(oldName), {method:'DELETE'});
+  for(const r of rows){
+    await sbq('chef_positions', {method:'POST', body: JSON.stringify({
+      chef_name: newName,
+      shift_date: r.shift_date,
+      shift_time: r.shift_time,
+      notes: r.notes
+    })});
+  }
+}
+
 function showAddChef(){
+  document.getElementById('editChefForm').style.display='none';
   document.getElementById('addChefForm').style.display='block';
   document.getElementById('newCName').focus();
+}
+function showEditChef(i){
+  const w = DYNAMIC_CHEFS[i];
+  if(!w) return;
+  document.getElementById('addChefForm').style.display='none';
+  document.getElementById('editChefIdx').value = String(i);
+  document.getElementById('editChefName').value = w.name;
+  document.getElementById('editChefPhone').value = w.phone || '';
+  document.getElementById('editChefForm').style.display='block';
+  document.getElementById('editChefName').focus();
+}
+function hideEditChef(){
+  document.getElementById('editChefForm').style.display='none';
+  document.getElementById('editChefIdx').value = '-1';
+}
+async function saveEditChef(){
+  const i = parseInt(document.getElementById('editChefIdx').value, 10);
+  if(i < 0 || i >= DYNAMIC_CHEFS.length){ hideEditChef(); return; }
+  const w = DYNAMIC_CHEFS[i];
+  const oldName = w.name;
+  const newName = document.getElementById('editChefName').value.trim();
+  const newPhone = document.getElementById('editChefPhone').value.trim();
+  if(!newName){ alert('სახელი სავალდებულოა'); return; }
+  try{
+    if(newName !== oldName){
+      await migrateChefPositions(oldName, newName);
+    }
+    const payload = JSON.stringify({name:newName, phone:newPhone||null});
+    let serverOk = false;
+    if(w.id){
+      await sbq('chefs?id=eq.'+w.id, {method:'PATCH', body: payload});
+      serverOk = true;
+    } else if(oldName){
+      const rep = await sbq('chefs?name=eq.'+encodeURIComponent(oldName), {method:'PATCH', body: payload});
+      serverOk = !!(rep && rep.length);
+    }
+    rekeyChefCache(oldName, newName);
+    if(serverOk){
+      await loadChefs();
+    } else {
+      DYNAMIC_CHEFS[i] = {id:w.id, name:newName, phone:newPhone, shifts:[]};
+    }
+    hideEditChef();
+    renderChefsList();
+    renderAdminGrid();
+    renderAll();
+    setSS('ok', serverOk ? 'მონაცემები განახლდა' : 'ლოკალურად · Supabase-ზე ჩანაწერი არ მოიძებნა');
+  }catch(e){
+    alert('შეცდომა: '+e.message);
+  }
 }
 
 async function addChef(){
@@ -1418,6 +1533,8 @@ async function addChef(){
     document.getElementById('newCPhone').value='';
     document.getElementById('addChefForm').style.display='none';
     renderChefsList();
+    renderAdminGrid();
+    renderAll();
     setSS('ok','მზარეული დამატებულია');
   }catch(e){
     alert('შეცდომა: '+e.message);
@@ -1428,11 +1545,17 @@ async function removeChef(idx){
   const w = DYNAMIC_CHEFS[idx];
   if(!confirm(w.name+' — წაშლა?')) return;
   try{
+    await sbq('chef_positions?chef_name=eq.'+encodeURIComponent(w.name), {method:'DELETE'});
     if(w.id){
       await sbq('chefs?id=eq.'+w.id, {method:'DELETE'});
     }
+    for(const k of Object.keys(DB)){
+      if(k.split('|')[0]===w.name) delete DB[k];
+    }
     DYNAMIC_CHEFS.splice(idx,1);
     renderChefsList();
+    renderAdminGrid();
+    renderAll();
     setSS('ok','მზარეული წაიშალა');
   }catch(e){
     alert('შეცდომა: '+e.message);

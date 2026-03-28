@@ -1,7 +1,17 @@
 {
   "cleanUrls": false,
+  "directoryListing": false,
   "rewrites": [
+    { "source": "/", "destination": "/index.html" },
     { "source": "waiters", "destination": "/waiters.html" },
-    { "source": "waiters/", "destination": "/waiters.html" }
+    { "source": "waiters/", "destination": "/waiters.html" },
+    { "source": "hostess", "destination": "/hostess.html" },
+    { "source": "hostess/", "destination": "/hostess.html" },
+    { "source": "chefs", "destination": "/chefs.html" },
+    { "source": "chefs/", "destination": "/chefs.html" },
+    { "source": "cleaning", "destination": "/cleaning.html" },
+    { "source": "cleaning/", "destination": "/cleaning.html" },
+    { "source": "cashier", "destination": "/cashier.html" },
+    { "source": "cashier/", "destination": "/cashier.html" }
   ]
 }

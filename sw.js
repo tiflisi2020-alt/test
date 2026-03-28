@@ -1,16 +1,19 @@
-const CACHE = 'schedule-v13';
+const CACHE = 'schedule-v14';
+const BASE = self.location.pathname.replace(/\/sw\.js$/i, '') || '';
+const asset = (p) => (BASE + (p.startsWith('/') ? p : '/' + p)).replace(/\/{2,}/g, '/');
+
 const ASSETS = [
-  '/test/',
-  '/test/index.html',
-  '/test/waiters.html',
-  '/test/chefs.html',
-  '/test/cleaning.html',
-  '/test/cashier.html',
-  '/test/hostess.html',
-  '/test/manifest.json',
-  '/test/icon-192.png',
-  '/test/icon-512.png',
-  '/test/assets/logo-tiflisi.pdf'
+  asset('/'),
+  asset('/index.html'),
+  asset('/waiters.html'),
+  asset('/chefs.html'),
+  asset('/cleaning.html'),
+  asset('/cashier.html'),
+  asset('/hostess.html'),
+  asset('/manifest.json'),
+  asset('/icon-192.png'),
+  asset('/icon-512.png'),
+  asset('/assets/logo-tiflisi.pdf')
 ];
 
 self.addEventListener('install', e => {
@@ -30,7 +33,7 @@ self.addEventListener('activate', e => {
 });
 
 self.addEventListener('fetch', e => {
-  if(e.request.url.includes('supabase.co') || 
+  if(e.request.url.includes('supabase.co') ||
      e.request.url.includes('fonts.googleapis.com')){
     return;
   }
