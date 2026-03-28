@@ -798,7 +798,7 @@ body.light input:focus-visible,body.light select:focus-visible{
       <!-- CLEANING TEAM TAB -->
       <div id="aCleaning" style="display:none">
         <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
-          <span style="font-size:.8rem;font-weight:800;">დასუფთავების ჯგუფი</span>
+          <span style="font-size:.8rem;font-weight:800;">დასუფთავების ჯგუფი (Supabase)</span>
           <button class="sbtn" style="padding:7px 14px;font-size:.72rem;" onclick="showAddCleaner()">+ დამატება</button>
         </div>
         <div id="cleanersList"></div>
@@ -951,21 +951,13 @@ function gselShiftClass(val){
   return ['s-m','s-a','s-e'][i % 3];
 }
 
-/* hardcoded Mar 22 – Apr 4 (Sun–Sat) */
+/* საჯარო ცხრილის თარიღები; ცვლები — cleaner_positions + ადმინი */
 const FCOLS = [
   {y:2026,m:3,d:22,wd:0},{y:2026,m:3,d:23,wd:1},{y:2026,m:3,d:24,wd:2},
   {y:2026,m:3,d:25,wd:3},{y:2026,m:3,d:26,wd:4},{y:2026,m:3,d:27,wd:5},
   {y:2026,m:3,d:28,wd:6},{y:2026,m:3,d:29,wd:0},{y:2026,m:3,d:30,wd:1},
   {y:2026,m:3,d:31,wd:2},{y:2026,m:4,d:1,wd:3},{y:2026,m:4,d:2,wd:4},
   {y:2026,m:4,d:3,wd:5},{y:2026,m:4,d:4,wd:6}
-];
-const CLEANERS = [
-  {name:'მარინა ვადაჭკორია', phone:'577 939 359', shifts:Array(14).fill('OFF')},
-  {name:'მზია სოითურქ', phone:'555 958 990', shifts:Array(14).fill('OFF')},
-  {name:'ნათია ჯორბენაძე', phone:'599 279 981', shifts:Array(14).fill('OFF')},
-  {name:'ლეილა თავართქილაძე', phone:'', shifts:Array(14).fill('OFF')},
-  {name:'გულნაზ ქუთელია', phone:'568 466 565', shifts:Array(14).fill('OFF')},
-  {name:'დარინა ჩიტაძე', phone:'555 210 017', shifts:Array(14).fill('OFF')}
 ];
 
 /* ══════════════════════════════
@@ -1017,14 +1009,9 @@ function nowTimeStr(){
   return String(t.getHours()).padStart(2,'0')+':'+String(t.getMinutes()).padStart(2,'0');
 }
 
-// get shift for a cleaner on a date (DB overrides hardcoded)
 function getShift(name,y,m,d){
   const key=pk(name,dk(y,m,d));
-  // DB entry exists and has explicit shift_time
   if(DB[key] && DB[key].shift_time && DB[key].shift_time!=='') return DB[key].shift_time;
-  // fallback to hardcoded FCOLS
-  const i=FCOLS.findIndex(c=>c.y===y&&c.m===m&&c.d===d);
-  if(i>=0){ const w=CLEANERS.find(ww=>ww.name===name); return w?w.shifts[i]:'OFF'; }
   return 'OFF';
 }
 function getNote(name,y,m,d){ return DB[pk(name,dk(y,m,d))]?.notes||''; }
@@ -1040,7 +1027,7 @@ async function sbq(path,opts={}){
     'Prefer':'return=representation'
   };
   if(opts.headers) Object.assign(h, opts.headers);
-  const r=await fetch(SB+'/rest/v1/'+path,{...opts, headers:h});
+  const r=await fetch(SB+'/rest/v1/'+path,{...opts, headers:h, cache:'no-store'});
   const t=await r.text();
   if(!r.ok) throw new Error(t);
   return t?JSON.parse(t):null;
@@ -1662,30 +1649,38 @@ function showCalDay(y,m,d){
 }
 
 /* ══════════════════════════════
-   CLEANING TEAM MANAGEMENT
+   CLEANERS — public.cleaners (Supabase)
 ══════════════════════════════ */
-let DYNAMIC_CLEANERS = [...CLEANERS];
+let DYNAMIC_CLEANERS = [];
 
 function escHtml(s){
   return String(s??'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/"/g,'&quot;');
 }
 
+function sbqRepOk(rep){
+  if(rep==null) return false;
+  if(Array.isArray(rep)) return rep.length > 0;
+  return typeof rep === 'object';
+}
+
 async function loadCleaners(){
   try{
     const rows = await sbq('cleaners?select=id,name,phone&order=position_order');
-    if(rows && rows.length > 0){
-      DYNAMIC_CLEANERS = rows.map(r=>({id:r.id, name:r.name, phone:r.phone, shifts:[]}));
-    } else {
-      DYNAMIC_CLEANERS = [...CLEANERS];
-    }
+    DYNAMIC_CLEANERS = (rows && rows.length > 0)
+      ? rows.map(r=>({id:r.id, name:r.name, phone:(r.phone!=null&&r.phone!=='')?String(r.phone):'', shifts:[]}))
+      : [];
   }catch(e){
-    DYNAMIC_CLEANERS = [...CLEANERS];
+    console.warn('loadCleaners', e);
   }
 }
 
 function renderCleanersList(){
   const list = document.getElementById('cleanersList');
   list.innerHTML = '';
+  if(!DYNAMIC_CLEANERS.length){
+    list.innerHTML = '<p style="color:var(--mu);font-size:.76rem;padding:12px 0;line-height:1.45;">ჯგუფი ცარიელია. დაამატე <b>Table Editor → cleaners</b> ან გაუშვი <code>supabase/seed_employees.sql</code>, ან „+ დამატება“.</p>';
+    return;
+  }
   DYNAMIC_CLEANERS.forEach((w,i)=>{
     const row = document.createElement('div');
     row.style.cssText='display:flex;align-items:center;padding:9px 0;border-bottom:1px solid var(--br);gap:10px;';
@@ -1759,12 +1754,31 @@ async function saveEditCleaner(){
     }
     const payload = JSON.stringify({name:newName, phone:newPhone||null});
     let serverOk = false;
-    if(w.id){
-      await sbq('cleaners?id=eq.'+w.id, {method:'PATCH', body: payload});
-      serverOk = true;
-    } else if(oldName){
+    let matchedDbRow = null;
+    const idStr = (w.id!=null && String(w.id).trim()!=='') ? String(w.id) : '';
+    if(idStr){
+      const rep = await sbq('cleaners?id=eq.'+idStr, {method:'PATCH', body: payload});
+      serverOk = sbqRepOk(rep);
+    }
+    if(!serverOk && oldName){
       const rep = await sbq('cleaners?name=eq.'+encodeURIComponent(oldName), {method:'PATCH', body: payload});
-      serverOk = !!(rep && rep.length);
+      serverOk = sbqRepOk(rep);
+    }
+    if(!serverOk && oldName){
+      const all = await sbq('cleaners?select=id,name,phone');
+      const hit = (all||[]).find(r=>String(r.name).trim()===String(oldName).trim());
+      if(hit && hit.id!=null){
+        matchedDbRow = hit;
+        const rep = await sbq('cleaners?id=eq.'+hit.id, {method:'PATCH', body: payload});
+        serverOk = sbqRepOk(rep);
+      }
+    }
+    if(!serverOk && !matchedDbRow){
+      const ins = await sbq('cleaners', {
+        method:'POST',
+        body: JSON.stringify({name:newName, phone:newPhone||null, position_order: Math.min(i+1,999)})
+      });
+      serverOk = sbqRepOk(ins);
     }
     rekeyCleanerCache(oldName, newName);
     if(serverOk){

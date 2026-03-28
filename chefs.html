@@ -535,7 +535,7 @@ body{background:var(--bg);color:var(--tx);font-family:'Noto Sans Georgian',sans-
       <!-- CHEFS TAB -->
       <div id="aChefs" style="display:none">
         <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
-          <span style="font-size:.8rem;font-weight:800;">მზარეულების სია</span>
+          <span style="font-size:.8rem;font-weight:800;">მზარეულების სია (Supabase)</span>
           <button class="sbtn" style="padding:7px 14px;font-size:.72rem;" onclick="showAddChef()">+ დამატება</button>
         </div>
         <div id="chefsList"></div>
@@ -688,20 +688,13 @@ function gselShiftClass(val){
   return ['s-m','s-a','s-e'][i % 3];
 }
 
-/* hardcoded Mar 22 – Apr 4 (Sun–Sat) */
+/* საჯარო ცხრილის თარიღები; ცვლები — chef_positions + ადმინი */
 const FCOLS = [
   {y:2026,m:3,d:22,wd:0},{y:2026,m:3,d:23,wd:1},{y:2026,m:3,d:24,wd:2},
   {y:2026,m:3,d:25,wd:3},{y:2026,m:3,d:26,wd:4},{y:2026,m:3,d:27,wd:5},
   {y:2026,m:3,d:28,wd:6},{y:2026,m:3,d:29,wd:0},{y:2026,m:3,d:30,wd:1},
   {y:2026,m:3,d:31,wd:2},{y:2026,m:4,d:1,wd:3},{y:2026,m:4,d:2,wd:4},
   {y:2026,m:4,d:3,wd:5},{y:2026,m:4,d:4,wd:6}
-];
-const CHEFS = [
-  {name:'გიორგი უსუფაშვილი', phone:'555 201 101', shifts:['10:00','14:00','OFF','10:00','14:00','OFF','10:00','14:00','OFF','10:00','14:00','OFF','10:00','14:00']},
-  {name:'ლევან ბაკურაძე',   phone:'555 201 102', shifts:['14:00','OFF','10:00','14:00','14:00','OFF','14:00','OFF','10:00','14:00','14:00','OFF','14:00','OFF']},
-  {name:'დავით ხაჭაპურიძე', phone:'555 201 103', shifts:['OFF','10:00','14:00','OFF','10:00','14:00','OFF','10:00','14:00','OFF','10:00','14:00','OFF','10:00']},
-  {name:'ნიკოლოზ გოგოლაძე', phone:'555 201 104', shifts:['10:00','10:00','14:00','OFF','OFF','14:00','10:00','14:00','OFF','15:00','OFF','14:00','10:00','OFF']},
-  {name:'შოთა მელაძე',      phone:'555 201 105', shifts:['14:00','14:00','OFF','10:00','14:00','14:00','OFF','10:00','14:00','OFF','10:00','14:00','OFF','14:00']}
 ];
 
 /* ══════════════════════════════
@@ -753,14 +746,9 @@ function nowTimeStr(){
   return String(t.getHours()).padStart(2,'0')+':'+String(t.getMinutes()).padStart(2,'0');
 }
 
-// get shift for a chef on a date (DB overrides hardcoded)
 function getShift(name,y,m,d){
   const key=pk(name,dk(y,m,d));
-  // DB entry exists and has explicit shift_time
   if(DB[key] && DB[key].shift_time && DB[key].shift_time!=='') return DB[key].shift_time;
-  // fallback to hardcoded FCOLS
-  const i=FCOLS.findIndex(c=>c.y===y&&c.m===m&&c.d===d);
-  if(i>=0){ const w=CHEFS.find(ww=>ww.name===name); return w?w.shifts[i]:'OFF'; }
   return 'OFF';
 }
 function getNote(name,y,m,d){ return DB[pk(name,dk(y,m,d))]?.notes||''; }
@@ -776,7 +764,7 @@ async function sbq(path,opts={}){
     'Prefer':'return=representation'
   };
   if(opts.headers) Object.assign(h, opts.headers);
-  const r=await fetch(SB+'/rest/v1/'+path,{...opts, headers:h});
+  const r=await fetch(SB+'/rest/v1/'+path,{...opts, headers:h, cache:'no-store'});
   const t=await r.text();
   if(!r.ok) throw new Error(t);
   return t?JSON.parse(t):null;
@@ -1398,30 +1386,38 @@ function showCalDay(y,m,d){
 }
 
 /* ══════════════════════════════
-   CHEFS MANAGEMENT
+   CHEFS — public.chefs (Supabase)
 ══════════════════════════════ */
-let DYNAMIC_CHEFS = [...CHEFS];
+let DYNAMIC_CHEFS = [];
 
 function escHtml(s){
   return String(s??'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/"/g,'&quot;');
 }
 
+function sbqRepOk(rep){
+  if(rep==null) return false;
+  if(Array.isArray(rep)) return rep.length > 0;
+  return typeof rep === 'object';
+}
+
 async function loadChefs(){
   try{
     const rows = await sbq('chefs?select=id,name,phone&order=position_order');
-    if(rows && rows.length > 0){
-      DYNAMIC_CHEFS = rows.map(r=>({id:r.id, name:r.name, phone:r.phone, shifts:[]}));
-    } else {
-      DYNAMIC_CHEFS = [...CHEFS];
-    }
+    DYNAMIC_CHEFS = (rows && rows.length > 0)
+      ? rows.map(r=>({id:r.id, name:r.name, phone:(r.phone!=null&&r.phone!=='')?String(r.phone):'', shifts:[]}))
+      : [];
   }catch(e){
-    DYNAMIC_CHEFS = [...CHEFS];
+    console.warn('loadChefs', e);
   }
 }
 
 function renderChefsList(){
   const list = document.getElementById('chefsList');
   list.innerHTML = '';
+  if(!DYNAMIC_CHEFS.length){
+    list.innerHTML = '<p style="color:var(--mu);font-size:.76rem;padding:12px 0;line-height:1.45;">მზარეულები ცარიელია. დაამატე <b>Table Editor → chefs</b> ან გაუშვი <code>supabase/seed_employees.sql</code>, ან „+ დამატება“.</p>';
+    return;
+  }
   DYNAMIC_CHEFS.forEach((w,i)=>{
     const row = document.createElement('div');
     row.style.cssText='display:flex;align-items:center;padding:9px 0;border-bottom:1px solid var(--br);gap:10px;';
@@ -1495,12 +1491,31 @@ async function saveEditChef(){
     }
     const payload = JSON.stringify({name:newName, phone:newPhone||null});
     let serverOk = false;
-    if(w.id){
-      await sbq('chefs?id=eq.'+w.id, {method:'PATCH', body: payload});
-      serverOk = true;
-    } else if(oldName){
+    let matchedDbRow = null;
+    const idStr = (w.id!=null && String(w.id).trim()!=='') ? String(w.id) : '';
+    if(idStr){
+      const rep = await sbq('chefs?id=eq.'+idStr, {method:'PATCH', body: payload});
+      serverOk = sbqRepOk(rep);
+    }
+    if(!serverOk && oldName){
       const rep = await sbq('chefs?name=eq.'+encodeURIComponent(oldName), {method:'PATCH', body: payload});
-      serverOk = !!(rep && rep.length);
+      serverOk = sbqRepOk(rep);
+    }
+    if(!serverOk && oldName){
+      const all = await sbq('chefs?select=id,name,phone');
+      const hit = (all||[]).find(r=>String(r.name).trim()===String(oldName).trim());
+      if(hit && hit.id!=null){
+        matchedDbRow = hit;
+        const rep = await sbq('chefs?id=eq.'+hit.id, {method:'PATCH', body: payload});
+        serverOk = sbqRepOk(rep);
+      }
+    }
+    if(!serverOk && !matchedDbRow){
+      const ins = await sbq('chefs', {
+        method:'POST',
+        body: JSON.stringify({name:newName, phone:newPhone||null, position_order: Math.min(i+1,999)})
+      });
+      serverOk = sbqRepOk(ins);
     }
     rekeyChefCache(oldName, newName);
     if(serverOk){
