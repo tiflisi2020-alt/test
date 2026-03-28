@@ -774,7 +774,7 @@ async function sbq(path,opts={}){
     'Prefer':'return=representation'
   };
   if(opts.headers) Object.assign(h, opts.headers);
-  const r=await fetch(SB+'/rest/v1/'+path,{...opts, headers:h});
+  const r=await fetch(SB+'/rest/v1/'+path,{...opts, headers:h, cache:'no-store'});
   const t=await r.text();
   if(!r.ok) throw new Error(t);
   return t?JSON.parse(t):null;
@@ -1408,12 +1408,13 @@ async function loadCashiers(){
   try{
     const rows = await sbq('cashiers?select=id,name,phone&order=position_order');
     if(rows && rows.length > 0){
-      DYNAMIC_CASHIERS = rows.map(r=>({id:r.id, name:r.name, phone:r.phone, shifts:[]}));
+      DYNAMIC_CASHIERS = rows.map(r=>({id:r.id, name:r.name, phone:(r.phone!=null&&r.phone!=='')?String(r.phone):'', shifts:[]}));
     } else {
-      DYNAMIC_CASHIERS = [...CASHIERS];
+      DYNAMIC_CASHIERS = CASHIERS.map(w=>({name:w.name, phone:w.phone||'', shifts:[], id:undefined}));
     }
   }catch(e){
-    DYNAMIC_CASHIERS = [...CASHIERS];
+    console.warn('loadCashiers', e);
+    /* არ ვაბრუნებთ ჩაშენებულ სიას — თორემ წარმატებული რედაქტირების შემდეგ ქსელის შეცდომა ძველ ნომერს აჩენს */
   }
 }
 
@@ -1497,10 +1498,12 @@ async function saveEditCashier(){
     }
     const payload = JSON.stringify({name:newName, phone:newPhone||null});
     let serverOk = false;
-    if(w.id){
-      await sbq('cashiers?id=eq.'+w.id, {method:'PATCH', body: payload});
-      serverOk = true;
-    } else if(oldName){
+    const idStr = (w.id!=null && String(w.id).trim()!=='') ? String(w.id) : '';
+    if(idStr){
+      let rep = await sbq('cashiers?id=eq.'+idStr, {method:'PATCH', body: payload});
+      serverOk = !!(rep && rep.length);
+    }
+    if(!serverOk && oldName){
       const rep = await sbq('cashiers?name=eq.'+encodeURIComponent(oldName), {method:'PATCH', body: payload});
       serverOk = !!(rep && rep.length);
     }
