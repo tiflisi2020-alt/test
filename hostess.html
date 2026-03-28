@@ -475,6 +475,7 @@ body{background:var(--bg);color:var(--tx);font-family:'Noto Sans Georgian',sans-
         <button class="atab" onclick="aTab('copy',this)">🔄 კოპირება</button>
         <button class="atab" onclick="aTab('stats',this)">📊 სტატისტიკა</button>
         <button class="atab" onclick="aTab('notif',this)">🔔 შეტყობინება</button>
+        <button class="atab" onclick="aTab('shifts',this)">⏱ ცვლები</button>
       </div>
 
       <!-- GRID TAB -->
@@ -505,10 +506,7 @@ body{background:var(--bg);color:var(--tx);font-family:'Noto Sans Georgian',sans-
             <button class="flt-clear" style="background:rgba(248,113,113,.25);border-color:rgba(248,113,113,.5);" onclick="deleteFiltered()">🗑 არჩეულის წაშლა</button>
           </div>
           <div class="flt-label" style="margin-top:2px;">შიფტი</div>
-          <div class="flt-chips">
-            <span class="flt-chip fc-a active" onclick="toggleFltChipH(this)">14–00</span>
-            <span class="flt-chip fc-o active" onclick="toggleFltChip(this,'OFF')">OFF</span>
-          </div>
+          <div class="flt-chips" id="fltShiftChips"></div>
         </div>
         <div class="ag-wrap">
           <table class="ag-table" id="agTable"></table>
@@ -548,6 +546,16 @@ body{background:var(--bg);color:var(--tx);font-family:'Noto Sans Georgian',sans-
             </div>
           </div>
         </div>
+      </div>
+
+      <div id="aShifts" style="display:none">
+        <p style="font-size:.74rem;color:var(--mu);margin-bottom:10px;line-height:1.45;">თითო ხაზზე ერთი ცვლის ვარიანტი (ნაგულობრივი: <code>14:00–00:00</code> და <code>OFF</code>). ინახება ამ მოწყობილობაზე (localStorage).</p>
+        <textarea id="shiftEditorTa" class="inp" style="width:100%;min-height:160px;font-family:ui-monospace,monospace;font-size:.8rem;resize:vertical;" spellcheck="false" aria-label="ცვლების სია"></textarea>
+        <div style="display:flex;flex-wrap:wrap;gap:8px;margin-top:12px;">
+          <button type="button" class="sbtn" onclick="saveShiftEditor()">💾 შენახვა და განახლება</button>
+          <button type="button" class="sbtn" style="background:var(--s3);color:var(--tx);" onclick="resetShiftEditorDefaults()">↺ ქარხნულზე</button>
+        </div>
+        <p id="shiftEditorSt" style="font-size:.68rem;color:var(--V-c);margin-top:10px;min-height:1.2em;"></p>
       </div>
 
       <!-- COPY TAB -->
@@ -629,7 +637,37 @@ const MSH = ['იან','თებ','მარ','აპრ','მაი','ივ
 
 /** ჰოსტესის ცვლა: 14:00-დან ღამის ბოლომდე (საჩვენებლად 00:00) */
 const H_SHIFT = '14:00\u201300:00';
-const SHIFTS_OPT = [H_SHIFT,'OFF'];
+const SHIFTS_OPT_DEFAULT = [H_SHIFT,'OFF'];
+const SHIFTS_LS_KEY = 'tiflisi_shifts_hostess';
+function getShiftsOpt(){
+  try{
+    const raw = localStorage.getItem(SHIFTS_LS_KEY);
+    if(!raw) return SHIFTS_OPT_DEFAULT.slice();
+    const a = JSON.parse(raw);
+    if(!Array.isArray(a) || !a.length) return SHIFTS_OPT_DEFAULT.slice();
+    const seen = new Set();
+    const out = [];
+    for(const x of a){
+      const s = String(x).trim();
+      if(!s || s.length > 36 || seen.has(s)) continue;
+      seen.add(s); out.push(s);
+    }
+    return out.length ? out : SHIFTS_OPT_DEFAULT.slice();
+  }catch(_){ return SHIFTS_OPT_DEFAULT.slice(); }
+}
+function setShiftsOpt(arr){
+  localStorage.setItem(SHIFTS_LS_KEY, JSON.stringify(arr));
+}
+function resetShiftsOpt(){
+  localStorage.removeItem(SHIFTS_LS_KEY);
+}
+function gselShiftClass(val){
+  if(!val || val === 'OFF') return 's-o';
+  const opts = getShiftsOpt();
+  const i = opts.indexOf(val);
+  if(i < 0) return 's-o';
+  return ['s-m','s-a','s-e'][i % 3];
+}
 
 /* hardcoded Mar 22 – Apr 4 (Sun–Sat) — მარიამი 24–25 ცვლაში; ანა 2×2-ში საპირისპიროდ */
 const FCOLS = [
@@ -661,12 +699,13 @@ const pk  = (name,datekey) => `${name}|${datekey}`;
 const iW  = wd => wd===0||wd===6;
 function scls(v){
   if(!v||v==='OFF')return'o';
-  if(v===H_SHIFT)return'a';
-  return'o';
+  const opts = getShiftsOpt();
+  const i = opts.indexOf(v);
+  if(i < 0) return 'o';
+  return ['m','a','e'][i % 3];
 }
 function lbl(v){
   if(!v||v==='OFF')return'OFF';
-  if(v===H_SHIFT)return'14–00';
   return v;
 }
 
@@ -828,12 +867,16 @@ function renderCardsByWeek(days){
   const opens=new Set([...vw.querySelectorAll('.wcard.open')].map(c=>c.dataset.n));
   vw.innerHTML='';
   DYNAMIC_HOSTESSES.forEach(w=>{
-    let h=0;
+    const cnt = {};
+    getShiftsOpt().forEach(s=>{ if(s!=='OFF') cnt[s]=0; });
     days.forEach(c=>{
       const s=getShift(w.name,c.y,c.m,c.d);
-      if(s===H_SHIFT)h++;
+      if(s!=='OFF' && Object.prototype.hasOwnProperty.call(cnt,s)) cnt[s]++;
     });
-    const bdgs=h?`<span class="bdg a">14–00×${h}</span>`:'';
+    const bdgs=getShiftsOpt().filter(s=>s!=='OFF' && cnt[s]).map(s=>{
+      const lab=s.length>10?s.slice(0,9)+'…':s;
+      return `<span class="bdg ${scls(s)}">${lab.replace(/</g,'&lt;')}×${cnt[s]}</span>`;
+    }).join('');
     const chips=days.map((c)=>{
       const s=getShift(w.name,c.y,c.m,c.d);
       return `<div class="chip ${scls(s)} ${iW(c.wd)?'wknd':''}">
@@ -988,6 +1031,7 @@ function openAdminPanel(){
   renderHostessesList();
   const nt=new Date(); statY=nt.getFullYear(); statM=nt.getMonth();
   document.getElementById('adminOv').classList.add('show');
+  renderShiftFilterChips();
 }
 function aTab(tab,btn){
   document.querySelectorAll('.atab').forEach(b=>b.classList.remove('active'));
@@ -998,6 +1042,7 @@ function aTab(tab,btn){
   document.getElementById('aCopy').style.display=tab==='copy'?'block':'none';
   document.getElementById('aStats').style.display=tab==='stats'?'block':'none';
   document.getElementById('aNotif').style.display=tab==='notif'?'block':'none';
+  document.getElementById('aShifts').style.display=tab==='shifts'?'block':'none';
   if(tab==='hostesses') renderHostessesList();
   if(tab==='copy') updateCopyLabels();
   if(tab==='stats') renderStats();
@@ -1009,6 +1054,11 @@ function aTab(tab,btn){
       document.getElementById('notifStatus').className='notif-status ok';
       document.getElementById('notifStatus').textContent='✓ ჩართულია · '+tv;
     }
+  }
+  if(tab==='shifts'){
+    fillShiftEditorTa();
+    const st=document.getElementById('shiftEditorSt');
+    if(st) st.textContent='';
   }
 }
 
@@ -1050,9 +1100,9 @@ function renderAdminGrid(){
       const curN=getNote(w.name,c.y,c.m,c.d);
       const td=document.createElement('td');
 
-      const shiftOpts=SHIFTS_OPT.map(s=>`<option value="${s}"${curS===s?' selected':''}>${s}</option>`).join('');
+      const shiftOpts=getShiftsOpt().map(s=>`<option value="${s.replace(/"/g,'&quot;')}"${curS===s?' selected':''}>${s.replace(/</g,'&lt;')}</option>`).join('');
 
-      const sClass = curS===H_SHIFT?'s-a':'s-o';
+      const sClass = gselShiftClass(curS);
       td.innerHTML=`<div class="gcell">
         <select class="gsel ${sClass}" data-n="${w.name}" data-dk="${dkv}" data-t="s" onchange="colorSel(this)">${shiftOpts}</select>
         <input class="ginp" placeholder="შენიშვნა" value="${String(curN||'').replace(/&/g,'&amp;').replace(/"/g,'&quot;')}" data-n="${w.name}" data-dk="${dkv}" data-t="n">
@@ -1106,7 +1156,56 @@ async function saveGrid(){
 }
 
 /* ── FILTER ── */
-let fltShifts = new Set([H_SHIFT,'OFF']);
+let fltShifts = new Set();
+
+function renderShiftFilterChips(){
+  const wrap = document.getElementById('fltShiftChips');
+  if(!wrap) return;
+  wrap.innerHTML = '';
+  const opts = getShiftsOpt();
+  fltShifts = new Set(opts);
+  opts.forEach(s=>{
+    const span = document.createElement('span');
+    span.className = 'flt-chip fc-' + scls(s) + ' active';
+    span.textContent = s.length > 18 ? s.slice(0,16)+'…' : s;
+    span.title = s;
+    span.onclick = ()=> toggleFltShiftChip(span, s);
+    wrap.appendChild(span);
+  });
+}
+function toggleFltShiftChip(el, val){
+  if(fltShifts.has(val)){ fltShifts.delete(val); el.classList.remove('active'); }
+  else { fltShifts.add(val); el.classList.add('active'); }
+  applyFilter();
+}
+function fillShiftEditorTa(){
+  const ta = document.getElementById('shiftEditorTa');
+  if(ta) ta.value = getShiftsOpt().join('\n');
+}
+function saveShiftEditor(){
+  const ta = document.getElementById('shiftEditorTa');
+  const st = document.getElementById('shiftEditorSt');
+  if(!ta) return;
+  const lines = ta.value.split(/\r?\n/).map(l=>l.trim()).filter(Boolean);
+  if(!lines.length){ if(st) st.textContent = 'მინიმუმ ერთი ვარიანტი საჭიროა.'; return; }
+  if(lines.length > 24){ if(st) st.textContent = 'არაუმეტეს 24 ხაზი.'; return; }
+  setShiftsOpt(lines);
+  fltShifts = new Set(getShiftsOpt());
+  renderShiftFilterChips();
+  renderAdminGrid();
+  renderAll();
+  if(st) st.textContent = '✓ შენახულია. ცხრილი განახლდა.';
+}
+function resetShiftEditorDefaults(){
+  resetShiftsOpt();
+  fillShiftEditorTa();
+  fltShifts = new Set(getShiftsOpt());
+  renderShiftFilterChips();
+  renderAdminGrid();
+  renderAll();
+  const st = document.getElementById('shiftEditorSt');
+  if(st) st.textContent = 'ქარხნული სია აღდგა.';
+}
 
 function initFilter(){
   const sel = document.getElementById('fltHostess');
@@ -1117,13 +1216,6 @@ function initFilter(){
     sel.appendChild(o);
   });
 }
-
-function toggleFltChip(el, val){
-  if(fltShifts.has(val)){ fltShifts.delete(val); el.classList.remove('active'); }
-  else { fltShifts.add(val); el.classList.add('active'); }
-  applyFilter();
-}
-function toggleFltChipH(el){ toggleFltChip(el, H_SHIFT); }
 
 function applyFilter(){
   const hostess = document.getElementById('fltHostess').value;
@@ -1171,8 +1263,8 @@ function clearFilter(){
   document.getElementById('fltHostess').value = '';
   document.getElementById('fltFrom').value   = '';
   document.getElementById('fltTo').value     = '';
-  fltShifts = new Set([H_SHIFT,'OFF']);
-  document.querySelectorAll('.flt-chip').forEach(c=>c.classList.add('active'));
+  fltShifts = new Set(getShiftsOpt());
+  renderShiftFilterChips();
   document.querySelectorAll('#agTable tbody td').forEach(td=>td.style.opacity='1');
   document.querySelectorAll('#agTable tbody tr').forEach(tr=>tr.style.display='');
 }
@@ -1216,8 +1308,7 @@ async function deleteFiltered(){
 /* ── COLOR SELECT ── */
 function colorSel(sel){
   sel.className = 'gsel';
-  const map = {[H_SHIFT]:'s-a','OFF':'s-o'};
-  sel.classList.add(map[sel.value]||'s-o');
+  sel.classList.add(gselShiftClass(sel.value));
 }
 
 /* ── CALENDAR ── */
@@ -1576,26 +1667,37 @@ function renderStats(){
   const statContainer = document.createElement('div');
   statContainer.className = 'stat-grid';
 
+  const shiftStatOpts = getShiftsOpt().filter(s=>s!=='OFF');
+  const palC = ['var(--m-c)','var(--a-c)','var(--e-c)'];
+
   DYNAMIC_HOSTESSES.forEach(w=>{
-    let hCnt=0, totalDays=0;
+    const cnt = {};
+    shiftStatOpts.forEach(s=>{ cnt[s]=0; });
+    let totalDays = 0;
     monthDays.forEach(c=>{
       const s = getShift(w.name, c.y, c.m, c.d);
-      if(s === H_SHIFT){ hCnt++; totalDays++; }
+      if(s !== 'OFF'){
+        totalDays++;
+        if(Object.prototype.hasOwnProperty.call(cnt,s)) cnt[s]++;
+      }
     });
 
-    if(totalDays === 0) return; // skip if no data this month
+    if(totalDays === 0) return;
 
     const card = document.createElement('div');
     card.className = 'stat-card';
 
-    const bars = [
-      {label:'14:00–00:00', val:hCnt, col:'var(--a-c)', bg:'var(--a-b)'},
-    ].filter(b=>b.val>0).map(b=>`
+    const bars = shiftStatOpts.map((s,i)=>{
+      const v = cnt[s];
+      if(!v) return '';
+      const col = palC[i % palC.length];
+      return `
       <div class="stat-bar-row">
-        <div class="stat-bar-label">${b.label}</div>
-        <div class="stat-bar-wrap"><div class="stat-bar-fill" style="width:${Math.round(b.val/maxDays*100)}%;background:${b.col}"></div></div>
-        <div class="stat-bar-val" style="color:${b.col}">${b.val}</div>
-      </div>`).join('');
+        <div class="stat-bar-label">${s.replace(/</g,'&lt;')}</div>
+        <div class="stat-bar-wrap"><div class="stat-bar-fill" style="width:${Math.round(v/maxDays*100)}%;background:${col}"></div></div>
+        <div class="stat-bar-val" style="color:${col}">${v}</div>
+      </div>`;
+    }).join('');
 
     card.innerHTML = `
       <div class="sc-name">${w.name.split(' ')[0]} ${w.name.split(' ')[1]||''}</div>
