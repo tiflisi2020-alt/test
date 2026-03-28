@@ -1,0 +1,7 @@
+{
+  "cleanUrls": false,
+  "rewrites": [
+    { "source": "waiters", "destination": "/waiters.html" },
+    { "source": "waiters/", "destination": "/waiters.html" }
+  ]
+}
