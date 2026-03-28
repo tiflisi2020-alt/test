@@ -1,6 +1,6 @@
 const CACHE = 'schedule-v16';
 const BASE = self.location.pathname.replace(/\/sw\.js$/i, '') || '';
-const asset = (p) => (BASE + (p.startsWith('/') ? p : '/' + p)).replace(/\/\/{2,}/g, '/');
+const asset = (p) => (BASE + (p.startsWith('/') ? p : '/' + p)).replace(/\/\/+/g, '/');
 
 const ASSETS = [
   asset('/'),
