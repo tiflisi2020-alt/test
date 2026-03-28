@@ -186,9 +186,10 @@ body{background:var(--bg);color:var(--tx);font-family:'Noto Sans Georgian',sans-
 .errmsg{color:#f87171;font-size:.75rem;text-align:center;min-height:18px;}
 
 /* ADMIN TABS */
-.atabs{display:flex;gap:6px;margin-bottom:16px;}
-.atab{flex:1;padding:8px;border-radius:8px;border:1px solid var(--br);background:var(--s2);
-  color:var(--mu);font-family:inherit;font-size:.72rem;font-weight:700;cursor:pointer;transition:all .15s;}
+.atabs{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:16px;}
+.atab{flex:1 1 calc(33.333% - 4px);min-width:min(7.25rem, 100%);max-width:100%;box-sizing:border-box;
+  padding:8px 4px;border-radius:8px;border:1px solid var(--br);background:var(--s2);
+  color:var(--mu);font-family:inherit;font-size:.68rem;font-weight:700;cursor:pointer;transition:all .15s;}
 .atab.active{background:var(--ac);color:#000;border-color:var(--ac);}
 
 /* ADMIN GRID */

@@ -247,9 +247,10 @@ body.light .ov{background:rgba(45,38,32,.52);}
 .errmsg{color:#f87171;font-size:.75rem;text-align:center;min-height:18px;}
 
 /* ADMIN TABS */
-.atabs{display:flex;gap:6px;margin-bottom:16px;}
-.atab{flex:1;padding:8px;border-radius:8px;border:1px solid var(--br);background:var(--s2);
-  color:var(--mu);font-family:inherit;font-size:.72rem;font-weight:700;cursor:pointer;transition:all .15s;}
+.atabs{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:16px;}
+.atab{flex:1 1 calc(33.333% - 4px);min-width:min(7.25rem, 100%);max-width:100%;box-sizing:border-box;
+  padding:8px 4px;border-radius:8px;border:1px solid var(--br);background:var(--s2);
+  color:var(--mu);font-family:inherit;font-size:.68rem;font-weight:700;cursor:pointer;transition:all .15s;}
 .atab.active{background:var(--ac);color:var(--on-ac);border-color:var(--ac);}
 
 /* ADMIN GRID */
@@ -643,6 +644,7 @@ body.light input:focus-visible,body.light select:focus-visible{
   .hdr-icon{width:52px;height:52px;font-size:1.55rem;border-radius:15px;}
   .app-cleaning .modal{max-width:min(92vw, 560px);}
   .atabs{flex-wrap:wrap;overflow-x:visible;mask-image:none!important;scroll-snap-type:none;}
+  .atab{flex:1 1 calc(33.333% - 4px);min-width:min(7.25rem, 100%);max-width:100%;box-sizing:border-box;padding:8px 4px;font-size:.68rem;}
 }
 </style>
 </head>
