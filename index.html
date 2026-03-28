@@ -27,10 +27,13 @@ body{
   background:var(--bg);
   color:var(--tx);
   min-height:100vh;
+  min-height:100dvh;
   display:flex;
   flex-direction:column;
   align-items:center;
-  padding:24px 16px 32px;
+  padding:24px 16px max(32px, env(safe-area-inset-bottom, 0px));
+  line-height:1.45;
+  -webkit-font-smoothing:antialiased;
 }
 @supports ((-webkit-backdrop-filter:blur(1px)) or (backdrop-filter:blur(1px))){
   body{
@@ -100,9 +103,17 @@ body.light .logo-wrap canvas{filter:drop-shadow(0 2px 10px rgba(60,35,28,.1));}
 }
 .card:hover,.card:focus-visible{
   border-color:var(--ac);
-  box-shadow:0 4px 24px rgba(0,0,0,.2);
+  box-shadow:0 6px 28px rgba(0,0,0,.22);
+}
+body.light .card:hover,body.light .card:focus-visible{
+  box-shadow:0 8px 32px rgba(60,45,35,.1);
+}
+.card:focus-visible{
+  outline:2px solid var(--ac);
+  outline-offset:3px;
 }
 .card:active{transform:scale(.99);}
+.tbtn:focus-visible{outline:2px solid var(--ac);outline-offset:2px;}
 .card-ico{
   width:52px;height:52px;border-radius:14px;
   display:flex;align-items:center;justify-content:center;
@@ -137,6 +148,62 @@ body.light .c-cl .card-ico{background:rgba(6,95,70,.14);}
   .hero h1{font-size:1.75rem;}
   .cards{max-width:520px;}
 }
+.chat-wrap{
+  width:100%;max-width:420px;margin-top:28px;
+  scroll-margin-top:20px;
+}
+@media(min-width:720px){ .chat-wrap{max-width:520px;} }
+.chat-card{
+  background:var(--sf);
+  border:1px solid var(--br);
+  border-radius:16px;
+  padding:18px 18px 16px;
+  text-align:left;
+}
+.chat-h{
+  font-size:1rem;font-weight:900;letter-spacing:-.2px;
+  display:flex;align-items:center;gap:8px;
+}
+.chat-h span{font-size:1.15rem;}
+.chat-sub{
+  font-size:.68rem;color:var(--mu);margin:6px 0 14px;line-height:1.4;
+}
+.chat-msgs{
+  max-height:min(42vh,320px);overflow-y:auto;
+  border:1px solid var(--br);border-radius:12px;
+  padding:10px 12px;background:color-mix(in srgb,var(--bg) 55%,var(--sf));
+  margin-bottom:12px;
+  font-size:.8rem;line-height:1.4;
+}
+body.light .chat-msgs{background:color-mix(in srgb,var(--bg) 35%,var(--sf));}
+.chat-msg{margin-bottom:12px;padding-bottom:10px;border-bottom:1px solid var(--br);}
+.chat-msg:last-child{margin-bottom:0;padding-bottom:0;border-bottom:none;}
+.chat-msg-meta{
+  font-size:.62rem;color:var(--mu);margin-bottom:4px;
+  display:flex;flex-wrap:wrap;gap:6px;align-items:baseline;
+}
+.chat-msg-meta strong{color:var(--ac);font-weight:800;font-size:.72rem;}
+.chat-msg-body{white-space:pre-wrap;word-break:break-word;}
+.chat-form{display:flex;flex-direction:column;gap:8px;}
+.chat-form input,.chat-form textarea{
+  width:100%;font-family:inherit;font-size:.85rem;
+  padding:10px 12px;border-radius:10px;
+  border:1px solid var(--br);background:var(--s2);color:var(--tx);
+}
+.chat-form textarea{resize:vertical;min-height:52px;max-height:140px;}
+.chat-form input::placeholder,.chat-form textarea::placeholder{color:var(--mu);opacity:.85;}
+.chat-send{
+  align-self:flex-start;font-family:inherit;font-weight:800;font-size:.82rem;
+  padding:10px 18px;border-radius:10px;cursor:pointer;
+  border:1px solid var(--ac);background:color-mix(in srgb,var(--ac) 22%,transparent);
+  color:var(--ac);
+}
+.chat-send:hover{border-color:var(--ac2);color:var(--ac2);}
+.chat-send:disabled{opacity:.5;cursor:not-allowed;}
+.chat-err{font-size:.68rem;color:#e85d4c;margin-top:8px;}
+body.light .chat-err{color:#b91c1c;}
+.chat-empty{color:var(--mu);font-size:.75rem;text-align:center;padding:16px 8px;}
+.chat-poll{font-size:.6rem;color:var(--mu);margin-top:8px;text-align:right;}
 </style>
 </head>
 <body>
@@ -197,6 +264,21 @@ body.light .c-cl .card-ico{background:rgba(6,95,70,.14);}
   </a>
 </nav>
 
+<section class="chat-wrap" id="staffChat" aria-label="საერთო ჩატი">
+  <div class="chat-card">
+    <h2 class="chat-h"><span aria-hidden="true">💬</span> საერთო ჩატი</h2>
+    <p class="chat-sub">ერთი ჩატი ყველა განყოფილებისთვის. შეტყობინებები ინახება Supabase-ში — გაუშვით SQL ცხრილი თუ ჯერ არ გაქვთ.</p>
+    <div class="chat-msgs" id="chatMsgs" role="log" aria-live="polite" aria-relevant="additions"></div>
+    <form class="chat-form" id="chatForm" onsubmit="return false;">
+      <input type="text" id="chatAuthor" name="author" maxlength="40" placeholder="თქვენი სახელი" autocomplete="nickname" aria-label="სახელი">
+      <textarea id="chatBody" name="body" maxlength="800" placeholder="შეტყობინება…" rows="2" aria-label="ტექსტი"></textarea>
+      <button type="button" class="chat-send" id="chatSend">გაგზავნა</button>
+    </form>
+    <p class="chat-err" id="chatErr" hidden></p>
+    <p class="chat-poll" id="chatPollNote"></p>
+  </div>
+</section>
+
 <p class="foot">თუ აპი დაინსტალირებული გაქვთ, მთავარი გვერდი ყოველთვის აქედან იწყება.</p>
 
 <script>
@@ -210,6 +292,146 @@ function toggleTheme(){
     document.body.classList.add('light');
     document.getElementById('themeBtn').textContent = '☀️';
   }
+})();
+
+/* საერთო ჩატი (Supabase REST) */
+(function(){
+  const SB  = 'https://bbroknpeebjuilycutjd.supabase.co';
+  const KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJicm9rbnBlZWJqdWlseWN1dGpkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzM4NTk0NjksImV4cCI6MjA4OTQzNTQ2OX0.7rlaolshlMLtFObv6ViaifiSNkiYofiCRm8q2SiJns8';
+  const LS_AUTHOR = 'mainChatAuthor';
+  const PATH = 'main_chat_messages?select=id,author,body,created_at&order=created_at.desc&limit=100';
+
+  const elMsgs = document.getElementById('chatMsgs');
+  const elAuthor = document.getElementById('chatAuthor');
+  const elBody = document.getElementById('chatBody');
+  const elSend = document.getElementById('chatSend');
+  const elErr = document.getElementById('chatErr');
+  const elPoll = document.getElementById('chatPollNote');
+  if(!elMsgs||!elAuthor||!elBody||!elSend) return;
+
+  elAuthor.value = localStorage.getItem(LS_AUTHOR) || '';
+
+  function showErr(t){
+    if(!t){ elErr.hidden = true; elErr.textContent = ''; return; }
+    elErr.hidden = false;
+    elErr.textContent = t;
+  }
+
+  async function sbFetch(path, opts){
+    const h = {
+      'apikey': KEY,
+      'Authorization': 'Bearer ' + KEY,
+      'Content-Type': 'application/json'
+    };
+    if(opts && opts.headers) Object.assign(h, opts.headers);
+    const r = await fetch(SB + '/rest/v1/' + path, {...opts, headers: h});
+    return r;
+  }
+
+  function fmtTime(iso){
+    try{
+      const d = new Date(iso);
+      if(Number.isNaN(d.getTime())) return '';
+      return d.toLocaleString('ka-GE', {day:'2-digit', month:'short', hour:'2-digit', minute:'2-digit'});
+    }catch(_){ return ''; }
+  }
+
+  let lastSig = '';
+  function render(rows){
+    const arr = Array.isArray(rows) ? rows.slice().reverse() : [];
+    const sig = JSON.stringify(arr.map(m=>m.id+':'+m.body));
+    if(sig === lastSig) return;
+    lastSig = sig;
+    if(!arr.length){
+      elMsgs.innerHTML = '<p class="chat-empty">ჯერ შეტყობინება არ არის — დაწერეთ პირველი.</p>';
+      return;
+    }
+    elMsgs.innerHTML = arr.map(m=>{
+      const esc = s => String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+      const au = (m.author||'').trim() || 'ანონიმი';
+      const body = esc(m.body);
+      const tm = fmtTime(m.created_at);
+      return '<div class="chat-msg"><div class="chat-msg-meta"><strong>'+esc(au)+'</strong><span>'+esc(tm)+'</span></div><div class="chat-msg-body">'+body+'</div></div>';
+    }).join('');
+    elMsgs.scrollTop = elMsgs.scrollHeight;
+  }
+
+  let loading = false;
+  async function loadMsgs(){
+    if(loading) return;
+    loading = true;
+    try{
+      const r = await sbFetch(PATH, { method: 'GET' });
+      if(!r.ok){
+        const t = await r.text();
+        throw new Error(r.status === 404 ? 'ცხრილი არ არსებობს — გაუშვით SQL (main_chat_messages) Supabase-ში.' : (t || r.status));
+      }
+      const data = await r.json();
+      showErr('');
+      render(data);
+    }catch(e){
+      showErr(e.message || 'ჩატის ჩატვირთვა ვერ მოხერხდა.');
+      if(!elMsgs.querySelector('.chat-msg')) elMsgs.innerHTML = '<p class="chat-empty">შეცდომა ჩატვირთვისას.</p>';
+    }finally{
+      loading = false;
+    }
+  }
+
+  async function sendMsg(){
+    const author = elAuthor.value.trim().slice(0, 40);
+    const body = elBody.value.trim();
+    if(!body){ showErr('შეიყვანეთ ტექსტი.'); return; }
+    localStorage.setItem(LS_AUTHOR, author);
+    elSend.disabled = true;
+    showErr('');
+    try{
+      const r = await sbFetch('main_chat_messages', {
+        method: 'POST',
+        headers: { 'Prefer': 'return=minimal' },
+        body: JSON.stringify({ author, body })
+      });
+      if(!r.ok){
+        const t = await r.text();
+        throw new Error(r.status === 404 ? 'ცხრილი არ არსებობს — გაუშვით SQL Supabase-ში.' : (t || r.status));
+      }
+      elBody.value = '';
+      lastSig = '';
+      await loadMsgs();
+    }catch(e){
+      showErr(e.message || 'გაგზავნა ვერ მოხერხდა.');
+    }finally{
+      elSend.disabled = false;
+    }
+  }
+
+  elSend.addEventListener('click', sendMsg);
+
+  let pollId = null;
+  function startPoll(){
+    if(pollId) return;
+    loadMsgs();
+    pollId = setInterval(()=>{
+      if(document.hidden) return;
+      loadMsgs();
+    }, 5000);
+    elPoll.textContent = 'განახლება ~5 წამში ერთხელ';
+  }
+  function stopPoll(){ if(pollId){ clearInterval(pollId); pollId = null; } }
+
+  document.addEventListener('visibilitychange', ()=>{
+    if(!document.hidden) loadMsgs();
+  });
+
+  startPoll();
+
+  function scrollToChat(){
+    if(location.hash !== '#staffChat') return;
+    requestAnimationFrame(()=>{
+      document.getElementById('staffChat')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    });
+  }
+  scrollToChat();
+  window.addEventListener('hashchange', scrollToChat);
 })();
 
 (function(){

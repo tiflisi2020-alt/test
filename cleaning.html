@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
 <title>დალაგება · დასუფთავება — განრიგი</title>
 <link rel="manifest" href="manifest.json">
-<meta name="theme-color" content="#b8523d">
+<meta name="theme-color" content="#0d9488">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="განრიგი">
@@ -25,6 +25,14 @@
   --A-b:rgba(236,72,153,.14);  --A-c:#f472b6;
   --on-ac:#100d08;
   --on-v:#050806;
+  --clean:#2dd4bf;
+  --clean2:#14b8a6;
+  --clean-b:rgba(45,212,191,.18);
+  --clean-glow:rgba(45,212,191,.22);
+  --r-lg:14px;
+  --r-md:10px;
+  --shadow-1:0 2px 8px rgba(0,0,0,.2);
+  --shadow-2:0 12px 40px rgba(0,0,0,.28);
 }
 body.light{
   --bg:#faf4ee; --sf:#fff9f4; --s2:#f2ebe4; --s3:#ebe2d9;
@@ -39,17 +47,53 @@ body.light{
   --A-b:rgba(170,20,80,.1);   --A-c:#9d174d;
   --on-ac:#fffdf6;
   --on-v:#f0fdf5;
+  --clean:#0d9488;
+  --clean2:#0f766e;
+  --clean-b:rgba(13,148,136,.14);
+  --clean-glow:rgba(13,148,136,.18);
+  --shadow-1:0 2px 10px rgba(60,45,35,.06);
+  --shadow-2:0 14px 40px rgba(60,45,35,.1);
 }
 *{box-sizing:border-box;margin:0;padding:0;}
 html{-webkit-text-size-adjust:100%;}
-body{background:var(--bg);color:var(--tx);font-family:'Noto Sans Georgian',sans-serif;min-height:100vh;padding-bottom:60px;}
+body{background:var(--bg);color:var(--tx);font-family:'Noto Sans Georgian',sans-serif;min-height:100vh;
+  padding-bottom:max(60px, env(safe-area-inset-bottom, 0px));
+  line-height:1.45;
+  -webkit-font-smoothing:antialiased;
+}
+body.app-cleaning{
+  background:
+    radial-gradient(ellipse 85% 55% at 8% 95%, var(--clean-glow), transparent 52%),
+    var(--bg);
+}
+body.light.app-cleaning{
+  background:
+    radial-gradient(ellipse 85% 55% at 8% 95%, var(--clean-glow), transparent 52%),
+    var(--bg);
+}
+body.app-cleaning .hdr h1 span{color:var(--clean2);}
+body.light.app-cleaning .hdr h1 span{color:var(--clean);}
 
 /* ── Aero (მინის ეფექტი) ── */
 @supports ((-webkit-backdrop-filter:blur(1px)) or (backdrop-filter:blur(1px))){
+  body.app-cleaning{
+    background:
+      radial-gradient(ellipse 85% 55% at 8% 95%, var(--clean-glow), transparent 52%),
+      radial-gradient(ellipse 120% 70% at 50% -15%, rgba(212,175,55,.1), transparent 55%),
+      radial-gradient(ellipse 80% 50% at 100% 40%, rgba(184,82,61,.07), transparent 45%),
+      var(--bg);
+  }
   body{
     background:
       radial-gradient(ellipse 120% 70% at 50% -15%, rgba(212,175,55,.11), transparent 55%),
       radial-gradient(ellipse 80% 50% at 100% 40%, rgba(184,82,61,.08), transparent 45%),
+      var(--bg);
+  }
+  body.light.app-cleaning{
+    background:
+      radial-gradient(ellipse 85% 55% at 8% 95%, var(--clean-glow), transparent 52%),
+      radial-gradient(ellipse 120% 70% at 50% -15%, rgba(154,114,32,.06), transparent 55%),
+      radial-gradient(ellipse 80% 50% at 100% 40%, rgba(143,61,50,.05), transparent 45%),
       var(--bg);
   }
   body.light{
@@ -84,10 +128,11 @@ body.light .hdr.is-scrolled{box-shadow:0 12px 36px rgba(70,45,35,.12);}
 .hdr h1{font-size:1.15rem;font-weight:900;letter-spacing:-.3px;}
 .hdr h1 span{color:var(--ac);}
 .hdr-sub{font-size:.68rem;color:var(--mu);margin-top:2px;text-transform:uppercase;letter-spacing:.07em;}
-.leg{display:flex;gap:10px;flex-wrap:wrap;margin-top:8px;}
+.hdr-meta-row{display:flex;flex-direction:column;align-items:flex-start;gap:8px;margin-top:10px;}
+.leg{display:flex;gap:10px;flex-wrap:wrap;margin:0;}
 .li{display:flex;align-items:center;gap:5px;font-size:.66rem;color:var(--mu);}
 .ld{width:7px;height:7px;border-radius:50%;}
-.sync-row{display:flex;align-items:center;gap:6px;margin-top:5px;}
+.sync-row{display:flex;align-items:center;gap:6px;margin:0;}
 .sd{width:7px;height:7px;border-radius:50%;flex-shrink:0;}
 .sd.ok{background:#34d399;} .sd.spin{background:var(--ac);animation:blink 1s infinite;} .sd.err{background:#f87171;}
 @keyframes blink{0%,100%{opacity:1;}50%{opacity:.3;}}
@@ -311,13 +356,14 @@ body.light .ag-table tbody tr:hover td:first-child{background:var(--s2);}
 .cal-dn{flex:1;font-size:.8rem;font-weight:600;}
 .cal-dr{display:flex;gap:5px;align-items:center;flex-wrap:wrap;}
 
-/* DESKTOP */
+/* Tablet / small desktop: table view */
 @media(min-width:720px){
   body{padding:24px 16px 60px;}
+  .app-shell{max-width:1340px;margin:0 auto;}
   .hdr{position:static;border-radius:14px 14px 0 0;border:1px solid var(--br);border-bottom:none;
-    max-width:1340px;margin:0 auto;padding:18px 22px 14px;box-shadow:none;}
+    max-width:100%;margin:0;padding:18px 22px 14px;box-shadow:none;}
   .hdr h1{font-size:1.6rem;}
-  .wk-section{max-width:1340px;margin:0 auto;padding:0;border:1px solid var(--br);border-top:none;
+  .wk-section{max-width:100%;margin:0;padding:0;border:1px solid var(--br);border-top:none;
     border-bottom:none;background:var(--sf);}
   .wk-nav{padding:12px 16px 0;}
   .wk-grid{padding:8px 16px 12px;gap:6px;}
@@ -326,7 +372,7 @@ body.light .ag-table tbody tr:hover td:first-child{background:var(--s2);}
   .vtog{display:none;}
   #vw,#vd{display:none!important;}
   #dtbl{display:block;}
-  .twrap{max-width:1340px;margin:0 auto;overflow-x:auto;border:1px solid var(--br);
+  .twrap{max-width:100%;margin:0;overflow-x:auto;border:1px solid var(--br);
     border-top:none;border-radius:0 0 14px 14px;background:var(--sf);}
   table{width:100%;border-collapse:collapse;min-width:940px;}
   thead th{background:var(--bg);padding:8px 5px;font-size:.62rem;font-weight:700;
@@ -354,6 +400,93 @@ body.light .ag-table tbody tr:hover td:first-child{background:var(--s2);}
     font-size:.64rem;color:var(--mu);background:var(--bg);border-top:1px solid var(--br);
     flex-direction:column;gap:1px;}
   .scl .sc{font-size:.88rem;color:var(--tx);font-weight:700;}
+}
+
+/* Large desktop: unified application frame */
+.desk-section-h{display:none;}
+.app-shell{min-height:100vh;}
+@media(min-width:1024px){
+  body{padding:0 0 max(40px, env(safe-area-inset-bottom, 0px));font-size:15px;}
+  .desk-section-h{
+    display:block;margin:0;padding:18px 28px 10px;font-size:.7rem;font-weight:800;
+    text-transform:uppercase;letter-spacing:.1em;color:var(--mu);background:var(--bg);
+  }
+  .desk-section-h--table{padding-top:22px;border-top:1px solid var(--br);}
+  .app-shell{
+    max-width:min(100%, 1540px);margin:0 auto;
+    padding:28px 36px 48px;
+  }
+  .app-frame{
+    border:1px solid var(--br);border-radius:20px;background:var(--sf);
+    box-shadow:var(--shadow-2);overflow:hidden;
+  }
+  body.light .app-frame{box-shadow:0 8px 40px rgba(60,45,35,.09);}
+  .hdr{
+    position:static!important;border:none!important;border-radius:0!important;
+    border-bottom:1px solid var(--br)!important;max-width:none!important;margin:0!important;
+    padding:22px 28px 18px!important;box-shadow:none!important;
+    background:var(--s2)!important;
+  }
+  body.light .hdr{background:var(--s2)!important;}
+  .hdr h1{font-size:1.85rem;letter-spacing:-.4px;}
+  .hdr-meta-row{
+    flex-direction:row;align-items:center;justify-content:space-between;width:100%;
+    margin-top:16px;padding-top:16px;border-top:1px solid var(--br);gap:16px;
+  }
+  .hdr-actions .abtn{padding:9px 14px;font-size:.8rem;}
+  .wk-section{
+    border:none!important;max-width:none!important;margin:0!important;
+    background:transparent!important;padding:0 28px 24px!important;
+  }
+  .wk-nav{padding:8px 0 0;}
+  .wk-label{font-size:.95rem;}
+  .wk-grid{padding:12px 0 8px;gap:8px;}
+  .wk-col{min-height:148px;}
+  .wk-dd{font-size:1.12rem;}
+  .wk-entry{font-size:.68rem;}
+  .twrap{
+    border:none!important;border-radius:0!important;max-width:none!important;margin:0!important;
+    background:transparent!important;border-top:1px solid var(--br)!important;
+    padding:0 0 8px;
+  }
+  table{min-width:1020px!important;}
+  thead th{padding:10px 8px;font-size:.65rem;}
+  thead th:first-child{min-width:200px;padding-left:22px;}
+  td:first-child{padding:11px 14px 11px 22px!important;}
+  .thn{font-size:1rem;}
+  .tn{font-size:.88rem;}
+  .tph{font-size:.72rem;}
+  .tc{height:60px!important;font-size:.76rem!important;}
+  #dtbl table thead th:first-child,
+  #dtbl table tbody td:first-child{
+    position:sticky;left:0;z-index:2;
+    background:var(--sf);
+    box-shadow:6px 0 14px rgba(0,0,0,.12);
+  }
+  #dtbl table thead th:first-child{
+    z-index:4;background:var(--bg);
+    box-shadow:6px 0 14px rgba(0,0,0,.14);
+  }
+  body.light #dtbl table tbody td:first-child{background:var(--sf);}
+  body.light #dtbl table thead th:first-child{background:var(--bg);}
+  .ov.show{align-items:center;padding:24px;}
+  #adminOv .modal,#loginOv .modal{
+    max-width:min(96vw, 1120px)!important;width:100%;border-radius:20px!important;
+  }
+  #loginOv .modal{max-width:440px!important;}
+  .mbody{padding:22px 28px 26px!important;}
+  .mhdr{padding:16px 24px!important;}
+  .mhdr h2{font-size:1.05rem;}
+  .ag-wrap{max-height:min(70vh, 780px)!important;border-radius:12px!important;}
+  .ag-table{min-width:640px!important;}
+  .cn2{font-size:.84rem;}
+  .flt-row{display:grid;grid-template-columns:repeat(auto-fill, minmax(170px, 1fr));gap:12px;align-items:end;}
+  .stat-grid{grid-template-columns:repeat(3, 1fr);gap:12px;}
+  .stat-card{padding:16px 18px;}
+  .cal-grid{gap:5px;}
+  .cc{padding:8px 4px;font-size:.8rem;}
+  .hdr-icon{width:56px;height:56px;font-size:1.65rem;border-radius:16px;}
+  .atab{font-size:.78rem;padding:10px 14px;}
 }
 #dtbl{display:none;}
 
@@ -390,7 +523,8 @@ body.light .ag-table tbody tr:hover td:first-child{background:var(--s2);}
 
 /* ── PRINT ── */
 @media print{
-  .hdr,.vtog,.wk-section,.sync-row,.abtn,.leg,#vw,#vd{display:none!important;}
+  .hdr,.vtog,.wk-section,.sync-row,.abtn,.leg,#vw,#vd,.desk-section-h{display:none!important;}
+  .app-shell,.app-frame,.app-body{display:block!important;background:transparent!important;border:none!important;box-shadow:none!important;padding:0!important;max-width:none!important;}
   body{background:#fff;color:#000;padding:0;}
   #dtbl{display:block!important;}
   .twrap{border:none;border-radius:0;max-width:100%;}
@@ -421,19 +555,113 @@ body.light .ag-table tbody tr:hover td:first-child{background:var(--s2);}
   .wcard:hover{transform:none;box-shadow:none;}
   .abtn:hover,.abtn:active{transform:none;}
 }
+
+/* ── Cleaning app: layout & polish ── */
+.hdr-brand{display:flex;align-items:flex-start;gap:12px;min-width:0;flex:1;}
+.hdr-titles{min-width:0;}
+.hdr-icon{
+  width:46px;height:46px;flex-shrink:0;border-radius:13px;
+  display:flex;align-items:center;justify-content:center;
+  font-size:1.4rem;line-height:1;
+  background:var(--clean-b);
+  box-shadow:var(--shadow-1), inset 0 1px 0 rgba(255,255,255,.06);
+  border:1px solid color-mix(in srgb,var(--clean2) 35%, transparent);
+}
+body.light .hdr-icon{
+  border-color:color-mix(in srgb,var(--clean) 28%, var(--br));
+  box-shadow:var(--shadow-1);
+}
+.hdr-actions{display:flex;gap:6px;flex-shrink:0;flex-wrap:wrap;justify-content:flex-end;}
+a.abtn{text-decoration:none;}
+.abtn{border-radius:10px;}
+.abtn-ico{min-width:40px;justify-content:center;padding-left:10px;padding-right:10px;}
+
+.app-cleaning .wk-col{border-radius:var(--r-lg);box-shadow:var(--shadow-1);}
+.app-cleaning .wk-col.today{
+  border-color:var(--clean2);
+  box-shadow:0 0 0 1px var(--clean-b), var(--shadow-1);
+}
+body.light.app-cleaning .wk-col.today{border-color:var(--clean);}
+.app-cleaning .wk-col.today .wk-col-hdr{background:var(--clean-b);}
+
+.app-cleaning .wcard,.app-cleaning .dblk{border-radius:var(--r-lg);box-shadow:var(--shadow-1);}
+.app-cleaning .modal{
+  box-shadow:var(--shadow-2), 0 0 0 1px rgba(255,255,255,.04);
+  border-radius:18px;
+  max-width:min(96vw, 540px);
+}
+body.light.app-cleaning .modal{box-shadow:var(--shadow-2);}
+
+.atabs{
+  display:flex;gap:6px;margin-bottom:16px;
+  overflow-x:auto;-webkit-overflow-scrolling:touch;
+  flex-wrap:nowrap;padding-bottom:4px;
+  scrollbar-width:thin;
+  scroll-snap-type:x proximity;
+}
+@media(max-width:719px){
+  .atabs{mask-image:linear-gradient(90deg, #000 88%, transparent 100%);}
+}
+.atab{
+  flex:0 0 auto;scroll-snap-align:start;
+  border-radius:10px;padding:9px 12px;
+}
+.atab.active{box-shadow:0 2px 12px color-mix(in srgb, var(--ac) 35%, transparent);}
+
+.app-cleaning .cc.today-c{border-color:var(--clean2);}
+body.light.app-cleaning .cc.today-c{border-color:var(--clean);}
+.app-cleaning .cc.has-dot::after{background:var(--clean2);}
+body.light.app-cleaning .cc.has-dot::after{background:var(--clean);}
+
+.app-cleaning .vbtn.active{
+  background:linear-gradient(145deg, var(--clean2), color-mix(in srgb, var(--clean2) 70%, #000));
+  border-color:var(--clean2);
+  color:#042f2e;
+}
+body.light.app-cleaning .vbtn.active{
+  background:linear-gradient(145deg, var(--clean), #0f766e);
+  color:#f0fdfa;
+  border-color:var(--clean);
+}
+
+.inp,.flt-sel,.flt-inp,.notif-time-inp{border-radius:10px;}
+.btn-p,.sbtn{border-radius:10px;}
+.btn-p{box-shadow:0 2px 12px color-mix(in srgb, var(--ac) 25%, transparent);}
+
+button:focus-visible,.abtn:focus-visible,a.abtn:focus-visible,
+input:focus-visible,select:focus-visible,textarea:focus-visible{
+  outline:2px solid var(--clean2);
+  outline-offset:2px;
+}
+body.light button:focus-visible,body.light .abtn:focus-visible,body.light a.abtn:focus-visible,
+body.light input:focus-visible,body.light select:focus-visible{
+  outline-color:var(--clean);
+}
+.atab:focus-visible{outline-offset:3px;}
+
+@media(min-width:720px){
+  .hdr-icon{width:52px;height:52px;font-size:1.55rem;border-radius:15px;}
+  .app-cleaning .modal{max-width:min(92vw, 560px);}
+  .atabs{flex-wrap:wrap;overflow-x:visible;mask-image:none!important;scroll-snap-type:none;}
+}
 </style>
 </head>
-<body>
+<body class="app-cleaning">
 
+<div class="app-shell">
+<div class="app-frame">
 <!-- HEADER -->
-<div class="hdr">
+<header class="hdr">
   <div class="hdr-top">
-    <div>
-      <h1>დალაგება · <span>დასუფთავება</span></h1>
-      <div class="hdr-sub" id="hdrSub">იტვირთება...</div>
+    <div class="hdr-brand">
+      <div class="hdr-icon" aria-hidden="true">🧹</div>
+      <div class="hdr-titles">
+        <h1>დალაგება · <span>დასუფთავება</span></h1>
+        <div class="hdr-sub" id="hdrSub">იტვირთება...</div>
+      </div>
     </div>
-    <div style="display:flex;gap:6px;flex-shrink:0;">
-      <a href="index.html" class="abtn" style="text-decoration:none;" title="მთავარი მენიუ">🏠</a>
+    <div class="hdr-actions">
+      <a href="index.html" class="abtn abtn-ico" title="მთავარი მენიუ">🏠</a>
       <button class="abtn" onclick="toggleTheme()" id="themeBtn" title="თემა">🌙</button>
       <button class="abtn" onclick="doPrint()" title="ბეჭდვა">🖨️</button>
       <button class="abtn" onclick="openAdmin()">
@@ -442,18 +670,21 @@ body.light .ag-table tbody tr:hover td:first-child{background:var(--s2);}
       </button>
     </div>
   </div>
-  <div class="leg">
-    <div class="li"><div class="ld" style="background:var(--m-c)"></div>10:00</div>
-    <div class="li"><div class="ld" style="background:var(--a-c)"></div>13:00</div>
-    <div class="li"><div class="ld" style="background:var(--e-c)"></div>14:00</div>
-    <div class="li"><div class="ld" style="background:#3a3f52;border:1px solid #3a3f52"></div>OFF</div>
+  <div class="hdr-meta-row">
+    <div class="leg" role="list" aria-label="შიფტების ლეგენდა">
+      <div class="li"><div class="ld" style="background:var(--m-c)"></div>10:00</div>
+      <div class="li"><div class="ld" style="background:var(--e-c)"></div>14:00</div>
+      <div class="li"><div class="ld" style="background:#3a3f52;border:1px solid #3a3f52"></div>OFF</div>
+    </div>
+    <div class="sync-row">
+      <span class="sd spin" id="sd"></span>
+      <span class="st" id="st">სინქრონიზაცია...</span>
+    </div>
   </div>
-  <div class="sync-row">
-    <span class="sd spin" id="sd"></span>
-    <span class="st" id="st">სინქრონიზაცია...</span>
-  </div>
-</div>
+</header>
 
+<div class="app-body">
+<p class="desk-section-h" aria-hidden="true">კვირის მიმოხილვა</p>
 <!-- WEEK GRID -->
 <div class="wk-section">
   <div class="wk-nav">
@@ -474,9 +705,13 @@ body.light .ag-table tbody tr:hover td:first-child{background:var(--s2);}
 <div id="vw"></div>
 <!-- DAY VIEW -->
 <div id="vd" style="display:none"></div>
+<p class="desk-section-h desk-section-h--table" aria-hidden="true">სრული განრიგი (14 დღე)</p>
 <!-- DESKTOP TABLE -->
 <div class="print-hdr" id="printHdr">დალაგება · დასუფთავება</div>
 <div id="dtbl"><div class="twrap"><table><thead id="dth"></thead><tbody id="dtb"></tbody></table></div></div>
+</div><!-- .app-body -->
+</div><!-- .app-frame -->
+</div><!-- .app-shell -->
 
 <!-- LOGIN -->
 <div class="ov" id="loginOv">
@@ -536,7 +771,6 @@ body.light .ag-table tbody tr:hover td:first-child{background:var(--s2);}
           <div class="flt-label" style="margin-top:2px;">შიფტი</div>
           <div class="flt-chips">
             <span class="flt-chip fc-m active" onclick="toggleFltChip(this,'10:00')">10:00</span>
-            <span class="flt-chip fc-a active" onclick="toggleFltChip(this,'13:00')">13:00</span>
             <span class="flt-chip fc-e active" onclick="toggleFltChip(this,'14:00')">14:00</span>
             <span class="flt-chip fc-o active" onclick="toggleFltChip(this,'OFF')">OFF</span>
           </div>
@@ -658,7 +892,7 @@ const MKA = ['იანვარი','თებერვალი','მარტ
              'ივლისი','აგვისტო','სექტემბერი','ოქტომბერი','ნოემბერი','დეკემბერი'];
 const MSH = ['იან','თებ','მარ','აპრ','მაი','ივნ','ივლ','აგვ','სექ','ოქტ','ნოე','დეკ'];
 
-const SHIFTS_OPT = ['10:00','13:00','14:00','OFF'];
+const SHIFTS_OPT = ['10:00','14:00','OFF'];
 
 /* hardcoded Mar 22 – Apr 4 (Sun–Sat) */
 const FCOLS = [
@@ -669,7 +903,12 @@ const FCOLS = [
   {y:2026,m:4,d:3,wd:5},{y:2026,m:4,d:4,wd:6}
 ];
 const CLEANERS = [
-  {name:'დასუფთავების ჯგუფი — დაამატეთ წევრები Admin-იდან', phone:'', shifts:Array(14).fill('OFF')}
+  {name:'მარინა ვადაჭკორია', phone:'577 939 359', shifts:Array(14).fill('OFF')},
+  {name:'მზია სოითურქ', phone:'555 958 990', shifts:Array(14).fill('OFF')},
+  {name:'ნათია ჯორბენაძე', phone:'599 279 981', shifts:Array(14).fill('OFF')},
+  {name:'ლეილა თავართქილაძე', phone:'', shifts:Array(14).fill('OFF')},
+  {name:'გულნაზ ქუთელია', phone:'568 466 565', shifts:Array(14).fill('OFF')},
+  {name:'დარინა ჩიტაძე', phone:'555 210 017', shifts:Array(14).fill('OFF')}
 ];
 
 /* ══════════════════════════════
@@ -689,7 +928,8 @@ const pk  = (name,datekey) => `${name}|${datekey}`;
 const iW  = wd => wd===0||wd===6;
 function scls(v){
   if(!v||v==='OFF')return'o';
-  if(v==='10:00')return'm'; if(v==='13:00')return'a'; if(v==='14:00')return'e';
+  if(v==='10:00')return'm'; if(v==='14:00')return'e';
+  if(v==='13:00')return'a';
   return'o';
 }
 function lbl(v){return(!v||v==='OFF')?'OFF':v;}
@@ -852,12 +1092,12 @@ function renderCardsByWeek(days){
   const opens=new Set([...vw.querySelectorAll('.wcard.open')].map(c=>c.dataset.n));
   vw.innerHTML='';
   DYNAMIC_CLEANERS.forEach(w=>{
-    let m=0,a=0,e=0;
+    let m=0,e=0;
     days.forEach(c=>{
       const s=getShift(w.name,c.y,c.m,c.d);
-      if(s==='10:00')m++;else if(s==='13:00')a++;else if(s==='14:00')e++;
+      if(s==='10:00')m++;else if(s==='14:00')e++;
     });
-    const bdgs=[m?`<span class="bdg m">10×${m}</span>`:'',a?`<span class="bdg a">13×${a}</span>`:'',e?`<span class="bdg e">14×${e}</span>`:''  ].join('');
+    const bdgs=[m?`<span class="bdg m">10×${m}</span>`:'',e?`<span class="bdg e">14×${e}</span>`:''].join('');
     const chips=days.map((c)=>{
       const s=getShift(w.name,c.y,c.m,c.d);
       return `<div class="chip ${scls(s)} ${iW(c.wd)?'wknd':''}">
@@ -1076,7 +1316,7 @@ function renderAdminGrid(){
 
       const shiftOpts=SHIFTS_OPT.map(s=>`<option value="${s}"${curS===s?' selected':''}>${s}</option>`).join('');
 
-      const sClass = curS==='10:00'?'s-m':curS==='13:00'?'s-a':curS==='14:00'?'s-e':'s-o';
+      const sClass = curS==='10:00'?'s-m':curS==='14:00'?'s-e':curS==='13:00'?'s-a':'s-o';
       td.innerHTML=`<div class="gcell">
         <select class="gsel ${sClass}" data-n="${w.name}" data-dk="${dkv}" data-t="s" onchange="colorSel(this)">${shiftOpts}</select>
         <input class="ginp" placeholder="შენიშვნა" value="${String(curN||'').replace(/&/g,'&amp;').replace(/"/g,'&quot;')}" data-n="${w.name}" data-dk="${dkv}" data-t="n">
@@ -1130,7 +1370,7 @@ async function saveGrid(){
 }
 
 /* ── FILTER ── */
-let fltShifts = new Set(['10:00','13:00','14:00','OFF']);
+let fltShifts = new Set(['10:00','14:00','OFF']);
 
 function initFilter(){
   const sel = document.getElementById('fltClean');
@@ -1194,7 +1434,7 @@ function clearFilter(){
   document.getElementById('fltClean').value = '';
   document.getElementById('fltFrom').value   = '';
   document.getElementById('fltTo').value     = '';
-  fltShifts = new Set(['10:00','13:00','14:00','OFF']);
+  fltShifts = new Set(['10:00','14:00','OFF']);
   document.querySelectorAll('.flt-chip').forEach(c=>c.classList.add('active'));
   document.querySelectorAll('#agTable tbody td').forEach(td=>td.style.opacity='1');
   document.querySelectorAll('#agTable tbody tr').forEach(tr=>tr.style.display='');
@@ -1239,7 +1479,7 @@ async function deleteFiltered(){
 /* ── COLOR SELECT ── */
 function colorSel(sel){
   sel.className = 'gsel';
-  const map = {'10:00':'s-m','13:00':'s-a','14:00':'s-e','OFF':'s-o'};
+  const map = {'10:00':'s-m','14:00':'s-e','13:00':'s-a','OFF':'s-o'};
   sel.classList.add(map[sel.value]||'s-o');
 }
 
@@ -1592,22 +1832,20 @@ function renderStats(){
   statContainer.className = 'stat-grid';
 
   DYNAMIC_CLEANERS.forEach(w=>{
-    let m10=0, m13=0, m14=0, totalDays=0;
+    let m10=0, m14=0, totalDays=0;
     monthDays.forEach(c=>{
       const s = getShift(w.name, c.y, c.m, c.d);
       if(s === '10:00'){ m10++; totalDays++; }
-      else if(s === '13:00'){ m13++; totalDays++; }
       else if(s === '14:00'){ m14++; totalDays++; }
     });
 
-    if(totalDays === 0) return; // skip if no data this month
+    if(totalDays === 0) return;
 
     const card = document.createElement('div');
     card.className = 'stat-card';
 
     const bars = [
       {label:'10:00', val:m10, col:'var(--m-c)', bg:'var(--m-b)'},
-      {label:'13:00', val:m13, col:'var(--a-c)', bg:'var(--a-b)'},
       {label:'14:00', val:m14, col:'var(--e-c)', bg:'var(--e-b)'},
     ].filter(b=>b.val>0).map(b=>`
       <div class="stat-bar-row">
