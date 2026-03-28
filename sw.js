@@ -1,6 +1,6 @@
-const CACHE = 'schedule-v14';
+const CACHE = 'schedule-v16';
 const BASE = self.location.pathname.replace(/\/sw\.js$/i, '') || '';
-const asset = (p) => (BASE + (p.startsWith('/') ? p : '/' + p)).replace(/\/{2,}/g, '/');
+const asset = (p) => (BASE + (p.startsWith('/') ? p : '/' + p)).replace(/\/\/{2,}/g, '/');
 
 const ASSETS = [
   asset('/'),
@@ -33,17 +33,39 @@ self.addEventListener('activate', e => {
 });
 
 self.addEventListener('fetch', e => {
-  if(e.request.url.includes('supabase.co') ||
-     e.request.url.includes('fonts.googleapis.com')){
+  const url = e.request.url;
+  if (url.includes('supabase.co') ||
+      url.includes('fonts.googleapis.com')) {
     return;
   }
+
+  const req = e.request;
+  const isNavigate = req.mode === 'navigate' || req.destination === 'document';
+
+  if (isNavigate) {
+    e.respondWith(
+      fetch(req, { cache: 'no-store' })
+        .then(res => {
+          if (res && res.ok) {
+            const copy = res.clone();
+            caches.open(CACHE).then(c => c.put(req, copy));
+          }
+          return res;
+        })
+        .catch(() => caches.match(req))
+    );
+    return;
+  }
+
   e.respondWith(
-    fetch(e.request)
+    fetch(req)
       .then(res => {
-        const clone = res.clone();
-        caches.open(CACHE).then(c => c.put(e.request, clone));
+        if (res && res.ok) {
+          const copy = res.clone();
+          caches.open(CACHE).then(c => c.put(req, copy));
+        }
         return res;
       })
-      .catch(() => caches.match(e.request))
+      .catch(() => caches.match(req))
   );
 });

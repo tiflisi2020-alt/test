@@ -1899,12 +1899,23 @@ async function init(){
 }
 init();
 
-// Register Service Worker
+// Service Worker — ბოლო ვერსია ყველა მოწყობილობაზე; ახალი SW → ერთჯერადი გადატვირთვა
 if('serviceWorker' in navigator){
+  let swRefreshing = false;
+  navigator.serviceWorker.addEventListener('controllerchange', ()=>{
+    if(swRefreshing) return;
+    swRefreshing = true;
+    window.location.reload();
+  });
+  document.addEventListener('visibilitychange', ()=>{
+    if(document.visibilityState === 'visible'){
+      navigator.serviceWorker.getRegistration().then(r=>{ if(r) r.update(); });
+    }
+  });
   window.addEventListener('load', ()=>{
     const swUrl = location.pathname.replace(/\/[^\/]*$/, '/') + 'sw.js';
     navigator.serviceWorker.register(swUrl)
-      .then(r => console.log('SW registered:', r.scope))
+      .then(reg=>{ reg.update(); })
       .catch(e => console.log('SW error', e));
   });
 }

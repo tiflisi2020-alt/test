@@ -554,9 +554,22 @@ function toggleTheme(){
   })();
 })();
 if('serviceWorker' in navigator){
+  let swRefreshing = false;
+  navigator.serviceWorker.addEventListener('controllerchange', ()=>{
+    if(swRefreshing) return;
+    swRefreshing = true;
+    window.location.reload();
+  });
+  document.addEventListener('visibilitychange', ()=>{
+    if(document.visibilityState === 'visible'){
+      navigator.serviceWorker.getRegistration().then(r=>{ if(r) r.update(); });
+    }
+  });
   window.addEventListener('load', ()=>{
     const swUrl = location.pathname.replace(/\/[^/]*$/, '/') + 'sw.js';
-    navigator.serviceWorker.register(swUrl).catch(()=>{});
+    navigator.serviceWorker.register(swUrl)
+      .then(reg=>{ reg.update(); })
+      .catch(()=>{});
   });
 }
 </script>
