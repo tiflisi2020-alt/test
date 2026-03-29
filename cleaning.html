@@ -17,10 +17,10 @@
   --bg:#120d0b; --sf:#1a1310; --s2:#221a16; --s3:#2a201b;
   --br:#3d2822; --br2:#4a322b;
   --ac:#d4af37; --ac2:#b8523d; --tx:#f2ebe6; --mu:#9a8a82;
-  --m-b:rgba(100,145,175,.14);  --m-c:#6a9eb5;
-  --a-b:rgba(212,175,55,.16);   --a-c:#d4af37;
-  --e-b:rgba(184,82,61,.18);   --e-c:#b8523d;
-  --o-b:rgba(255,255,255,.04); --o-c:#5c4a42;
+  --m-b:rgba(34,211,238,.24);   --m-c:#22d3ee;
+  --a-b:rgba(59,130,246,.28);   --a-c:#60a5fa;
+  --e-b:rgba(249,115,22,.24);   --e-c:#fb923c;
+  --o-b:rgba(220,38,38,.22);    --o-c:#f87171;
   --H-b:rgba(120,80,255,.16);  --H-c:#a78bfa;
   --V-b:rgba(20,200,130,.14);  --V-c:#34d399;
   --A-b:rgba(236,72,153,.14);  --A-c:#f472b6;
@@ -39,10 +39,10 @@ body.light{
   --bg:#faf4ee; --sf:#fff9f4; --s2:#f2ebe4; --s3:#ebe2d9;
   --br:#dccbc0; --br2:#cbb8aa;
   --ac:#9a7220; --ac2:#8f3d32; --tx:#1f1410; --mu:#6d5c54;
-  --m-b:rgba(60,100,130,.1);   --m-c:#2d5a72;
-  --a-b:rgba(160,120,30,.12);  --a-c:#7a5a10;
-  --e-b:rgba(140,55,40,.1);   --e-c:#6b2a20;
-  --o-b:rgba(90,70,60,.06);  --o-c:#7a6a60;
+  --m-b:rgba(14,165,233,.16);   --m-c:#0369a1;
+  --a-b:rgba(37,99,235,.18);    --a-c:#1d4ed8;
+  --e-b:rgba(234,88,12,.16);    --e-c:#c2410c;
+  --o-b:rgba(185,28,28,.14);    --o-c:#b91c1c;
   --H-b:rgba(100,40,200,.1);  --H-c:#5b21b6;
   --V-b:rgba(5,130,90,.1);    --V-c:#065f46;
   --A-b:rgba(170,20,80,.1);   --A-c:#9d174d;
@@ -675,9 +675,7 @@ body.light input:focus-visible,body.light select:focus-visible{
   </div>
   <div class="hdr-meta-row">
     <div class="leg" role="list" aria-label="შიფტების ლეგენდა">
-      <div class="li"><div class="ld" style="background:var(--m-c)"></div>10:00</div>
-      <div class="li"><div class="ld" style="background:var(--e-c)"></div>14:00</div>
-      <div class="li"><div class="ld" style="background:#3a3f52;border:1px solid #3a3f52"></div>OFF</div>
+      <div id="publicShiftLegend" style="display:contents"></div>
     </div>
     <div class="sync-row">
       <span class="sd spin" id="sd"></span>
@@ -1011,6 +1009,23 @@ function escAttr(s){
 }
 function telDigits(phone){
   return String(phone||'').replace(/[^\d+]/g,'');
+}
+function legendDotStyle(shiftVal){
+  const c = scls(shiftVal);
+  if(c === 'o') return 'background:var(--o-c);border:1px solid var(--o-c)';
+  return 'background:var(--'+c+'-c)';
+}
+function renderPublicShiftLegend(){
+  const host = document.getElementById('publicShiftLegend');
+  if(!host) return;
+  const opts = getShiftsOpt();
+  if(!opts.length){
+    host.innerHTML = '<div class="li" style="font-size:.62rem;color:var(--mu);">ცვლები: Admin → ⏱ ცვლები</div>';
+    return;
+  }
+  host.innerHTML = opts.map(s=>
+    '<div class="li"><div class="ld" style="'+legendDotStyle(s)+'"></div>'+escHtml(s)+'</div>'
+  ).join('');
 }
 
 function weekDates(off){
@@ -1357,7 +1372,7 @@ function renderTable(){
   dtb.appendChild(sr);
 }
 
-function renderAll(){ renderWeek(); renderCards(); renderDayView(); renderTable(); }
+function renderAll(){ renderPublicShiftLegend(); renderWeek(); renderCards(); renderDayView(); renderTable(); }
 
 function tog(h){ h.parentElement.classList.toggle('open'); }
 function sview(v,btn){
