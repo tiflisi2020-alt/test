@@ -1,4 +1,4 @@
-const CACHE = 'schedule-v19';
+const CACHE = 'schedule-v20';
 const BASE = self.location.pathname.replace(/\/sw\.js$/i, '') || '';
 const asset = (p) => (BASE + (p.startsWith('/') ? p : '/' + p)).replace(/\/\/+/g, '/');
 
@@ -18,7 +18,16 @@ const ASSETS = [
 
 self.addEventListener('install', e => {
   e.waitUntil(
-    caches.open(CACHE).then(c => c.addAll(ASSETS))
+    caches.open(CACHE).then(c =>
+      Promise.all(
+        ASSETS.map(url =>
+          c.add(url).catch(err => {
+            console.warn('[SW] cache skip', url, err && err.message);
+            return null;
+          })
+        )
+      )
+    )
   );
   self.skipWaiting();
 });

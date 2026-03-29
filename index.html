@@ -306,7 +306,7 @@ body.light .chat-err{color:#b91c1c;}
       const j = await r.json();
       if(j && j[0] && (j[0].value === 'light' || j[0].value === 'dark'))
         localStorage.setItem('theme', j[0].value);
-    }catch(_){}
+    }catch(e){ console.warn('theme pull', e); }
   }
   async function pushThemeToSupabase(th){
     try{
@@ -323,7 +323,7 @@ body.light .chat-err{color:#b91c1c;}
           body: JSON.stringify({ key:'ui_theme', value:th })
         });
       }
-    }catch(_){}
+    }catch(e){ console.warn('theme push', e); }
   }
   function applyThemeFromStorage(){
     const btn = document.getElementById('themeBtn');
@@ -378,7 +378,7 @@ body.light .chat-err{color:#b91c1c;}
       'Content-Type': 'application/json'
     };
     if(opts && opts.headers) Object.assign(h, opts.headers);
-    const r = await fetch(SB + '/rest/v1/' + path, {...opts, headers: h});
+    const r = await fetch(SB + '/rest/v1/' + path, {...opts, headers: h, cache: 'no-store'});
     return r;
   }
 

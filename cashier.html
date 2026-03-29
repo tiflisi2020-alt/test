@@ -737,6 +737,15 @@ function scls(v){
   return ['m','a','e'][i % 3];
 }
 function lbl(v){return(!v||v==='OFF')?'OFF':v;}
+function escHtml(s){
+  return String(s==null||s===undefined?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+function escAttr(s){
+  return String(s==null||s===undefined?'':s).replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+function telDigits(phone){
+  return String(phone||'').replace(/[^\d+]/g,'');
+}
 
 function weekDates(off){
   const t=new Date(), wd=t.getDay();
@@ -813,6 +822,7 @@ async function loadDB(){
 function upsertPatchOk(rep){
   if(rep==null) return false;
   if(Array.isArray(rep)) return rep.length > 0;
+  if(typeof rep === 'object' && rep !== null && Object.keys(rep).length === 0) return false;
   return typeof rep === 'object';
 }
 async function upsertRows(rows){
@@ -936,10 +946,10 @@ function renderWeek(){
     const workers=DYNAMIC_CASHIERS.filter(w=>getShift(w.name,c.y,c.m,c.d)!=='OFF');
     const entries=workers.map(w=>{
       const s=getShift(w.name,c.y,c.m,c.d);
-      const short=w.name.split(' ')[0];
-      const tel2 = w.phone.replace(/\s/g,'');
+      const short=escHtml((w.name.split(' ')[0]||''));
+      const tel2 = telDigits(w.phone);
       return `<div class="wk-entry" style="background:var(--${scls(s)}-b);color:var(--${scls(s)}-c)">
-        <a href="tel:${tel2}" style="text-decoration:none;display:flex;align-items:center;justify-content:space-between;gap:2px;">
+        <a href="${tel2?'tel:'+tel2:'#'}" style="text-decoration:none;display:flex;align-items:center;justify-content:space-between;gap:2px;">
           <span class="wk-ename" style="color:var(--${scls(s)}-c)">${short}</span>
           <span class="wk-epos" style="opacity:.85">📞</span>
         </a>
@@ -974,20 +984,20 @@ function renderCardsByWeek(days){
     });
     const bdgs=getShiftsOpt().filter(s=>s!=='OFF' && cnt[s]).map(s=>{
       const lab=s.length>8?s.slice(0,7)+'…':s;
-      return `<span class="bdg ${scls(s)}">${lab.replace(/</g,'&lt;')}×${cnt[s]}</span>`;
+      return `<span class="bdg ${scls(s)}">${escHtml(lab)}×${cnt[s]}</span>`;
     }).join('');
     const chips=days.map((c)=>{
       const s=getShift(w.name,c.y,c.m,c.d);
       return `<div class="chip ${scls(s)} ${iW(c.wd)?'wknd':''}">
         <span class="cd">${KD[c.wd]}</span><span class="cn">${c.d}</span>
-        <span class="ct">${lbl(s)}</span>
+        <span class="ct">${escHtml(lbl(s))}</span>
       </div>`;
     }).join('');
     const card=document.createElement('div');
     card.className='wcard'+(opens.has(w.name)?' open':'');
     card.dataset.n=w.name;
     card.innerHTML=`<div class="wcard-hdr" onclick="tog(this)">
-      <div class="wi"><div class="wn">${w.name}</div><div class="wp">${w.phone}</div></div>
+      <div class="wi"><div class="wn">${escHtml(w.name)}</div><div class="wp">${escHtml(w.phone)}</div></div>
       <div class="wbdg">${bdgs}</div>
       <svg class="chv" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
     </div><div class="wshifts">${chips}</div>`;
@@ -1014,14 +1024,14 @@ function renderDayViewByWeek(days){
     const rows=workers.map(w=>{
       const s=getShift(w.name,c.y,c.m,c.d);
       const n=getNote(w.name,c.y,c.m,c.d);
-      const tel=w.phone.replace(/\s/g,'');
+      const tel=telDigits(w.phone);
       return `<div class="drow">
-        <div class="drif"><div class="drn">${w.name}</div><div class="drp">${w.phone}</div></div>
+        <div class="drif"><div class="drn">${escHtml(w.name)}</div><div class="drp">${escHtml(w.phone)}</div></div>
         <div class="drr">
-          <span class="drs ${scls(s)}">${lbl(s)}</span>
-          <a href="tel:${tel}" class="call-btn">📞</a>
+          <span class="drs ${scls(s)}">${escHtml(lbl(s))}</span>
+          <a href="${tel?'tel:'+tel:'#'}" class="call-btn">📞</a>
         </div>
-      </div>${n?`<div class="dnote" style="padding:4px 13px 8px;font-size:.63rem;color:var(--mu);font-style:italic">💬 ${n}</div>`:''}`;
+      </div>${n?`<div class="dnote" style="padding:4px 13px 8px;font-size:.63rem;color:var(--mu);font-style:italic">💬 ${escHtml(n)}</div>`:''}`;
     }).join('');
     const cdkv = dk(c.y,c.m,c.d);
     const isToday2 = cdkv===todayDk();
@@ -1055,7 +1065,7 @@ function renderTable(){
   DYNAMIC_CASHIERS.forEach(w=>{
     const tr=document.createElement('tr');
     const td0=document.createElement('td');
-    td0.innerHTML=`<div class="tn">${w.name}</div><div class="tph">${w.phone}</div>`;
+    td0.innerHTML=`<div class="tn">${escHtml(w.name)}</div><div class="tph">${escHtml(w.phone)}</div>`;
     tr.appendChild(td0);
     FCOLS.forEach((col,i)=>{
       const s=getShift(w.name,col.y,col.m,col.d);
@@ -1197,7 +1207,7 @@ function renderAdminGrid(){
   DYNAMIC_CASHIERS.forEach(w=>{
     const tr=document.createElement('tr');
     const td0=document.createElement('td');
-    td0.innerHTML=`<div class="cn2">${w.name}</div><div class="cp2">${w.phone}</div>`;
+    td0.innerHTML=`<div class="cn2">${escHtml(w.name)}</div><div class="cp2">${escHtml(w.phone)}</div>`;
     tr.appendChild(td0);
 
     days.forEach(c=>{
@@ -1206,12 +1216,12 @@ function renderAdminGrid(){
       const curN=getNote(w.name,c.y,c.m,c.d);
       const td=document.createElement('td');
 
-      const shiftOpts=shiftSelectOptions(curS).map(s=>`<option value="${s.replace(/"/g,'&quot;')}"${curS===s?' selected':''}>${s.replace(/</g,'&lt;')}</option>`).join('');
+      const shiftOpts=shiftSelectOptions(curS).map(s=>`<option value="${escAttr(s)}"${curS===s?' selected':''}>${escHtml(s)}</option>`).join('');
 
       const sClass = gselShiftClass(curS);
       td.innerHTML=`<div class="gcell">
-        <select class="gsel ${sClass}" data-n="${w.name}" data-dk="${dkv}" data-t="s" onchange="colorSel(this)">${shiftOpts}</select>
-        <input class="ginp" placeholder="შენიშვნა" value="${String(curN||'').replace(/&/g,'&amp;').replace(/"/g,'&quot;')}" data-n="${w.name}" data-dk="${dkv}" data-t="n">
+        <select class="gsel ${sClass}" data-n="${escAttr(w.name)}" data-dk="${dkv}" data-t="s" onchange="colorSel(this)">${shiftOpts}</select>
+        <input class="ginp" placeholder="შენიშვნა" value="${escAttr(curN)}" data-n="${escAttr(w.name)}" data-dk="${dkv}" data-t="n">
       </div>`;
       tr.appendChild(td);
     });
@@ -1470,10 +1480,10 @@ function showCalDay(y,m,d){
   }
 
   const rows=workers.map(w=>`<div class="cal-drow">
-    <div class="cal-dn">${w.name}</div>
+    <div class="cal-dn">${escHtml(w.name)}</div>
     <div class="cal-dr">
-      <span class="drs ${scls(w.s)}">${w.s}</span>
-      ${w.n?`<span style="font-size:.62rem;color:var(--mu);font-style:italic">💬 ${w.n}</span>`:''}
+      <span class="drs ${scls(w.s)}">${escHtml(w.s)}</span>
+      ${w.n?`<span style="font-size:.62rem;color:var(--mu);font-style:italic">💬 ${escHtml(w.n)}</span>`:''}
     </div>
   </div>`).join('');
 
@@ -1487,10 +1497,6 @@ function showCalDay(y,m,d){
    CASHIERS (მოლარეები)
 ══════════════════════════════ */
 let DYNAMIC_CASHIERS = [...CASHIERS];
-
-function escHtml(s){
-  return String(s??'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/"/g,'&quot;');
-}
 
 async function loadCashiers(){
   try{
@@ -1736,10 +1742,10 @@ function renderTodayPreview(){
   el.innerHTML = workers.map(w=>`
     <div style="display:flex;align-items:center;justify-content:space-between;padding:7px 0;border-bottom:1px solid var(--br);">
       <div>
-        <div style="font-size:.8rem;font-weight:700;">${w.name}</div>
-        <div style="font-size:.67rem;color:var(--mu);">${w.s}</div>
+        <div style="font-size:.8rem;font-weight:700;">${escHtml(w.name)}</div>
+        <div style="font-size:.67rem;color:var(--mu);">${escHtml(w.s)}</div>
       </div>
-      <a href="tel:${w.phone.replace(/\s/g,'')}" class="call-btn">📞</a>
+      <a href="${telDigits(w.phone)?'tel:'+telDigits(w.phone):'#'}" class="call-btn">📞</a>
     </div>`).join('');
 }
 
@@ -1910,14 +1916,14 @@ function renderStats(){
       const col = palC[i % palC.length];
       return `
       <div class="stat-bar-row">
-        <div class="stat-bar-label">${s.replace(/</g,'&lt;')}</div>
+        <div class="stat-bar-label">${escHtml(s)}</div>
         <div class="stat-bar-wrap"><div class="stat-bar-fill" style="width:${Math.round(v/maxDays*100)}%;background:${col}"></div></div>
         <div class="stat-bar-val" style="color:${col}">${v}</div>
       </div>`;
     }).join('');
 
     card.innerHTML = `
-      <div class="sc-name">${w.name.split(' ')[0]} ${w.name.split(' ')[1]||''}</div>
+      <div class="sc-name">${escHtml(w.name.split(' ')[0]||'')} ${escHtml(w.name.split(' ')[1]||'')}</div>
       ${bars}
       <div class="stat-total">${totalDays} სამუშაო დღე</div>`;
     statContainer.appendChild(card);
