@@ -99,6 +99,13 @@ CREATE TABLE IF NOT EXISTS public.main_chat_messages (
 CREATE INDEX IF NOT EXISTS main_chat_messages_created_at_idx
   ON public.main_chat_messages (created_at DESC);
 
+-- ── ადმინის პარამეტრები (ცვლების სია, შეტყობინება, თემა) — სინქრონი მოწყობილობებს შორის
+CREATE TABLE IF NOT EXISTS public.app_settings (
+  key         text PRIMARY KEY,
+  value       jsonb NOT NULL,
+  updated_at  timestamptz NOT NULL DEFAULT now()
+);
+
 -- ═══════════════════════════════════════════════════════════════════════════
 -- RLS (იგივე ლოგიკა ყველა ცხრილზე: anon + authenticated — სრული წვდომა)
 -- ⚠️ საჯარო anon key-ით ეს ყველას წვდომას იძლევა. პროდაქშენში გამოიყენე მკაცრი პოლიტიკა.
@@ -115,6 +122,7 @@ ALTER TABLE public.cashier_positions  ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.hostesses          ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.hostess_positions  ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.main_chat_messages ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.app_settings         ENABLE ROW LEVEL SECURITY;
 
 -- პოლიტიკა: ყველა როლს (მათ შორის anon — ბრაუზერიდან API key-ით)
 -- იგივე სახელი ცხრილზე ცალ-ცალკე დასაშვებაა
@@ -146,6 +154,9 @@ CREATE POLICY schedule_full_access ON public.hostess_positions FOR ALL USING (tr
 DROP POLICY IF EXISTS schedule_full_access ON public.main_chat_messages;
 CREATE POLICY schedule_full_access ON public.main_chat_messages FOR ALL USING (true) WITH CHECK (true);
 
+DROP POLICY IF EXISTS schedule_full_access ON public.app_settings;
+CREATE POLICY schedule_full_access ON public.app_settings FOR ALL USING (true) WITH CHECK (true);
+
 -- API როლებს მხოლოდ ამ ცხრილებზე
 GRANT SELECT, INSERT, UPDATE, DELETE ON public.waiters TO anon, authenticated;
 GRANT SELECT, INSERT, UPDATE, DELETE ON public.waiter_positions TO anon, authenticated;
@@ -158,6 +169,7 @@ GRANT SELECT, INSERT, UPDATE, DELETE ON public.cashier_positions TO anon, authen
 GRANT SELECT, INSERT, UPDATE, DELETE ON public.hostesses TO anon, authenticated;
 GRANT SELECT, INSERT, UPDATE, DELETE ON public.hostess_positions TO anon, authenticated;
 GRANT SELECT, INSERT, UPDATE, DELETE ON public.main_chat_messages TO anon, authenticated;
+GRANT SELECT, INSERT, UPDATE, DELETE ON public.app_settings TO anon, authenticated;
 
 -- Sequence-ების სახელები შეიძლება განსხვავდებოდეს (ძველი ცხრილი, identity, სხვა სქემა).
 -- GRANT მხოლოდ მაშინ, როცა pg_get_serial_sequence იპოვის ბმულს id სვეტზე.

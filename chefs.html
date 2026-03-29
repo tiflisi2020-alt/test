@@ -565,7 +565,7 @@ body{background:var(--bg);color:var(--tx);font-family:'Noto Sans Georgian',sans-
       </div>
 
       <div id="aShifts" style="display:none">
-        <p style="font-size:.74rem;color:var(--mu);margin-bottom:10px;line-height:1.45;">თითო ხაზზე ერთი ცვლის ტექსტი — რასაც თვითონ ჩაწერ. ქარხნული სია არ არის; ინახება ამ მოწყობილობაზე (localStorage).</p>
+        <p style="font-size:.74rem;color:var(--mu);margin-bottom:10px;line-height:1.45;">თითო ხაზზე ერთი ცვლის ტექსტი — რასაც თვითონ ჩაწერ. ინახება Supabase-ში — ყველა მოწყობილობაზე ერთნაირი სია.</p>
         <textarea id="shiftEditorTa" class="inp" style="width:100%;min-height:160px;font-family:ui-monospace,monospace;font-size:.8rem;resize:vertical;" spellcheck="false" aria-label="ცვლების სია" placeholder="მაგალითი:&#10;10:00&#10;14:00&#10;OFF"></textarea>
         <div style="display:flex;flex-wrap:wrap;gap:8px;margin-top:12px;">
           <button type="button" class="sbtn" onclick="saveShiftEditor()">💾 შენახვა და განახლება</button>
@@ -652,24 +652,36 @@ const MKA = ['იანვარი','თებერვალი','მარტ
 const MSH = ['იან','თებ','მარ','აპრ','მაი','ივნ','ივლ','აგვ','სექ','ოქტ','ნოე','დეკ'];
 
 const SHIFTS_LS_KEY = 'tiflisi_shifts_chefs';
+const SETTINGS_SHIFT_KEY = 'shifts_chefs';
+const SETTINGS_NOTIF_KEY = 'notif_chefs';
+const SETTINGS_THEME_KEY = 'ui_theme';
+const NOTIF_EN_LS = 'notifEnabled_chefs';
+const NOTIF_TIME_LS = 'notifTime_chefs';
+let _shiftOptsOverride = null;
+
+function normalizeShiftLines(src){
+  const arr = Array.isArray(src) ? src : [];
+  const seen = new Set();
+  const out = [];
+  for(const x of arr){
+    const s = String(x).trim();
+    if(!s || s.length > 36 || seen.has(s)) continue;
+    seen.add(s); out.push(s);
+  }
+  return out;
+}
 function getShiftsOpt(){
+  if(_shiftOptsOverride !== null) return _shiftOptsOverride;
   try{
     const raw = localStorage.getItem(SHIFTS_LS_KEY);
     if(!raw) return [];
-    const a = JSON.parse(raw);
-    if(!Array.isArray(a)) return [];
-    const seen = new Set();
-    const out = [];
-    for(const x of a){
-      const s = String(x).trim();
-      if(!s || s.length > 36 || seen.has(s)) continue;
-      seen.add(s); out.push(s);
-    }
-    return out;
+    return normalizeShiftLines(JSON.parse(raw));
   }catch(_){ return []; }
 }
 function setShiftsOpt(arr){
-  localStorage.setItem(SHIFTS_LS_KEY, JSON.stringify(arr));
+  const lines = normalizeShiftLines(arr);
+  _shiftOptsOverride = lines;
+  localStorage.setItem(SHIFTS_LS_KEY, JSON.stringify(lines));
 }
 function shiftSelectOptions(currentVal){
   const base = getShiftsOpt();
@@ -825,6 +837,72 @@ async function upsertRows(rows){
   }
   if(fails.length) throw new Error(fails.length+'/'+rows.length+' ჩანაწერი ვერ შეინახა');
   return results;
+}
+
+async function fetchAppSetting(key){
+  const rows = await sbq('app_settings?key=eq.'+encodeURIComponent(key)+'&select=key,value');
+  return (Array.isArray(rows) && rows[0]) ? rows[0].value : null;
+}
+async function upsertAppSetting(key, value){
+  const patchRep = await sbq('app_settings?key=eq.'+encodeURIComponent(key), {
+    method:'PATCH',
+    body: JSON.stringify({ value, updated_at: new Date().toISOString() })
+  });
+  if(!upsertPatchOk(patchRep)){
+    await sbq('app_settings', { method:'POST', body: JSON.stringify({ key, value }) });
+  }
+}
+async function loadUiSettingsFromSupabase(){
+  try{
+    const shiftV = await fetchAppSetting(SETTINGS_SHIFT_KEY);
+    if(shiftV !== null && Array.isArray(shiftV)){
+      _shiftOptsOverride = normalizeShiftLines(shiftV);
+      localStorage.setItem(SHIFTS_LS_KEY, JSON.stringify(_shiftOptsOverride));
+    } else {
+      let local = [];
+      try{
+        const locRaw = localStorage.getItem(SHIFTS_LS_KEY);
+        if(locRaw) local = normalizeShiftLines(JSON.parse(locRaw));
+      }catch(_){}
+      if(local.length){
+        await upsertAppSetting(SETTINGS_SHIFT_KEY, local);
+        _shiftOptsOverride = local;
+      } else {
+        _shiftOptsOverride = [];
+      }
+    }
+    const notifV = await fetchAppSetting(SETTINGS_NOTIF_KEY);
+    if(notifV !== null && typeof notifV === 'object'){
+      if(notifV.enabled) localStorage.setItem(NOTIF_EN_LS,'1');
+      else localStorage.removeItem(NOTIF_EN_LS);
+      localStorage.setItem(NOTIF_TIME_LS, String(notifV.time||'08:00'));
+    } else {
+      const localE = localStorage.getItem(NOTIF_EN_LS) === '1';
+      const localT = localStorage.getItem(NOTIF_TIME_LS) || '08:00';
+      if(localE || localT !== '08:00'){
+        await upsertAppSetting(SETTINGS_NOTIF_KEY, { enabled: localE, time: localT });
+      }
+    }
+    const themeV = await fetchAppSetting(SETTINGS_THEME_KEY);
+    if(themeV === 'light' || themeV === 'dark'){
+      localStorage.setItem('theme', themeV);
+    } else {
+      const lt = localStorage.getItem('theme');
+      if(lt === 'light' || lt === 'dark'){
+        await upsertAppSetting(SETTINGS_THEME_KEY, lt);
+      }
+    }
+  }catch(e){
+    console.warn('loadUiSettingsFromSupabase', e);
+  }
+}
+function persistNotifToSupabase(){
+  const enabled = localStorage.getItem(NOTIF_EN_LS) === '1';
+  const time = localStorage.getItem(NOTIF_TIME_LS) || '08:00';
+  upsertAppSetting(SETTINGS_NOTIF_KEY, { enabled, time }).catch(err=>console.warn(err));
+}
+function persistThemeToSupabase(theme){
+  upsertAppSetting(SETTINGS_THEME_KEY, theme).catch(err=>console.warn(err));
 }
 
 function setSS(state,txt){
@@ -1219,7 +1297,7 @@ function fillShiftEditorTa(){
   const ta = document.getElementById('shiftEditorTa');
   if(ta) ta.value = getShiftsOpt().join('\n');
 }
-function saveShiftEditor(){
+async function saveShiftEditor(){
   const ta = document.getElementById('shiftEditorTa');
   const st = document.getElementById('shiftEditorSt');
   if(!ta) return;
@@ -1230,17 +1308,26 @@ function saveShiftEditor(){
   renderShiftFilterChips();
   renderAdminGrid();
   renderAll();
-  if(st) st.textContent = '✓ შენახულია. ცხრილი განახლდა.';
+  if(st) st.textContent = 'ინახება Supabase-ში...';
+  try{
+    await upsertAppSetting(SETTINGS_SHIFT_KEY, getShiftsOpt());
+    if(st) st.textContent = '✓ შენახულია Supabase-ში. ცხრილი განახლდა.';
+  }catch(e){
+    if(st) st.textContent = 'ლოკალურად OK; Supabase: '+e.message.slice(0,40);
+  }
 }
-function clearShiftEditorList(){
-  localStorage.removeItem(SHIFTS_LS_KEY);
+async function clearShiftEditorList(){
+  setShiftsOpt([]);
+  try{
+    await upsertAppSetting(SETTINGS_SHIFT_KEY, []);
+  }catch(e){ console.warn(e); }
   fillShiftEditorTa();
   fltShifts = new Set();
   renderShiftFilterChips();
   renderAdminGrid();
   renderAll();
   const st = document.getElementById('shiftEditorSt');
-  if(st) st.textContent = 'სია გასუფთავდა. ჩაწერე შენი ვარიანტები და შეინახე.';
+  if(st) st.textContent = 'სია გასუფთავდა (Supabase). ჩაწერე ვარიანტები და შეინახე.';
 }
 
 function initFilter(){
@@ -1668,6 +1755,7 @@ async function enableNotif(){
   const timeVal = document.getElementById('notifTime').value || '08:00';
   localStorage.setItem('notifEnabled_chefs','1');
   localStorage.setItem('notifTime_chefs', timeVal);
+  persistNotifToSupabase();
   statusEl.className='notif-status ok';
   statusEl.textContent='✓ ჩართულია · '+timeVal;
   scheduleNotif(timeVal);
@@ -1676,6 +1764,7 @@ async function enableNotif(){
 function disableNotif(){
   localStorage.removeItem('notifEnabled_chefs');
   localStorage.removeItem('notifTime_chefs');
+  persistNotifToSupabase();
   if(notifTimer){ clearTimeout(notifTimer); notifTimer=null; }
   const statusEl = document.getElementById('notifStatus');
   statusEl.className='notif-status no';
@@ -1732,7 +1821,9 @@ function initNotif(){
 ══════════════════════════════ */
 function toggleTheme(){
   const isLight = document.body.classList.toggle('light');
-  localStorage.setItem('theme', isLight ? 'light' : 'dark');
+  const th = isLight ? 'light' : 'dark';
+  localStorage.setItem('theme', th);
+  persistThemeToSupabase(th);
   document.getElementById('themeBtn').textContent = isLight ? '☀️' : '🌙';
 }
 
@@ -1835,6 +1926,7 @@ function renderStats(){
 ══════════════════════════════ */
 async function init(){
   await loadChefs();
+  await loadUiSettingsFromSupabase();
   renderAll();
   await loadDB();
   setInterval(loadDB, 30000);

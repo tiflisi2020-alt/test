@@ -293,16 +293,57 @@ body.light .chat-err{color:#b91c1c;}
 <p class="foot">თუ აპი დაინსტალირებული გაქვთ, მთავარი გვერდი ყოველთვის აქედან იწყება.</p>
 
 <script>
-function toggleTheme(){
-  const light = document.body.classList.toggle('light');
-  localStorage.setItem('theme', light ? 'light' : 'dark');
-  document.getElementById('themeBtn').textContent = light ? '☀️' : '🌙';
-}
 (function(){
-  if(localStorage.getItem('theme')==='light'){
-    document.body.classList.add('light');
-    document.getElementById('themeBtn').textContent = '☀️';
+  const SB = 'https://bbroknpeebjuilycutjd.supabase.co';
+  const KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJicm9rbnBlZWJqdWlseWN1dGpkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzM4NTk0NjksImV4cCI6MjA4OTQzNTQ2OX0.7rlaolshlMLtFObv6ViaifiSNkiYofiCRm8q2SiJns8';
+  async function pullThemeFromSupabase(){
+    try{
+      const r = await fetch(SB+'/rest/v1/app_settings?key=eq.ui_theme&select=value', {
+        headers:{ apikey:KEY, Authorization:'Bearer '+KEY },
+        cache:'no-store'
+      });
+      if(!r.ok) return;
+      const j = await r.json();
+      if(j && j[0] && (j[0].value === 'light' || j[0].value === 'dark'))
+        localStorage.setItem('theme', j[0].value);
+    }catch(_){}
   }
+  async function pushThemeToSupabase(th){
+    try{
+      const h = { apikey:KEY, Authorization:'Bearer '+KEY, 'Content-Type':'application/json', Prefer:'return=representation' };
+      const body = JSON.stringify({ value:th, updated_at:new Date().toISOString() });
+      const resp = await fetch(SB+'/rest/v1/app_settings?key=eq.ui_theme', { method:'PATCH', headers:h, body });
+      const txt = await resp.text();
+      const rep = txt ? JSON.parse(txt) : null;
+      const ok = rep && (Array.isArray(rep) ? rep.length > 0 : typeof rep === 'object');
+      if(!ok){
+        await fetch(SB+'/rest/v1/app_settings', {
+          method:'POST',
+          headers:h,
+          body: JSON.stringify({ key:'ui_theme', value:th })
+        });
+      }
+    }catch(_){}
+  }
+  function applyThemeFromStorage(){
+    const btn = document.getElementById('themeBtn');
+    if(localStorage.getItem('theme') === 'light'){
+      document.body.classList.add('light');
+      if(btn) btn.textContent = '☀️';
+    } else {
+      document.body.classList.remove('light');
+      if(btn) btn.textContent = '🌙';
+    }
+  }
+  window.toggleTheme = function(){
+    const light = document.body.classList.toggle('light');
+    const th = light ? 'light' : 'dark';
+    localStorage.setItem('theme', th);
+    const btn = document.getElementById('themeBtn');
+    if(btn) btn.textContent = light ? '☀️' : '🌙';
+    pushThemeToSupabase(th);
+  };
+  pullThemeFromSupabase().then(applyThemeFromStorage);
 })();
 
 /* საერთო ჩატი (Supabase REST) */
