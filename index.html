@@ -11,6 +11,16 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="განრიგი">
 <link rel="apple-touch-icon" href="icon-192.png">
+<script>
+(function(){
+  try{
+    var t = localStorage.getItem('theme');
+    if(t === 'light') document.documentElement.classList.add('light');
+    var m = document.querySelector('meta[name="theme-color"]');
+    if(m) m.setAttribute('content', t === 'light' ? '#f6f0ea' : '#0c0a09');
+  }catch(e){}
+})();
+</script>
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Georgian:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
 <style>
 :root{
@@ -33,7 +43,7 @@
   --shadow-md:0 8px 32px rgba(0,0,0,.35);
   --shadow-glow:0 0 0 1px rgba(232,197,71,.08), 0 12px 40px rgba(0,0,0,.4);
 }
-body.light{
+html.light{
   --bg:#f6f0ea;
   --bg2:#efe8e0;
   --sf:rgba(255,252,248,.88);
@@ -77,7 +87,7 @@ body::before{
     linear-gradient(180deg, var(--bg2) 0%, var(--bg) 38%, var(--bg) 100%);
   pointer-events:none;
 }
-body.light::before{
+html.light body::before{
   background:
     radial-gradient(ellipse 85% 65% at 20% -5%, rgba(138,106,24,.14), transparent 50%),
     radial-gradient(ellipse 70% 50% at 100% 10%, rgba(156,61,46,.08), transparent 48%),
@@ -131,7 +141,7 @@ body.light::before{
   display:block;max-width:100%;height:auto;
   filter:drop-shadow(0 4px 20px rgba(0,0,0,.35));
 }
-body.light .logo-wrap canvas{filter:drop-shadow(0 3px 16px rgba(60,45,35,.12));}
+html.light .logo-wrap canvas{filter:drop-shadow(0 3px 16px rgba(60,45,35,.12));}
 .logo-fallback{
   font-size:1.45rem;font-weight:900;letter-spacing:.04em;color:var(--ac);
   text-decoration:none;
@@ -154,7 +164,7 @@ body.light .logo-wrap canvas{filter:drop-shadow(0 3px 16px rgba(60,45,35,.12));}
   -webkit-background-clip:text;background-clip:text;
   color:transparent;
 }
-body.light .hero h1 span{
+html.light .hero h1 span{
   background:linear-gradient(120deg,#6b5420 0%,var(--ac) 50%,var(--ac2) 100%);
   -webkit-background-clip:text;background-clip:text;
   color:transparent;
@@ -204,7 +214,7 @@ body.light .hero h1 span{
   background:var(--ico-bg);
   box-shadow:inset 0 1px 0 rgba(255,255,255,.06);
 }
-body.light .card-ico{box-shadow:inset 0 1px 0 rgba(255,255,255,.5);}
+html.light .card-ico{box-shadow:inset 0 1px 0 rgba(255,255,255,.5);}
 .card-txt{flex:1;min-width:0;}
 .card-txt strong{
   display:block;font-size:.94rem;font-weight:800;margin-bottom:5px;letter-spacing:-.02em;
@@ -224,11 +234,11 @@ body.light .card-ico{box-shadow:inset 0 1px 0 rgba(255,255,255,.5);}
 .c-cl{--card-accent:#2dd4bf;--ico-bg:linear-gradient(145deg,rgba(45,212,191,.26),rgba(20,184,166,.09));}
 .c-ca{--card-accent:#60a5fa;--ico-bg:linear-gradient(145deg,rgba(96,165,250,.28),rgba(59,130,246,.1));}
 .c-ho{--card-accent:#c084fc;--ico-bg:linear-gradient(145deg,rgba(192,132,252,.26),rgba(168,85,247,.09));}
-body.light .c-w{--ico-bg:linear-gradient(145deg,rgba(138,106,24,.18),rgba(138,106,24,.06));}
-body.light .c-ch{--ico-bg:linear-gradient(145deg,rgba(156,61,46,.16),rgba(156,61,46,.05));}
-body.light .c-cl{--ico-bg:linear-gradient(145deg,rgba(13,148,136,.16),rgba(13,148,136,.05));}
-body.light .c-ca{--ico-bg:linear-gradient(145deg,rgba(37,99,235,.14),rgba(37,99,235,.05));}
-body.light .c-ho{--ico-bg:linear-gradient(145deg,rgba(126,34,206,.12),rgba(126,34,206,.04));}
+html.light .c-w{--ico-bg:linear-gradient(145deg,rgba(138,106,24,.18),rgba(138,106,24,.06));}
+html.light .c-ch{--ico-bg:linear-gradient(145deg,rgba(156,61,46,.16),rgba(156,61,46,.05));}
+html.light .c-cl{--ico-bg:linear-gradient(145deg,rgba(13,148,136,.16),rgba(13,148,136,.05));}
+html.light .c-ca{--ico-bg:linear-gradient(145deg,rgba(37,99,235,.14),rgba(37,99,235,.05));}
+html.light .c-ho{--ico-bg:linear-gradient(145deg,rgba(126,34,206,.12),rgba(126,34,206,.04));}
 @keyframes footIn{
   from{opacity:0;transform:translateY(8px);}
   to{opacity:1;transform:none;}
@@ -286,7 +296,7 @@ body.light .c-ho{--ico-bg:linear-gradient(145deg,rgba(126,34,206,.12),rgba(126,3
   font-size:.8rem;line-height:1.45;
   scrollbar-width:thin;
 }
-body.light .chat-msgs{background:color-mix(in srgb,var(--bg) 25%,#fff);}
+html.light .chat-msgs{background:color-mix(in srgb,var(--bg) 25%,#fff);}
 .chat-msg{margin-bottom:12px;padding-bottom:11px;border-bottom:1px solid var(--br);}
 .chat-msg:last-child{margin-bottom:0;padding-bottom:0;border-bottom:none;}
 .chat-msg-meta{
@@ -321,12 +331,12 @@ body.light .chat-msgs{background:color-mix(in srgb,var(--bg) 25%,#fff);}
   box-shadow:0 4px 16px color-mix(in srgb,var(--ac) 25%,transparent);
   transition:filter .15s, transform .12s;
 }
-body.light .chat-send{color:#1a1410;}
+html.light .chat-send{color:#1a1410;}
 .chat-send:hover{filter:brightness(1.06);}
 .chat-send:active{transform:scale(.98);}
 .chat-send:disabled{opacity:.5;cursor:not-allowed;filter:none;}
 .chat-err{font-size:.68rem;color:#f87171;margin-top:8px;}
-body.light .chat-err{color:#b91c1c;}
+html.light .chat-err{color:#b91c1c;}
 .chat-empty{color:var(--mu);font-size:.76rem;text-align:center;padding:18px 10px;}
 .chat-poll{font-size:.6rem;color:var(--mu);margin-top:10px;text-align:right;opacity:.85;}
 .chat-toolbar{display:flex;justify-content:flex-end;align-items:center;margin:0 0 10px;}
@@ -472,25 +482,27 @@ body.light .chat-err{color:#b91c1c;}
     }catch(e){ console.warn('theme push', e); }
   }
   function applyThemeFromStorage(){
+    const root = document.documentElement;
     const light = localStorage.getItem('theme') === 'light';
     if(light){
-      document.body.classList.add('light');
+      root.classList.add('light');
       setThemeIco(true);
       setMetaTheme('#f6f0ea');
     } else {
-      document.body.classList.remove('light');
+      root.classList.remove('light');
       setThemeIco(false);
       setMetaTheme('#0c0a09');
     }
   }
   window.toggleTheme = function(){
-    const light = document.body.classList.toggle('light');
+    const light = document.documentElement.classList.toggle('light');
     const th = light ? 'light' : 'dark';
     localStorage.setItem('theme', th);
     setThemeIco(light);
     setMetaTheme(light ? '#f6f0ea' : '#0c0a09');
     pushThemeToSupabase(th);
   };
+  applyThemeFromStorage();
   pullThemeFromSupabase().then(applyThemeFromStorage);
 })();
 

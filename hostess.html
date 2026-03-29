@@ -11,6 +11,18 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="განრიგი">
 <link rel="apple-touch-icon" href="icon-192.png">
+<script>
+(function(){
+  try{
+    var t = localStorage.getItem('theme');
+    if(t === 'light'){
+      document.documentElement.classList.add('light');
+      var m = document.querySelector('meta[name="theme-color"]');
+      if(m) m.setAttribute('content', '#faf4ee');
+    }
+  }catch(e){}
+})();
+</script>
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Georgian:wght@300;400;600;700;900&display=swap" rel="stylesheet">
 <style>
 :root{
@@ -25,7 +37,7 @@
   --V-b:rgba(20,200,130,.14);  --V-c:#34d399;
   --A-b:rgba(236,72,153,.14);  --A-c:#f472b6;
 }
-body.light{
+html.light{
   --bg:#faf4ee; --sf:#fff9f4; --s2:#f2ebe4; --s3:#ebe2d9;
   --br:#dccbc0; --br2:#cbb8aa;
   --ac:#9a7220; --ac2:#8f3d32; --tx:#1f1410; --mu:#6d5c54;
@@ -54,13 +66,13 @@ body{background:var(--bg);color:var(--tx);font-family:'Noto Sans Georgian',sans-
     backdrop-filter:blur(16px);
   }
   .hdr{background:color-mix(in srgb,var(--sf) 70%,transparent);border-bottom-color:color-mix(in srgb,var(--br) 80%,transparent);}
-  body.light .hdr{background:color-mix(in srgb,var(--sf) 78%,transparent);}
+  html.light .hdr{background:color-mix(in srgb,var(--sf) 78%,transparent);}
   .modal,.mhdr{background:color-mix(in srgb,var(--sf) 72%,transparent);}
-  body.light .modal,body.light .mhdr{background:color-mix(in srgb,var(--sf) 82%,transparent);}
+  html.light .modal,html.light .mhdr{background:color-mix(in srgb,var(--sf) 82%,transparent);}
   .wk-col,.wcard,.dblk{background:color-mix(in srgb,var(--sf) 62%,transparent);}
-  body.light .wk-col,body.light .wcard,body.light .dblk{background:color-mix(in srgb,var(--sf) 72%,transparent);}
+  html.light .wk-col,html.light .wcard,html.light .dblk{background:color-mix(in srgb,var(--sf) 72%,transparent);}
   .abtn,.wk-nav-btn,.ag-nav-btn,.cal-nav-btn,.stat-month-nav .ag-nav-btn{background:color-mix(in srgb,var(--s2) 68%,transparent);}
-  body.light .abtn,body.light .wk-nav-btn,body.light .ag-nav-btn,body.light .cal-nav-btn{background:color-mix(in srgb,var(--s2) 75%,transparent);}
+  html.light .abtn,html.light .wk-nav-btn,html.light .ag-nav-btn,html.light .cal-nav-btn{background:color-mix(in srgb,var(--s2) 75%,transparent);}
   .vbtn:not(.active){background:color-mix(in srgb,var(--sf) 62%,transparent);}
   .flt-wrap,.cal-detail,.notif-wrap,.stat-card{background:color-mix(in srgb,var(--s2) 58%,transparent);}
   .ag-wrap{background:color-mix(in srgb,var(--sf) 55%,transparent);}
@@ -1839,7 +1851,7 @@ function initNotif(){
    THEME
 ══════════════════════════════ */
 function toggleTheme(){
-  const isLight = document.body.classList.toggle('light');
+  const isLight = document.documentElement.classList.toggle('light');
   const th = isLight ? 'light' : 'dark';
   localStorage.setItem('theme', th);
   persistThemeToSupabase(th);
@@ -1848,9 +1860,14 @@ function toggleTheme(){
 
 function initTheme(){
   const saved = localStorage.getItem('theme');
+  const root = document.documentElement;
+  const btn = document.getElementById('themeBtn');
   if(saved === 'light'){
-    document.body.classList.add('light');
-    document.getElementById('themeBtn').textContent = '☀️';
+    root.classList.add('light');
+    if(btn) btn.textContent = '☀️';
+  } else {
+    root.classList.remove('light');
+    if(btn) btn.textContent = '🌙';
   }
 }
 
