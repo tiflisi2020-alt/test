@@ -243,7 +243,7 @@ body.light .ov{background:rgba(45,38,32,.52);}
 .inp{background:var(--s2);border:1px solid var(--br);border-radius:8px;
   padding:10px 13px;color:var(--tx);font-family:inherit;font-size:.85rem;width:100%;outline:none;}
 .inp:focus{border-color:var(--ac);}
-.btn-p{background:var(--ac);color:var(--on-ac);border:none;border-radius:8px;
+.btn-p{background:var(--ac);color:#000;border:none;border-radius:8px;
   padding:11px;font-family:inherit;font-size:.85rem;font-weight:800;cursor:pointer;width:100%;}
 .errmsg{color:#f87171;font-size:.75rem;text-align:center;min-height:18px;}
 
@@ -252,7 +252,7 @@ body.light .ov{background:rgba(45,38,32,.52);}
 .atab{flex:1 1 calc(33.333% - 4px);min-width:min(7.25rem, 100%);max-width:100%;box-sizing:border-box;
   padding:8px 4px;border-radius:8px;border:1px solid var(--br);background:var(--s2);
   color:var(--mu);font-family:inherit;font-size:.68rem;font-weight:700;cursor:pointer;transition:all .15s;}
-.atab.active{background:var(--ac);color:var(--on-ac);border-color:var(--ac);}
+.atab.active{background:var(--ac);color:#000;border-color:var(--ac);}
 
 /* ADMIN GRID */
 .ag-nav{display:flex;align-items:center;gap:8px;margin-bottom:12px;}
@@ -330,7 +330,7 @@ body.light .ag-table tbody tr:hover td:first-child{background:var(--s2);}
 .flt-chip.fc-V{background:var(--V-b);color:var(--V-c);}
 .flt-chip.fc-A{background:var(--A-b);color:var(--A-c);}
 .sstt{font-size:.72rem;color:var(--V-c);}
-.sbtn{background:var(--V-c);color:var(--on-v);border:none;border-radius:8px;
+.sbtn{background:var(--V-c);color:#000;border:none;border-radius:8px;
   padding:9px 20px;font-family:inherit;font-size:.78rem;font-weight:800;cursor:pointer;transition:opacity .15s;}
 .sbtn:hover{opacity:.9;}
 .sbtn:disabled{opacity:.5;cursor:not-allowed;}
@@ -587,28 +587,6 @@ body.light.app-cleaning .wk-col.today{border-color:var(--clean);}
 .app-cleaning .wk-col.today .wk-col-hdr{background:var(--clean-b);}
 
 .app-cleaning .wcard,.app-cleaning .dblk{border-radius:var(--r-lg);box-shadow:var(--shadow-1);}
-.app-cleaning .modal{
-  box-shadow:var(--shadow-2), 0 0 0 1px rgba(255,255,255,.04);
-  border-radius:18px;
-  max-width:min(96vw, 540px);
-}
-body.light.app-cleaning .modal{box-shadow:var(--shadow-2);}
-
-.atabs{
-  display:flex;gap:6px;margin-bottom:16px;
-  overflow-x:auto;-webkit-overflow-scrolling:touch;
-  flex-wrap:nowrap;padding-bottom:4px;
-  scrollbar-width:thin;
-  scroll-snap-type:x proximity;
-}
-@media(max-width:719px){
-  .atabs{mask-image:linear-gradient(90deg, #000 88%, transparent 100%);}
-}
-.atab{
-  flex:0 0 auto;scroll-snap-align:start;
-  border-radius:10px;padding:9px 12px;
-}
-.atab.active{box-shadow:0 2px 12px color-mix(in srgb, var(--ac) 35%, transparent);}
 
 .app-cleaning .cc.today-c{border-color:var(--clean2);}
 body.light.app-cleaning .cc.today-c{border-color:var(--clean);}
@@ -627,8 +605,6 @@ body.light.app-cleaning .vbtn.active{
 }
 
 .inp,.flt-sel,.flt-inp,.notif-time-inp{border-radius:10px;}
-.btn-p,.sbtn{border-radius:10px;}
-.btn-p{box-shadow:0 2px 12px color-mix(in srgb, var(--ac) 25%, transparent);}
 
 button:focus-visible,.abtn:focus-visible,a.abtn:focus-visible,
 input:focus-visible,select:focus-visible,textarea:focus-visible{
@@ -643,9 +619,6 @@ body.light input:focus-visible,body.light select:focus-visible{
 
 @media(min-width:720px){
   .hdr-icon{width:52px;height:52px;font-size:1.55rem;border-radius:15px;}
-  .app-cleaning .modal{max-width:min(92vw, 560px);}
-  .atabs{flex-wrap:wrap;overflow-x:visible;mask-image:none!important;scroll-snap-type:none;}
-  .atab{flex:1 1 calc(33.333% - 4px);min-width:min(7.25rem, 100%);max-width:100%;box-sizing:border-box;padding:8px 4px;font-size:.68rem;}
 }
 </style>
 </head>
@@ -826,8 +799,8 @@ body.light input:focus-visible,body.light select:focus-visible{
       </div>
 
       <div id="aShifts" style="display:none">
-        <p style="font-size:.74rem;color:var(--mu);margin-bottom:10px;line-height:1.45;">თითო ხაზზე ერთი ცვლის ტექსტი — რასაც თვითონ ჩაწერ. ინახება Supabase-ში — ყველა მოწყობილობაზე ერთნაირი სია.</p>
-        <textarea id="shiftEditorTa" class="inp" style="width:100%;min-height:160px;font-family:ui-monospace,monospace;font-size:.8rem;resize:vertical;" spellcheck="false" aria-label="ცვლების სია" placeholder="მაგალითი:&#10;10:00&#10;14:00&#10;OFF"></textarea>
+        <p style="font-size:.74rem;color:var(--mu);margin-bottom:10px;line-height:1.45;">თითო ხაზზე ერთი ცვლის ტექსტი — ზუსტად ის, რაც გინდა სიაში (მაგ. <code>10:00–18:00</code>, <code>OFF</code>). ინახება Supabase-ში — ყველა მოწყობილობაზე ერთნაირი სია.</p>
+        <textarea id="shiftEditorTa" class="inp" style="width:100%;min-height:160px;font-family:ui-monospace,monospace;font-size:.8rem;resize:vertical;" spellcheck="false" aria-label="ცვლების სია" placeholder="მაგალითი:&#10;10:00–18:00&#10;14:00–22:00&#10;OFF"></textarea>
         <div style="display:flex;flex-wrap:wrap;gap:8px;margin-top:12px;">
           <button type="button" class="sbtn" onclick="saveShiftEditor()">💾 შენახვა და განახლება</button>
           <button type="button" class="sbtn" style="background:var(--s3);color:var(--tx);" onclick="clearShiftEditorList()">✕ სიის გასუფთავება</button>
