@@ -853,25 +853,13 @@ function upsertPatchOk(rep){
   return typeof rep === 'object';
 }
 async function upsertRows(rows){
-  const results = [];
-  const fails = [];
-  for(const row of rows){
-    try{
-      const patchRep = await sbq(
-        'waiter_positions?waiter_name=eq.'+encodeURIComponent(row.waiter_name)+'&shift_date=eq.'+row.shift_date,
-        {method:'PATCH', body:JSON.stringify({shift_time:row.shift_time, position:row.position, notes:row.notes})}
-      );
-      if(!upsertPatchOk(patchRep)){
-        await sbq('waiter_positions',{method:'POST', body:JSON.stringify(row)});
-      }
-      results.push(row);
-    }catch(e){
-      console.warn('row error:', row, e.message);
-      fails.push(e.message);
-    }
-  }
-  if(fails.length) throw new Error(fails.length+'/'+rows.length+' ჩანაწერი ვერ შეინახა');
-  return results;
+  if(!rows.length) return rows;
+  await sbq('waiter_positions?on_conflict=waiter_name,shift_date', {
+    method: 'POST',
+    body: JSON.stringify(rows),
+    headers: { Prefer: 'return=minimal,resolution=merge-duplicates' }
+  });
+  return rows;
 }
 
 async function fetchAppSetting(key){
