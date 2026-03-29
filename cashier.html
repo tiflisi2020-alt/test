@@ -798,20 +798,21 @@ async function loadDB(){
   }
 }
 
+function upsertPatchOk(rep){
+  if(rep==null) return false;
+  if(Array.isArray(rep)) return rep.length > 0;
+  return typeof rep === 'object';
+}
 async function upsertRows(rows){
   const results = [];
   const fails = [];
   for(const row of rows){
     try{
-      const existing = await sbq(
-        'cashier_positions?cashier_name=eq.'+encodeURIComponent(row.cashier_name)+'&shift_date=eq.'+row.shift_date
+      const patchRep = await sbq(
+        'cashier_positions?cashier_name=eq.'+encodeURIComponent(row.cashier_name)+'&shift_date=eq.'+row.shift_date,
+        {method:'PATCH', body:JSON.stringify({shift_time:row.shift_time, notes:row.notes})}
       );
-      if(existing && existing.length > 0){
-        await sbq(
-          'cashier_positions?cashier_name=eq.'+encodeURIComponent(row.cashier_name)+'&shift_date=eq.'+row.shift_date,
-          {method:'PATCH', body:JSON.stringify({shift_time:row.shift_time, notes:row.notes})}
-        );
-      } else {
+      if(!upsertPatchOk(patchRep)){
         await sbq('cashier_positions',{method:'POST', body:JSON.stringify(row)});
       }
       results.push(row);
