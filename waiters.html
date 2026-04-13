@@ -242,6 +242,7 @@ body{background:var(--bg);color:var(--tx);font-family:'Noto Sans Georgian',sans-
 .gsel.s-H{background:var(--H-b);color:var(--H-c);border-color:var(--H-c);}
 .gsel.s-V{background:var(--V-b);color:var(--V-c);border-color:var(--V-c);}
 .gsel.s-A{background:var(--A-b);color:var(--A-c);border-color:var(--A-c);}
+.gsel.s-p{background:var(--s3);color:var(--tx);border-color:var(--br2);}
 .ginp{background:var(--s2);border:1px solid var(--br);border-radius:6px;
   padding:4px 5px;color:var(--tx);font-family:inherit;font-size:.63rem;width:100%;outline:none;}
 .ginp:focus{border-color:var(--ac);}
@@ -492,6 +493,7 @@ body{background:var(--bg);color:var(--tx);font-family:'Noto Sans Georgian',sans-
         <button class="atab" onclick="aTab('stats',this)">📊 სტატისტიკა</button>
         <button class="atab" onclick="aTab('notif',this)">🔔 შეტყობინება</button>
         <button class="atab" onclick="aTab('shifts',this)">⏱ ცვლები</button>
+        <button class="atab" id="tabPositionsBtn" onclick="aTab('positions',this)">📍 პოზიციები</button>
       </div>
 
       <!-- GRID TAB -->
@@ -523,7 +525,10 @@ body{background:var(--bg);color:var(--tx);font-family:'Noto Sans Georgian',sans-
           </div>
           <div class="flt-label" style="margin-top:2px;">შიფტი</div>
           <div class="flt-chips" id="fltShiftChips"></div>
-          <div class="flt-label" style="margin-top:2px;">პოზიცია</div>
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-top:2px;gap:8px;">
+            <div class="flt-label" style="margin-top:0;">პოზიცია</div>
+            <button type="button" class="flt-clear" style="padding:5px 8px;font-size:.62rem;" onclick="openPosManagerTab()">⚙️ პოზიციების მართვა</button>
+          </div>
           <div class="flt-chips" id="fltPosChips">
             <span class="flt-chip fc-H active" onclick="toggleFltChip(this,'H')">ჰოლი</span>
             <span class="flt-chip fc-V active" onclick="toggleFltChip(this,'V')">ვერანდა</span>
@@ -591,6 +596,16 @@ body{background:var(--bg);color:var(--tx);font-family:'Noto Sans Georgian',sans-
           <button type="button" class="sbtn" style="background:var(--s3);color:var(--tx);" onclick="clearShiftEditorList()">✕ სიის გასუფთავება</button>
         </div>
         <p id="shiftEditorSt" style="font-size:.68rem;color:var(--V-c);margin-top:10px;min-height:1.2em;"></p>
+      </div>
+
+      <div id="aPositions" style="display:none">
+        <p style="font-size:.74rem;color:var(--mu);margin-bottom:10px;line-height:1.45;">პოზიციები გამოჩნდება ცხრილში, ფილტრში და კალენდარში. შეგიძლია სახელის შეცვლა, წაშლა ან ახალი პოზიციის დამატება.</p>
+        <div id="posEditorRows" style="display:flex;flex-direction:column;gap:8px;"></div>
+        <div style="display:flex;flex-wrap:wrap;gap:8px;margin-top:12px;">
+          <button type="button" class="sbtn" onclick="addPosEditorRow()">+ პოზიციის დამატება</button>
+          <button type="button" class="sbtn" onclick="savePosEditor()">💾 შენახვა</button>
+        </div>
+        <p id="posEditorSt" style="font-size:.68rem;color:var(--V-c);margin-top:10px;min-height:1.2em;"></p>
       </div>
 
       <!-- COPY TAB -->
@@ -665,10 +680,18 @@ const MKA = ['იანვარი','თებერვალი','მარტ
 const MSH = ['იან','თებ','მარ','აპრ','მაი','ივნ','ივლ','აგვ','სექ','ოქტ','ნოე','დეკ'];
 
 const SHIFTS_LS_KEY = 'tiflisi_shifts_waiters';
+const POSITIONS_LS_KEY = 'tiflisi_positions_waiters';
 const SETTINGS_SHIFT_KEY = 'shifts_waiters';
 const SETTINGS_NOTIF_KEY = 'notif_waiters';
 const SETTINGS_THEME_KEY = 'ui_theme';
+const SETTINGS_POS_KEY = 'positions_waiters';
 let _shiftOptsOverride = null;
+let _positionOptsOverride = null;
+const DEFAULT_POSITIONS = [
+  { key:'H', label:'ჰოლი',     full:'ჰოლი' },
+  { key:'V', label:'ვერანდა',  full:'ვერანდა' },
+  { key:'A', label:'ანტრ.',    full:'ანტრესოლი' }
+];
 
 function normalizeShiftLines(src){
   const arr = Array.isArray(src) ? src : [];
@@ -710,8 +733,85 @@ function gselShiftClass(val){
   if(i < 0) return 's-o';
   return ['s-m','s-a','s-e'][i % 3];
 }
-const POS_MAP = {'':'—','H':'ჰოლი','V':'ვერანდა','A':'ანტრ.'};
-const POS_FULL = {'':'—','H':'ჰოლი','V':'ვერანდა','A':'ანტრესოლი'};
+function sanitizePosKey(raw){
+  return String(raw||'').toUpperCase().replace(/[^A-Z0-9_]/g,'').slice(0,12);
+}
+function makePosKeyFromLabel(label, used){
+  let key = sanitizePosKey(String(label||'').replace(/\s+/g,'_'));
+  if(!key) key = 'POS';
+  if(!used.has(key)) return key;
+  let n = 2;
+  while(used.has((key+'_'+n).slice(0,12))) n++;
+  return (key+'_'+n).slice(0,12);
+}
+function normalizePositionEntries(src){
+  const arr = Array.isArray(src) ? src : [];
+  const out = [];
+  const used = new Set();
+  for(const item of arr){
+    if(!item || typeof item !== 'object') continue;
+    const label = String(item.label || item.name || '').trim();
+    if(!label) continue;
+    const full = String(item.full || label).trim().slice(0,28);
+    let key = sanitizePosKey(item.key || item.code || item.id || '');
+    if(!key) key = makePosKeyFromLabel(label, used);
+    if(used.has(key)) continue;
+    used.add(key);
+    out.push({ key, label: label.slice(0,18), full });
+  }
+  return out.length ? out : DEFAULT_POSITIONS.map(p=>({ ...p }));
+}
+function getPositionOptions(){
+  if(_positionOptsOverride !== null) return _positionOptsOverride;
+  try{
+    const raw = localStorage.getItem(POSITIONS_LS_KEY);
+    if(!raw) return DEFAULT_POSITIONS.map(p=>({ ...p }));
+    return normalizePositionEntries(JSON.parse(raw));
+  }catch(_){
+    return DEFAULT_POSITIONS.map(p=>({ ...p }));
+  }
+}
+function setPositionOptions(arr){
+  const data = normalizePositionEntries(arr);
+  _positionOptsOverride = data;
+  localStorage.setItem(POSITIONS_LS_KEY, JSON.stringify(data));
+}
+function getPosEntryByKey(key){
+  return getPositionOptions().find(p=>p.key===key) || null;
+}
+function posLabel(key){
+  if(!key) return '—';
+  const row = getPosEntryByKey(key);
+  return row ? row.label : key;
+}
+function posFullLabel(key){
+  if(!key) return '—';
+  const row = getPosEntryByKey(key);
+  return row ? row.full : key;
+}
+function posSelectOptions(currentVal){
+  const opts = [{ key:'', label:'—' }, ...getPositionOptions().map(p=>({ key:p.key, label:p.label }))];
+  const v = currentVal ? String(currentVal).trim() : '';
+  if(v && !opts.some(o=>o.key===v)) opts.push({ key:v, label:v });
+  return opts;
+}
+function gselPosClass(val){
+  if(!val) return 's-o';
+  if(val==='H' || val==='V' || val==='A') return 's-'+val;
+  return 's-p';
+}
+function posBadgeStyle(val){
+  if(val==='H') return 'background:var(--H-b);color:var(--H-c)';
+  if(val==='V') return 'background:var(--V-b);color:var(--V-c)';
+  if(val==='A') return 'background:var(--A-b);color:var(--A-c)';
+  return 'background:var(--s3);color:var(--tx)';
+}
+function posTextStyle(val){
+  if(val==='H') return 'color:var(--H-c)';
+  if(val==='V') return 'color:var(--V-c)';
+  if(val==='A') return 'color:var(--A-c)';
+  return 'color:var(--mu)';
+}
 
 /* hardcoded Mar 22 – Apr 4 (Sun–Sat) */
 const FCOLS = [
@@ -906,6 +1006,22 @@ async function loadUiSettingsFromSupabase(){
         _shiftOptsOverride = [];
       }
     }
+    const posV = await fetchAppSetting(SETTINGS_POS_KEY);
+    if(posV !== null && Array.isArray(posV)){
+      setPositionOptions(posV);
+    } else {
+      let localPos = [];
+      try{
+        const pRaw = localStorage.getItem(POSITIONS_LS_KEY);
+        if(pRaw) localPos = normalizePositionEntries(JSON.parse(pRaw));
+      }catch(_){}
+      if(localPos.length){
+        setPositionOptions(localPos);
+        await upsertAppSetting(SETTINGS_POS_KEY, localPos);
+      } else {
+        setPositionOptions(DEFAULT_POSITIONS);
+      }
+    }
     const notifV = await fetchAppSetting(SETTINGS_NOTIF_KEY);
     if(notifV !== null && typeof notifV === 'object'){
       if(notifV.enabled) localStorage.setItem('notifEnabled','1');
@@ -979,7 +1095,7 @@ function renderWeek(){
       return `<div class="wk-entry" style="background:var(--${scls(s)}-b);color:var(--${scls(s)}-c)">
         <a href="${tel2?'tel:'+tel2:'#'}" style="text-decoration:none;display:flex;align-items:center;justify-content:space-between;gap:2px;">
           <span class="wk-ename" style="color:var(--${scls(s)}-c)">${short}</span>
-          ${p?`<span class="wk-epos" style="color:var(--${p}-c)">${POS_MAP[p]}</span>`:'📞'}
+          ${p?`<span class="wk-epos" style="${posTextStyle(p)}">${escHtml(posLabel(p))}</span>`:'📞'}
         </a>
       </div>`;
     }).join('');
@@ -1020,7 +1136,7 @@ function renderCardsByWeek(days){
       return `<div class="chip ${scls(s)} ${iW(c.wd)?'wknd':''}">
         <span class="cd">${KD[c.wd]}</span><span class="cn">${c.d}</span>
         <span class="ct">${escHtml(lbl(s))}</span>
-        ${p?`<span class="cp" style="background:var(--${p}-b);color:var(--${p}-c)">${POS_MAP[p]}</span>`:''}
+        ${p?`<span class="cp" style="${posBadgeStyle(p)}">${escHtml(posLabel(p))}</span>`:''}
       </div>`;
     }).join('');
     const card=document.createElement('div');
@@ -1059,7 +1175,7 @@ function renderDayViewByWeek(days){
       return `<div class="drow">
         <div class="drif"><div class="drn">${escHtml(w.name)}</div><div class="drp">${escHtml(w.phone)}</div></div>
         <div class="drr">
-          ${p?`<span class="pc ${p}">${POS_FULL[p]}</span>`:''}
+          ${p?`<span class="pc" style="${posBadgeStyle(p)}">${escHtml(posFullLabel(p))}</span>`:''}
           <span class="drs ${scls(s)}">${escHtml(lbl(s))}</span>
           <a href="${tel?'tel:'+tel:'#'}" class="call-btn">📞</a>
         </div>
@@ -1104,7 +1220,7 @@ function renderTable(){
       const p=getPos(w.name,col.y,col.m,col.d);
       const td=document.createElement('td');
       const d=document.createElement('div'); d.className='tc '+scls(s);
-      d.innerHTML=escHtml(lbl(s))+(p?`<span class="tp" style="background:var(--${p}-b);color:var(--${p}-c)">${POS_MAP[p]}</span>`:'');
+      d.innerHTML=escHtml(lbl(s))+(p?`<span class="tp" style="${posBadgeStyle(p)}">${escHtml(posLabel(p))}</span>`:'');
       td.appendChild(d); tr.appendChild(td);
     });
     dtb.appendChild(tr);
@@ -1167,6 +1283,7 @@ function openAdminPanel(){
   const nt=new Date(); statY=nt.getFullYear(); statM=nt.getMonth();
   document.getElementById('adminOv').classList.add('show');
   renderShiftFilterChips();
+  renderPosFilterChips();
 }
 function aTab(tab,btn){
   document.querySelectorAll('.atab').forEach(b=>b.classList.remove('active'));
@@ -1178,6 +1295,7 @@ function aTab(tab,btn){
   document.getElementById('aStats').style.display=tab==='stats'?'block':'none';
   document.getElementById('aNotif').style.display=tab==='notif'?'block':'none';
   document.getElementById('aShifts').style.display=tab==='shifts'?'block':'none';
+  document.getElementById('aPositions').style.display=tab==='positions'?'block':'none';
   if(tab==='waiters') renderWaitersList();
   if(tab==='copy') updateCopyLabels();
   if(tab==='stats') renderStats();
@@ -1200,6 +1318,11 @@ function aTab(tab,btn){
   if(tab==='shifts'){
     fillShiftEditorTa();
     const st=document.getElementById('shiftEditorSt');
+    if(st) st.textContent='';
+  }
+  if(tab==='positions'){
+    renderPosEditor();
+    const st=document.getElementById('posEditorSt');
     if(st) st.textContent='';
   }
 }
@@ -1244,10 +1367,10 @@ function renderAdminGrid(){
       const td=document.createElement('td');
 
       const shiftOpts=shiftSelectOptions(curS).map(s=>`<option value="${escAttr(s)}"${curS===s?' selected':''}>${escHtml(s)}</option>`).join('');
-      const posOpts=Object.entries(POS_MAP).map(([k,v])=>`<option value="${k}"${curP===k?' selected':''}>${v}</option>`).join('');
+      const posOpts=posSelectOptions(curP).map(o=>`<option value="${escAttr(o.key)}"${curP===o.key?' selected':''}>${escHtml(o.label)}</option>`).join('');
 
       const sClass = gselShiftClass(curS);
-      const pClass = curP?'s-'+curP:'s-o';
+      const pClass = gselPosClass(curP);
       td.innerHTML=`<div class="gcell">
         <select class="gsel ${sClass}" data-n="${escAttr(w.name)}" data-dk="${dkv}" data-t="s" onchange="colorSel(this,'shift')">${shiftOpts}</select>
         <select class="gsel ${pClass}" data-n="${escAttr(w.name)}" data-dk="${dkv}" data-t="p" onchange="colorSel(this,'pos')">${posOpts}</select>
@@ -1305,7 +1428,7 @@ async function saveGrid(){
 
 /* ── FILTER ── */
 let fltShifts = new Set();
-let fltPos    = new Set(['H','V','A','none']);
+let fltPos    = new Set(getPositionOptions().map(p=>p.key).concat(['none']));
 
 function renderShiftFilterChips(){
   const wrap = document.getElementById('fltShiftChips');
@@ -1333,6 +1456,33 @@ function toggleFltShiftChip(el, val){
   if(fltShifts.has(val)){ fltShifts.delete(val); el.classList.remove('active'); }
   else { fltShifts.add(val); el.classList.add('active'); }
   applyFilter();
+}
+function resetPosFilterToAll(){
+  fltPos = new Set(getPositionOptions().map(p=>p.key).concat(['none']));
+}
+function renderPosFilterChips(){
+  const wrap = document.getElementById('fltPosChips');
+  if(!wrap) return;
+  const valid = new Set(getPositionOptions().map(p=>p.key).concat(['none']));
+  fltPos = new Set([...fltPos].filter(v=>valid.has(v)));
+  if(!fltPos.size) resetPosFilterToAll();
+  wrap.innerHTML = '';
+
+  getPositionOptions().forEach(p=>{
+    const span = document.createElement('span');
+    span.className = 'flt-chip ' + ((p.key==='H'||p.key==='V'||p.key==='A') ? ('fc-'+p.key) : 'fc-o');
+    if(fltPos.has(p.key)) span.classList.add('active');
+    span.textContent = p.label;
+    span.onclick = ()=> toggleFltChip(span, p.key);
+    wrap.appendChild(span);
+  });
+
+  const none = document.createElement('span');
+  none.className = 'flt-chip fc-o';
+  if(fltPos.has('none')) none.classList.add('active');
+  none.textContent = 'პოზიციის გარეშე';
+  none.onclick = ()=> toggleFltChip(none, 'none');
+  wrap.appendChild(none);
 }
 function fillShiftEditorTa(){
   const ta = document.getElementById('shiftEditorTa');
@@ -1369,6 +1519,68 @@ async function clearShiftEditorList(){
   renderAll();
   const st = document.getElementById('shiftEditorSt');
   if(st) st.textContent = 'სია გასუფთავდა (Supabase). ჩაწერე ვარიანტები და შეინახე.';
+}
+
+function openPosManagerTab(){
+  const btn = document.getElementById('tabPositionsBtn');
+  if(btn) aTab('positions', btn);
+}
+function renderPosEditor(){
+  const host = document.getElementById('posEditorRows');
+  if(!host) return;
+  host.innerHTML = '';
+  getPositionOptions().forEach(p=> appendPosEditorRow(p));
+}
+function appendPosEditorRow(row){
+  const host = document.getElementById('posEditorRows');
+  if(!host) return;
+  const wrap = document.createElement('div');
+  wrap.className = 'pos-row';
+  wrap.dataset.key = row?.key || '';
+  wrap.style.cssText = 'display:flex;gap:8px;align-items:center;background:var(--s2);border:1px solid var(--br);border-radius:8px;padding:8px;';
+  wrap.innerHTML = `
+    <div style="font-size:.62rem;color:var(--mu);font-weight:700;min-width:56px;">${escHtml(row?.key || 'ახალი')}</div>
+    <input class="inp pos-label" style="padding:8px 10px;font-size:.75rem;" placeholder="სახელი ( напр. ჰოლი )" value="${escAttr(row?.label || '')}">
+    <input class="inp pos-full" style="padding:8px 10px;font-size:.75rem;" placeholder="სრული სახელი (optional)" value="${escAttr(row?.full || '')}">
+    <button type="button" class="sbtn" style="background:rgba(248,113,113,.16);color:#f87171;padding:7px 10px;" onclick="this.closest('.pos-row').remove()">წაშლა</button>
+  `;
+  host.appendChild(wrap);
+}
+function addPosEditorRow(){
+  appendPosEditorRow({ key:'', label:'', full:'' });
+}
+async function savePosEditor(){
+  const st = document.getElementById('posEditorSt');
+  const rows = [...document.querySelectorAll('#posEditorRows .pos-row')];
+  const used = new Set();
+  const next = [];
+  for(const row of rows){
+    const label = (row.querySelector('.pos-label')?.value || '').trim();
+    if(!label) continue;
+    const fullRaw = (row.querySelector('.pos-full')?.value || '').trim();
+    let key = sanitizePosKey(row.dataset.key || '');
+    if(!key) key = makePosKeyFromLabel(label, used);
+    if(used.has(key)) continue;
+    used.add(key);
+    next.push({ key, label: label.slice(0,18), full: (fullRaw || label).slice(0,28) });
+  }
+  if(!next.length){
+    if(st) st.textContent = 'მინიმუმ 1 პოზიცია უნდა იყოს.';
+    return;
+  }
+  setPositionOptions(next);
+  resetPosFilterToAll();
+  renderPosFilterChips();
+  renderPosEditor();
+  renderAdminGrid();
+  renderAll();
+  if(st) st.textContent = 'ინახება Supabase-ში...';
+  try{
+    await upsertAppSetting(SETTINGS_POS_KEY, getPositionOptions());
+    if(st) st.textContent = '✓ პოზიციები შენახულია.';
+  }catch(e){
+    if(st) st.textContent = 'ლოკალურად OK; Supabase: '+e.message.slice(0,40);
+  }
 }
 
 function initFilter(){
@@ -1445,9 +1657,9 @@ function clearFilter(){
   document.getElementById('fltFrom').value   = '';
   document.getElementById('fltTo').value     = '';
   fltShifts = new Set(getShiftsOpt());
-  fltPos    = new Set(['H','V','A','none']);
+  resetPosFilterToAll();
   renderShiftFilterChips();
-  document.querySelectorAll('#fltPosChips .flt-chip').forEach(c=>c.classList.add('active'));
+  renderPosFilterChips();
   // reset cell opacity
   document.querySelectorAll('#agTable tbody td').forEach(td=>td.style.opacity='1');
   document.querySelectorAll('#agTable tbody tr').forEach(tr=>tr.style.display='');
@@ -1495,8 +1707,7 @@ function colorSel(sel, type){
   if(type==='shift'){
     sel.classList.add(gselShiftClass(sel.value));
   } else {
-    const map = {'H':'s-H','V':'s-V','A':'s-A','':'s-o'};
-    sel.classList.add(map[sel.value]||'s-o');
+    sel.classList.add(gselPosClass(sel.value));
   }
 }
 
@@ -1540,7 +1751,7 @@ function showCalDay(y,m,d){
   const rows=workers.map(w=>`<div class="cal-drow">
     <div class="cal-dn">${escHtml(w.name)}</div>
     <div class="cal-dr">
-      ${w.p?`<span class="pc ${w.p}">${POS_FULL[w.p]}</span>`:''}
+      ${w.p?`<span class="pc" style="${posBadgeStyle(w.p)}">${escHtml(posFullLabel(w.p))}</span>`:''}
       <span class="drs ${scls(w.s)}">${escHtml(w.s)}</span>
       ${w.n?`<span style="font-size:.62rem;color:var(--mu);font-style:italic">💬 ${escHtml(w.n)}</span>`:''}
     </div>
@@ -1795,7 +2006,7 @@ function renderTodayPreview(){
     <div style="display:flex;align-items:center;justify-content:space-between;padding:7px 0;border-bottom:1px solid var(--br);">
       <div>
         <div style="font-size:.8rem;font-weight:700;">${escHtml(w.name)}</div>
-        <div style="font-size:.67rem;color:var(--mu);">${escHtml(w.s)}${w.p?' · '+POS_FULL[w.p]:''}</div>
+        <div style="font-size:.67rem;color:var(--mu);">${escHtml(w.s)}${w.p?' · '+escHtml(posFullLabel(w.p)):''}</div>
       </div>
       <a href="${telDigits(w.phone)?'tel:'+telDigits(w.phone):'#'}" class="call-btn">📞</a>
     </div>`).join('');

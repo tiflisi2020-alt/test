@@ -305,6 +305,7 @@ html.light .ag-table tbody tr:hover td:first-child{background:var(--s2);}
 .gsel.s-H{background:var(--H-b);color:var(--H-c);border-color:var(--H-c);}
 .gsel.s-V{background:var(--V-b);color:var(--V-c);border-color:var(--V-c);}
 .gsel.s-A{background:var(--A-b);color:var(--A-c);border-color:var(--A-c);}
+.gsel.s-p{background:var(--s3);color:var(--tx);border-color:var(--br2);}
 .ginp{background:var(--s2);border:1px solid var(--br);border-radius:6px;
   padding:4px 5px;color:var(--tx);font-family:inherit;font-size:.63rem;width:100%;outline:none;}
 .ginp:focus{border-color:var(--ac);}
@@ -726,6 +727,7 @@ html.light input:focus-visible,html.light select:focus-visible{
         <button class="atab" onclick="aTab('stats',this)">📊 სტატისტიკა</button>
         <button class="atab" onclick="aTab('notif',this)">🔔 შეტყობინება</button>
         <button class="atab" onclick="aTab('shifts',this)">⏱ ცვლები</button>
+        <button class="atab" id="tabPositionsBtn" onclick="aTab('positions',this)">📍 პოზიციები</button>
       </div>
 
       <!-- GRID TAB -->
@@ -757,6 +759,11 @@ html.light input:focus-visible,html.light select:focus-visible{
           </div>
           <div class="flt-label" style="margin-top:2px;">შიფტი</div>
           <div class="flt-chips" id="fltShiftChips"></div>
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-top:2px;gap:8px;">
+            <div class="flt-label" style="margin-top:0;">პოზიცია</div>
+            <button type="button" class="flt-clear" style="padding:5px 8px;font-size:.62rem;" onclick="openPosManagerTab()">⚙️ პოზიციების მართვა</button>
+          </div>
+          <div class="flt-chips" id="fltPosChips"></div>
         </div>
         <div class="ag-wrap">
           <table class="ag-table" id="agTable"></table>
@@ -818,6 +825,16 @@ html.light input:focus-visible,html.light select:focus-visible{
           <button type="button" class="sbtn" style="background:var(--s3);color:var(--tx);" onclick="clearShiftEditorList()">✕ სიის გასუფთავება</button>
         </div>
         <p id="shiftEditorSt" style="font-size:.68rem;color:var(--V-c);margin-top:10px;min-height:1.2em;"></p>
+      </div>
+
+      <div id="aPositions" style="display:none">
+        <p style="font-size:.74rem;color:var(--mu);margin-bottom:10px;line-height:1.45;">პოზიციები გამოჩნდება ცხრილში, ფილტრში და კალენდარში. შეგიძლია სახელის შეცვლა, წაშლა ან ახალი პოზიციის დამატება.</p>
+        <div id="posEditorRows" style="display:flex;flex-direction:column;gap:8px;"></div>
+        <div style="display:flex;flex-wrap:wrap;gap:8px;margin-top:12px;">
+          <button type="button" class="sbtn" onclick="addPosEditorRow()">+ პოზიციის დამატება</button>
+          <button type="button" class="sbtn" onclick="savePosEditor()">💾 შენახვა</button>
+        </div>
+        <p id="posEditorSt" style="font-size:.68rem;color:var(--V-c);margin-top:10px;min-height:1.2em;"></p>
       </div>
 
       <!-- COPY TAB -->
@@ -898,12 +915,20 @@ const MKA = ['იანვარი','თებერვალი','მარტ
 const MSH = ['იან','თებ','მარ','აპრ','მაი','ივნ','ივლ','აგვ','სექ','ოქტ','ნოე','დეკ'];
 
 const SHIFTS_LS_KEY = 'tiflisi_shifts_cleaning';
+const POSITIONS_LS_KEY = 'tiflisi_positions_cleaning';
 const SETTINGS_SHIFT_KEY = 'shifts_cleaning';
 const SETTINGS_NOTIF_KEY = 'notif_cleaning';
 const SETTINGS_THEME_KEY = 'ui_theme';
+const SETTINGS_POS_KEY = 'positions_cleaning';
 const NOTIF_EN_LS = 'notifEnabled_cleaning';
 const NOTIF_TIME_LS = 'notifTime_cleaning';
 let _shiftOptsOverride = null;
+let _positionOptsOverride = null;
+const DEFAULT_POSITIONS = [
+  { key:'H', label:'ჰოლი',     full:'ჰოლი' },
+  { key:'V', label:'ვერანდა',  full:'ვერანდა' },
+  { key:'A', label:'ანტრ.',    full:'ანტრესოლი' }
+];
 
 function normalizeShiftLines(src){
   const arr = Array.isArray(src) ? src : [];
@@ -945,6 +970,63 @@ function gselShiftClass(val){
   if(i < 0) return 's-o';
   return ['s-m','s-a','s-e'][i % 3];
 }
+function sanitizePosKey(raw){
+  return String(raw||'').toUpperCase().replace(/[^A-Z0-9_]/g,'').slice(0,12);
+}
+function makePosKeyFromLabel(label, used){
+  let key = sanitizePosKey(String(label||'').replace(/\s+/g,'_'));
+  if(!key) key = 'POS';
+  if(!used.has(key)) return key;
+  let n = 2;
+  while(used.has((key+'_'+n).slice(0,12))) n++;
+  return (key+'_'+n).slice(0,12);
+}
+function normalizePositionEntries(src){
+  const arr = Array.isArray(src) ? src : [];
+  const out = [];
+  const used = new Set();
+  for(const item of arr){
+    if(!item || typeof item !== 'object') continue;
+    const label = String(item.label || item.name || '').trim();
+    if(!label) continue;
+    const full = String(item.full || label).trim().slice(0,28);
+    let key = sanitizePosKey(item.key || item.code || item.id || '');
+    if(!key) key = makePosKeyFromLabel(label, used);
+    if(used.has(key)) continue;
+    used.add(key);
+    out.push({ key, label: label.slice(0,18), full });
+  }
+  return out.length ? out : DEFAULT_POSITIONS.map(p=>({ ...p }));
+}
+function getPositionOptions(){
+  if(_positionOptsOverride !== null) return _positionOptsOverride;
+  try{
+    const raw = localStorage.getItem(POSITIONS_LS_KEY);
+    if(!raw) return DEFAULT_POSITIONS.map(p=>({ ...p }));
+    return normalizePositionEntries(JSON.parse(raw));
+  }catch(_){
+    return DEFAULT_POSITIONS.map(p=>({ ...p }));
+  }
+}
+function setPositionOptions(arr){
+  const data = normalizePositionEntries(arr);
+  _positionOptsOverride = data;
+  localStorage.setItem(POSITIONS_LS_KEY, JSON.stringify(data));
+}
+function getPosEntryByKey(key){
+  return getPositionOptions().find(p=>p.key===key) || null;
+}
+function posSelectOptions(currentVal){
+  const opts = [{ key:'', label:'—' }, ...getPositionOptions().map(p=>({ key:p.key, label:p.label }))];
+  const v = currentVal ? String(currentVal).trim() : '';
+  if(v && !opts.some(o=>o.key===v)) opts.push({ key:v, label:v });
+  return opts;
+}
+function gselPosClass(val){
+  if(!val) return 's-o';
+  if(val==='H' || val==='V' || val==='A') return 's-'+val;
+  return 's-p';
+}
 
 /* hardcoded Mar 22 – Apr 4 (Sun–Sat) */
 const FCOLS = [
@@ -966,7 +1048,7 @@ const CLEANERS = [
 /* ══════════════════════════════
    STATE
 ══════════════════════════════ */
-// cache: "name|YYYY-MM-DD" → {shift_time, notes}
+// cache: "name|YYYY-MM-DD" → {shift_time, position, notes}
 let DB = {};
 let wkOff = 0;   // public week offset
 let agOff = 0;   // admin grid week offset
@@ -1048,6 +1130,7 @@ function getShift(name,y,m,d){
   if(i>=0){ const w=CLEANERS.find(ww=>ww.name===name); return w?w.shifts[i]:'OFF'; }
   return 'OFF';
 }
+function getPos(name,y,m,d){ return DB[pk(name,dk(y,m,d))]?.position||''; }
 function getNote(name,y,m,d){ return DB[pk(name,dk(y,m,d))]?.notes||''; }
 
 /* ══════════════════════════════
@@ -1070,11 +1153,12 @@ async function sbq(path,opts={}){
 async function loadDB(){
   setSS('spin','ჩატვირთვა...');
   try{
-    const rows=await sbq('cleaner_positions?select=cleaner_name,shift_date,shift_time,notes');
+    const rows=await sbq('cleaner_positions?select=cleaner_name,shift_date,shift_time,position,notes');
     DB={};
     (rows||[]).forEach(r=>{
       DB[pk(r.cleaner_name,r.shift_date)]={
         shift_time:r.shift_time||'',
+        position:r.position||'',
         notes:r.notes||''
       };
     });
@@ -1131,6 +1215,22 @@ async function loadUiSettingsFromSupabase(){
         _shiftOptsOverride = local;
       } else {
         _shiftOptsOverride = [];
+      }
+    }
+    const posV = await fetchAppSetting(SETTINGS_POS_KEY);
+    if(posV !== null && Array.isArray(posV)){
+      setPositionOptions(posV);
+    } else {
+      let localPos = [];
+      try{
+        const pRaw = localStorage.getItem(POSITIONS_LS_KEY);
+        if(pRaw) localPos = normalizePositionEntries(JSON.parse(pRaw));
+      }catch(_){}
+      if(localPos.length){
+        setPositionOptions(localPos);
+        await upsertAppSetting(SETTINGS_POS_KEY, localPos);
+      } else {
+        setPositionOptions(DEFAULT_POSITIONS);
       }
     }
     const notifV = await fetchAppSetting(SETTINGS_NOTIF_KEY);
@@ -1388,6 +1488,7 @@ function openAdminPanel(){
   const nt=new Date(); statY=nt.getFullYear(); statM=nt.getMonth();
   document.getElementById('adminOv').classList.add('show');
   renderShiftFilterChips();
+  renderPosFilterChips();
 }
 function aTab(tab,btn){
   document.querySelectorAll('.atab').forEach(b=>b.classList.remove('active'));
@@ -1399,6 +1500,7 @@ function aTab(tab,btn){
   document.getElementById('aStats').style.display=tab==='stats'?'block':'none';
   document.getElementById('aNotif').style.display=tab==='notif'?'block':'none';
   document.getElementById('aShifts').style.display=tab==='shifts'?'block':'none';
+  document.getElementById('aPositions').style.display=tab==='positions'?'block':'none';
   if(tab==='cleaning') renderCleanersList();
   if(tab==='copy') updateCopyLabels();
   if(tab==='stats') renderStats();
@@ -1421,6 +1523,11 @@ function aTab(tab,btn){
   if(tab==='shifts'){
     fillShiftEditorTa();
     const st=document.getElementById('shiftEditorSt');
+    if(st) st.textContent='';
+  }
+  if(tab==='positions'){
+    renderPosEditor();
+    const st=document.getElementById('posEditorSt');
     if(st) st.textContent='';
   }
 }
@@ -1460,14 +1567,18 @@ function renderAdminGrid(){
     days.forEach(c=>{
       const dkv=dk(c.y,c.m,c.d);
       const curS=getShift(w.name,c.y,c.m,c.d);
+      const curP=getPos(w.name,c.y,c.m,c.d);
       const curN=getNote(w.name,c.y,c.m,c.d);
       const td=document.createElement('td');
 
       const shiftOpts=shiftSelectOptions(curS).map(s=>`<option value="${escAttr(s)}"${curS===s?' selected':''}>${escHtml(s)}</option>`).join('');
+      const posOpts=posSelectOptions(curP).map(o=>`<option value="${escAttr(o.key)}"${curP===o.key?' selected':''}>${escHtml(o.label)}</option>`).join('');
 
       const sClass = gselShiftClass(curS);
+      const pClass = gselPosClass(curP);
       td.innerHTML=`<div class="gcell">
-        <select class="gsel ${sClass}" data-n="${escAttr(w.name)}" data-dk="${dkv}" data-t="s" onchange="colorSel(this)">${shiftOpts}</select>
+        <select class="gsel ${sClass}" data-n="${escAttr(w.name)}" data-dk="${dkv}" data-t="s" onchange="colorSel(this,'shift')">${shiftOpts}</select>
+        <select class="gsel ${pClass}" data-n="${escAttr(w.name)}" data-dk="${dkv}" data-t="p" onchange="colorSel(this,'pos')">${posOpts}</select>
         <input class="ginp" placeholder="შენიშვნა" value="${escAttr(curN)}" data-n="${escAttr(w.name)}" data-dk="${dkv}" data-t="n">
       </div>`;
       tr.appendChild(td);
@@ -1488,6 +1599,7 @@ async function saveGrid(){
     const key=pk(el.dataset.n, el.dataset.dk);
     if(!map[key]) map[key]={cleaner_name:el.dataset.n, shift_date:el.dataset.dk};
     if(el.dataset.t==='s') map[key].shift_time=el.value;
+    if(el.dataset.t==='p') map[key].position=el.value||null;
     if(el.dataset.t==='n') map[key].notes=el.value||null;
   });
 
@@ -1500,6 +1612,7 @@ async function saveGrid(){
     rows.forEach(r=>{
       DB[pk(r.cleaner_name,r.shift_date)]={
         shift_time:r.shift_time||'',
+        position:r.position||'',
         notes:r.notes||''
       };
     });
@@ -1520,6 +1633,7 @@ async function saveGrid(){
 
 /* ── FILTER ── */
 let fltShifts = new Set();
+let fltPos    = new Set(getPositionOptions().map(p=>p.key).concat(['none']));
 
 function renderShiftFilterChips(){
   const wrap = document.getElementById('fltShiftChips');
@@ -1547,6 +1661,31 @@ function toggleFltShiftChip(el, val){
   if(fltShifts.has(val)){ fltShifts.delete(val); el.classList.remove('active'); }
   else { fltShifts.add(val); el.classList.add('active'); }
   applyFilter();
+}
+function resetPosFilterToAll(){
+  fltPos = new Set(getPositionOptions().map(p=>p.key).concat(['none']));
+}
+function renderPosFilterChips(){
+  const wrap = document.getElementById('fltPosChips');
+  if(!wrap) return;
+  const valid = new Set(getPositionOptions().map(p=>p.key).concat(['none']));
+  fltPos = new Set([...fltPos].filter(v=>valid.has(v)));
+  if(!fltPos.size) resetPosFilterToAll();
+  wrap.innerHTML = '';
+  getPositionOptions().forEach(p=>{
+    const span = document.createElement('span');
+    span.className = 'flt-chip ' + ((p.key==='H'||p.key==='V'||p.key==='A') ? ('fc-'+p.key) : 'fc-o');
+    if(fltPos.has(p.key)) span.classList.add('active');
+    span.textContent = p.label;
+    span.onclick = ()=> toggleFltChip(span, p.key);
+    wrap.appendChild(span);
+  });
+  const none = document.createElement('span');
+  none.className = 'flt-chip fc-o';
+  if(fltPos.has('none')) none.classList.add('active');
+  none.textContent = 'პოზიციის გარეშე';
+  none.onclick = ()=> toggleFltChip(none, 'none');
+  wrap.appendChild(none);
 }
 function fillShiftEditorTa(){
   const ta = document.getElementById('shiftEditorTa');
@@ -1584,6 +1723,71 @@ async function clearShiftEditorList(){
   const st = document.getElementById('shiftEditorSt');
   if(st) st.textContent = 'სია გასუფთავდა (Supabase). ჩაწერე ვარიანტები და შეინახე.';
 }
+function toggleFltChip(el, val){
+  const set = fltPos;
+  if(set.has(val)){ set.delete(val); el.classList.remove('active'); }
+  else { set.add(val); el.classList.add('active'); }
+  applyFilter();
+}
+function openPosManagerTab(){
+  const btn = document.getElementById('tabPositionsBtn');
+  if(btn) aTab('positions', btn);
+}
+function renderPosEditor(){
+  const host = document.getElementById('posEditorRows');
+  if(!host) return;
+  host.innerHTML = '';
+  getPositionOptions().forEach(p=> appendPosEditorRow(p));
+}
+function appendPosEditorRow(row){
+  const host = document.getElementById('posEditorRows');
+  if(!host) return;
+  const wrap = document.createElement('div');
+  wrap.className = 'pos-row';
+  wrap.dataset.key = row?.key || '';
+  wrap.style.cssText = 'display:flex;gap:8px;align-items:center;background:var(--s2);border:1px solid var(--br);border-radius:8px;padding:8px;';
+  wrap.innerHTML = `
+    <div style="font-size:.62rem;color:var(--mu);font-weight:700;min-width:56px;">${escHtml(row?.key || 'ახალი')}</div>
+    <input class="inp pos-label" style="padding:8px 10px;font-size:.75rem;" placeholder="სახელი ( напр. ჰოლი )" value="${escAttr(row?.label || '')}">
+    <input class="inp pos-full" style="padding:8px 10px;font-size:.75rem;" placeholder="სრული სახელი (optional)" value="${escAttr(row?.full || '')}">
+    <button type="button" class="sbtn" style="background:rgba(248,113,113,.16);color:#f87171;padding:7px 10px;" onclick="this.closest('.pos-row').remove()">წაშლა</button>
+  `;
+  host.appendChild(wrap);
+}
+function addPosEditorRow(){ appendPosEditorRow({ key:'', label:'', full:'' }); }
+async function savePosEditor(){
+  const st = document.getElementById('posEditorSt');
+  const rows = [...document.querySelectorAll('#posEditorRows .pos-row')];
+  const used = new Set();
+  const next = [];
+  for(const row of rows){
+    const label = (row.querySelector('.pos-label')?.value || '').trim();
+    if(!label) continue;
+    const fullRaw = (row.querySelector('.pos-full')?.value || '').trim();
+    let key = sanitizePosKey(row.dataset.key || '');
+    if(!key) key = makePosKeyFromLabel(label, used);
+    if(used.has(key)) continue;
+    used.add(key);
+    next.push({ key, label: label.slice(0,18), full: (fullRaw || label).slice(0,28) });
+  }
+  if(!next.length){
+    if(st) st.textContent = 'მინიმუმ 1 პოზიცია უნდა იყოს.';
+    return;
+  }
+  setPositionOptions(next);
+  resetPosFilterToAll();
+  renderPosFilterChips();
+  renderPosEditor();
+  renderAdminGrid();
+  renderAll();
+  if(st) st.textContent = 'ინახება Supabase-ში...';
+  try{
+    await upsertAppSetting(SETTINGS_POS_KEY, getPositionOptions());
+    if(st) st.textContent = '✓ პოზიციები შენახულია.';
+  }catch(e){
+    if(st) st.textContent = 'ლოკალურად OK; Supabase: '+e.message.slice(0,40);
+  }
+}
 
 function initFilter(){
   const sel = document.getElementById('fltClean');
@@ -1620,14 +1824,18 @@ function applyFilter(){
       if(!c){ td.style.opacity='1'; return; }
       const dkv = dk(c.y,c.m,c.d);
       const shiftSel = td.querySelector('[data-t="s"]');
+      const posSel   = td.querySelector('[data-t="p"]');
       if(!shiftSel){ td.style.opacity='1'; anyVisible=true; return; }
 
       const sVal = shiftSel.value;
+      const pVal = posSel ? posSel.value : '';
 
       if(fromVal && dkv < fromVal){ td.style.opacity='.2'; return; }
       if(toVal   && dkv > toVal  ){ td.style.opacity='.2'; return; }
 
       if(shiftTypeFilterOn() && !fltShifts.has(sVal)){ td.style.opacity='.2'; return; }
+      const pMatch = pVal ? fltPos.has(pVal) : fltPos.has('none');
+      if(!pMatch){ td.style.opacity='.2'; return; }
 
       td.style.opacity='1';
       anyVisible = true;
@@ -1642,7 +1850,9 @@ function clearFilter(){
   document.getElementById('fltFrom').value   = '';
   document.getElementById('fltTo').value     = '';
   fltShifts = new Set(getShiftsOpt());
+  resetPosFilterToAll();
   renderShiftFilterChips();
+  renderPosFilterChips();
   document.querySelectorAll('#agTable tbody td').forEach(td=>td.style.opacity='1');
   document.querySelectorAll('#agTable tbody tr').forEach(tr=>tr.style.display='');
 }
@@ -1684,9 +1894,10 @@ async function deleteFiltered(){
 }
 
 /* ── COLOR SELECT ── */
-function colorSel(sel){
+function colorSel(sel, type){
   sel.className = 'gsel';
-  sel.classList.add(gselShiftClass(sel.value));
+  if(type==='shift') sel.classList.add(gselShiftClass(sel.value));
+  else sel.classList.add(gselPosClass(sel.value));
 }
 
 /* ── CALENDAR ── */

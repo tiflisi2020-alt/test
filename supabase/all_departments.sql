@@ -36,6 +36,7 @@ CREATE TABLE IF NOT EXISTS public.chef_positions (
   chef_name   text NOT NULL,
   shift_date  date NOT NULL,
   shift_time  text,
+  position    text,
   notes       text,
   PRIMARY KEY (chef_name, shift_date)
 );
@@ -52,6 +53,7 @@ CREATE TABLE IF NOT EXISTS public.cleaner_positions (
   cleaner_name  text NOT NULL,
   shift_date    date NOT NULL,
   shift_time    text,
+  position      text,
   notes         text,
   PRIMARY KEY (cleaner_name, shift_date)
 );
@@ -68,6 +70,7 @@ CREATE TABLE IF NOT EXISTS public.cashier_positions (
   cashier_name  text NOT NULL,
   shift_date    date NOT NULL,
   shift_time    text,
+  position      text,
   notes         text,
   PRIMARY KEY (cashier_name, shift_date)
 );
@@ -84,9 +87,16 @@ CREATE TABLE IF NOT EXISTS public.hostess_positions (
   hostess_name  text NOT NULL,
   shift_date    date NOT NULL,
   shift_time    text,
+  position      text,
   notes         text,
   PRIMARY KEY (hostess_name, shift_date)
 );
+
+-- არსებული პროექტებისთვის უსაფრთხო მიგრაცია (თუ სვეტი უკვე არსებობს, შეცდომას არ აგდებს)
+ALTER TABLE public.chef_positions    ADD COLUMN IF NOT EXISTS position text;
+ALTER TABLE public.cleaner_positions ADD COLUMN IF NOT EXISTS position text;
+ALTER TABLE public.cashier_positions ADD COLUMN IF NOT EXISTS position text;
+ALTER TABLE public.hostess_positions ADD COLUMN IF NOT EXISTS position text;
 
 -- ── საერთო ჩატი (მთავარი გვერდი) ───────────────────────────────────────────
 CREATE TABLE IF NOT EXISTS public.main_chat_messages (
