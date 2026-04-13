@@ -781,6 +781,11 @@ function setPositionOptions(arr){
 function getPosEntryByKey(key){
   return getPositionOptions().find(p=>p.key===key) || null;
 }
+function posLabel(key){
+  if(!key) return '';
+  const row = getPosEntryByKey(key);
+  return row ? row.label : key;
+}
 function posSelectOptions(currentVal){
   const opts = [{ key:'', label:'—' }, ...getPositionOptions().map(p=>({ key:p.key, label:p.label }))];
   const v = currentVal ? String(currentVal).trim() : '';
@@ -791,6 +796,18 @@ function gselPosClass(val){
   if(!val) return 's-o';
   if(val==='H' || val==='V' || val==='A') return 's-'+val;
   return 's-p';
+}
+function posBadgeStyle(val){
+  if(val==='H') return 'background:var(--H-b);color:var(--H-c)';
+  if(val==='V') return 'background:var(--V-b);color:var(--V-c)';
+  if(val==='A') return 'background:var(--A-b);color:var(--A-c)';
+  return 'background:var(--s3);color:var(--tx)';
+}
+function posTextStyle(val){
+  if(val==='H') return 'color:var(--H-c)';
+  if(val==='V') return 'color:var(--V-c)';
+  if(val==='A') return 'color:var(--A-c)';
+  return 'color:var(--mu)';
 }
 
 /* hardcoded Mar 22 – Apr 4 (Sun–Sat) — მარიამი 24–25 ცვლაში; ანა 2×2-ში საპირისპიროდ */
@@ -1064,12 +1081,13 @@ function renderWeek(){
     const workers=DYNAMIC_HOSTESSES.filter(w=>getShift(w.name,c.y,c.m,c.d)!=='OFF');
     const entries=workers.map(w=>{
       const s=getShift(w.name,c.y,c.m,c.d);
+      const p=getPos(w.name,c.y,c.m,c.d);
       const short=escHtml((w.name.split(' ')[0]||''));
       const tel2 = telDigits(w.phone);
       return `<div class="wk-entry" style="background:var(--${scls(s)}-b);color:var(--${scls(s)}-c)">
         <a href="${tel2?'tel:'+tel2:'#'}" style="text-decoration:none;display:flex;align-items:center;justify-content:space-between;gap:2px;">
           <span class="wk-ename" style="color:var(--${scls(s)}-c)">${short}</span>
-          <span class="wk-epos" style="opacity:.85">📞</span>
+          ${p?`<span class="wk-epos" style="${posTextStyle(p)}">${escHtml(posLabel(p))}</span>`:'<span class="wk-epos" style="opacity:.85">📞</span>'}
         </a>
       </div>`;
     }).join('');
@@ -1106,9 +1124,11 @@ function renderCardsByWeek(days){
     }).join('');
     const chips=days.map((c)=>{
       const s=getShift(w.name,c.y,c.m,c.d);
+      const p=getPos(w.name,c.y,c.m,c.d);
       return `<div class="chip ${scls(s)} ${iW(c.wd)?'wknd':''}">
         <span class="cd">${KD[c.wd]}</span><span class="cn">${c.d}</span>
         <span class="ct">${escHtml(lbl(s))}</span>
+        ${p?`<span class="cp" style="${posBadgeStyle(p)}">${escHtml(posLabel(p))}</span>`:''}
       </div>`;
     }).join('');
     const card=document.createElement('div');
@@ -1141,11 +1161,13 @@ function renderDayViewByWeek(days){
     const workers=DYNAMIC_HOSTESSES.filter(w=>getShift(w.name,c.y,c.m,c.d)!=='OFF');
     const rows=workers.map(w=>{
       const s=getShift(w.name,c.y,c.m,c.d);
+      const p=getPos(w.name,c.y,c.m,c.d);
       const n=getNote(w.name,c.y,c.m,c.d);
       const tel=telDigits(w.phone);
       return `<div class="drow">
         <div class="drif"><div class="drn">${escHtml(w.name)}</div><div class="drp">${escHtml(w.phone)}</div></div>
         <div class="drr">
+          ${p?`<span class="pc" style="${posBadgeStyle(p)}">${escHtml(posLabel(p))}</span>`:''}
           <span class="drs ${scls(s)}">${escHtml(lbl(s))}</span>
           <a href="${tel?'tel:'+tel:'#'}" class="call-btn">📞</a>
         </div>
@@ -1187,9 +1209,10 @@ function renderTable(){
     tr.appendChild(td0);
     FCOLS.forEach((col,i)=>{
       const s=getShift(w.name,col.y,col.m,col.d);
+      const p=getPos(w.name,col.y,col.m,col.d);
       const td=document.createElement('td');
       const d=document.createElement('div'); d.className='tc '+scls(s);
-      d.textContent=lbl(s);
+      d.innerHTML=escHtml(lbl(s))+(p?`<span class="tp" style="${posBadgeStyle(p)}">${escHtml(posLabel(p))}</span>`:'');
       td.appendChild(d); tr.appendChild(td);
     });
     dtb.appendChild(tr);
@@ -1693,7 +1716,7 @@ function showCalDay(y,m,d){
   const dkv=dk(y,m,d);
   const det=document.getElementById('calDetail');
   const wd=new Date(y,m-1,d).getDay();
-  const workers=DYNAMIC_HOSTESSES.map(w=>({...w,s:getShift(w.name,y,m,d),n:getNote(w.name,y,m,d)}))
+  const workers=DYNAMIC_HOSTESSES.map(w=>({...w,s:getShift(w.name,y,m,d),p:getPos(w.name,y,m,d),n:getNote(w.name,y,m,d)}))
     .filter(w=>w.s!=='OFF');
 
   if(!workers.length){
@@ -1705,6 +1728,7 @@ function showCalDay(y,m,d){
   const rows=workers.map(w=>`<div class="cal-drow">
     <div class="cal-dn">${escHtml(w.name)}</div>
     <div class="cal-dr">
+      ${w.p?`<span class="pc" style="${posBadgeStyle(w.p)}">${escHtml(posLabel(w.p))}</span>`:''}
       <span class="drs ${scls(w.s)}">${escHtml(w.s)}</span>
       ${w.n?`<span style="font-size:.62rem;color:var(--mu);font-style:italic">💬 ${escHtml(w.n)}</span>`:''}
     </div>
@@ -1948,7 +1972,7 @@ function getTodayWorkers(){
   const t = new Date();
   const y=t.getFullYear(), m=t.getMonth()+1, d=t.getDate();
   return DYNAMIC_HOSTESSES
-    .map(w=>({...w, s:getShift(w.name,y,m,d)}))
+    .map(w=>({...w, s:getShift(w.name,y,m,d), p:getPos(w.name,y,m,d)}))
     .filter(w=>w.s!=='OFF');
 }
 
@@ -1963,7 +1987,7 @@ function renderTodayPreview(){
     <div style="display:flex;align-items:center;justify-content:space-between;padding:7px 0;border-bottom:1px solid var(--br);">
       <div>
         <div style="font-size:.8rem;font-weight:700;">${escHtml(w.name)}</div>
-        <div style="font-size:.67rem;color:var(--mu);">${escHtml(w.s)}</div>
+        <div style="font-size:.67rem;color:var(--mu);">${escHtml(w.s)}${w.p?' · '+escHtml(posLabel(w.p)):''}</div>
       </div>
       <a href="${telDigits(w.phone)?'tel:'+telDigits(w.phone):'#'}" class="call-btn">📞</a>
     </div>`).join('');
