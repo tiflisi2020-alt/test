@@ -934,6 +934,7 @@ async function sbq(path,opts={}){
 async function loadDB(){
   setSS('spin','ჩატვირთვა...');
   try{
+    await loadHostesses();
     const rows=await sbq('hostess_positions?select=hostess_name,shift_date,shift_time,position,notes');
     DB={};
     (rows||[]).forEach(r=>{
@@ -958,11 +959,15 @@ function upsertPatchOk(rep){
 }
 async function upsertRows(rows){
   if(!rows.length) return rows;
-  await sbq('hostess_positions?on_conflict=hostess_name,shift_date', {
-    method: 'POST',
-    body: JSON.stringify(rows),
-    headers: { Prefer: 'return=minimal,resolution=merge-duplicates' }
-  });
+  const CHUNK = 80;
+  for(let i = 0; i < rows.length; i += CHUNK){
+    const chunk = rows.slice(i, i + CHUNK);
+    await sbq('hostess_positions?on_conflict=hostess_name,shift_date', {
+      method: 'POST',
+      body: JSON.stringify(chunk),
+      headers: { Prefer: 'return=minimal,resolution=merge-duplicates' }
+    });
+  }
   return rows;
 }
 
@@ -1059,9 +1064,9 @@ function setSS(state,txt){
 function shiftWeek(d){ wkOff+=d; renderWeek(); renderViewsByWeek(); }
 
 function renderViewsByWeek(){
-  // Re-render hostess cards and day view for current wkOff week
   renderCardsByWeek(weekDates(wkOff));
   renderDayViewByWeek(weekDates(wkOff));
+  renderTable();
 }
 
 function renderWeek(){
@@ -1192,11 +1197,12 @@ function renderDayViewByWeek(days){
    RENDER: DESKTOP TABLE
 ══════════════════════════════ */
 function renderTable(){
+  const days = weekDates(wkOff);
   const dth=document.getElementById('dth'),dtb=document.getElementById('dtb');
   dth.innerHTML='';dtb.innerHTML='';
   const hr=document.createElement('tr');
   const t0=document.createElement('th');t0.textContent='ჰოსტესი';hr.appendChild(t0);
-  FCOLS.forEach(c=>{
+  days.forEach(c=>{
     const th=document.createElement('th');
     th.innerHTML=`<span class="thn ${iW(c.wd)?'wknd':''}">${c.d}</span>${KD[c.wd]}`;
     hr.appendChild(th);
@@ -1207,7 +1213,7 @@ function renderTable(){
     const td0=document.createElement('td');
     td0.innerHTML=`<div class="tn">${escHtml(w.name)}</div><div class="tph">${escHtml(w.phone)}</div>`;
     tr.appendChild(td0);
-    FCOLS.forEach((col,i)=>{
+    days.forEach(col=>{
       const s=getShift(w.name,col.y,col.m,col.d);
       const p=getPos(w.name,col.y,col.m,col.d);
       const td=document.createElement('td');
@@ -1222,7 +1228,7 @@ function renderTable(){
   const sd0=document.createElement('td');
   const sc0=document.createElement('div'); sc0.className='scl'; sc0.innerHTML='<span>სულ</span>';
   sd0.appendChild(sc0); sr.appendChild(sd0);
-  FCOLS.forEach((c,i)=>{
+  days.forEach(c=>{
     const n=DYNAMIC_HOSTESSES.filter(w=>getShift(w.name,c.y,c.m,c.d)!=='OFF').length;
     const td=document.createElement('td');
     const d=document.createElement('div'); d.className='scl';
@@ -1411,6 +1417,7 @@ async function saveGrid(){
     sstt.textContent='✓ შენახულია';
     setSS('ok','შენახულია');
     renderAll();
+    await loadDB();
   }catch(e){
     sstt.textContent='⚠️ '+e.message.slice(0,50);
     setSS('err','შეცდომა');
@@ -2103,10 +2110,7 @@ function initTheme(){
    PRINT
 ══════════════════════════════ */
 function doPrint(){
-  // update print header with current range
-  const first = FCOLS[0], last = FCOLS[FCOLS.length-1];
-  document.getElementById('printHdr').textContent =
-    'ჰოსტესის განრიგი · ' + first.d + ' ' + MSH[first.m-1] + ' – ' + last.d + ' ' + MSH[last.m-1] + ' ' + last.y;
+  document.getElementById('printHdr').textContent = 'ჰოსტესის განრიგი · ' + wkLabel(weekDates(wkOff));
   window.print();
 }
 
@@ -2194,7 +2198,6 @@ async function init(){
   renderAll();
   await loadDB();
   setInterval(loadDB, 30000);
-  setInterval(()=>{ loadHostesses().then(()=>renderAll()); }, 60000);
   initNotif();
   initTheme();
 }
