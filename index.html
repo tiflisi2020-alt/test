@@ -510,7 +510,20 @@ html.light .chat-err{color:#b91c1c;}
 (function(){
   const SB  = 'https://bbroknpeebjuilycutjd.supabase.co';
   const KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJicm9rbnBlZWJqdWlseWN1dGpkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzM4NTk0NjksImV4cCI6MjA4OTQzNTQ2OX0.7rlaolshlMLtFObv6ViaifiSNkiYofiCRm8q2SiJns8';
-  const CHAT_ADMIN_PASS = '151515';
+  let chatAdminPass = '151515';
+  async function loadChatAdminPass(){
+    try{
+      const r = await sbFetch('app_settings?key=eq.admin_password&select=value', { method: 'GET' });
+      if(!r.ok) return;
+      const data = await r.json();
+      const v = data && data[0] && data[0].value;
+      if(typeof v === 'string' && v.length >= 4) chatAdminPass = v;
+      else {
+        const local = localStorage.getItem('adminPass');
+        if(local && local.length >= 4) chatAdminPass = local;
+      }
+    }catch(_){}
+  }
   const LS_AUTHOR = 'mainChatAuthor';
   const PATH = 'main_chat_messages?select=id,author,body,created_at&order=created_at.desc&limit=100';
 
@@ -623,7 +636,7 @@ html.light .chat-err{color:#b91c1c;}
   async function clearChat(){
     const pin = window.prompt('ადმინის PIN:');
     if(pin === null) return;
-    if(String(pin).trim() !== CHAT_ADMIN_PASS){
+    if(String(pin).trim() !== chatAdminPass){
       showErr('PIN არასწორია.');
       return;
     }
@@ -665,7 +678,7 @@ html.light .chat-err{color:#b91c1c;}
     if(!document.hidden) loadMsgs();
   });
 
-  startPoll();
+  loadChatAdminPass().then(startPoll);
 
   function scrollToChat(){
     if(location.hash !== '#staffChat') return;

@@ -728,6 +728,7 @@ html.light input:focus-visible,html.light select:focus-visible{
         <button class="atab" onclick="aTab('notif',this)">🔔 შეტყობინება</button>
         <button class="atab" onclick="aTab('shifts',this)">⏱ ცვლები</button>
         <button class="atab" id="tabPositionsBtn" onclick="aTab('positions',this)">📍 პოზიციები</button>
+        <button class="atab" onclick="aTab('password',this)">🔐 პაროლი</button>
       </div>
 
       <!-- GRID TAB -->
@@ -837,6 +838,17 @@ html.light input:focus-visible,html.light select:focus-visible{
         <p id="posEditorSt" style="font-size:.68rem;color:var(--V-c);margin-top:10px;min-height:1.2em;"></p>
       </div>
 
+      <div id="aPassword" style="display:none">
+        <p style="font-size:.74rem;color:var(--mu);margin-bottom:10px;line-height:1.45;">Admin პაროლი ერთია ყველა განრიგზე და ინახება Supabase-ში — ყველა მოწყობილობაზე ერთნაირი.</p>
+        <div style="display:flex;flex-direction:column;gap:8px;max-width:320px;">
+          <input type="password" class="inp" id="passCur" placeholder="მიმდინარე პაროლი" autocomplete="current-password">
+          <input type="password" class="inp" id="passNew" placeholder="ახალი პაროლი (მინ. 4 სიმბოლო)" autocomplete="new-password">
+          <input type="password" class="inp" id="passConf" placeholder="ახალი პაროლის გამეორება" autocomplete="new-password">
+          <button type="button" class="sbtn" onclick="saveAdminPassword()">💾 პაროლის შეცვლა</button>
+        </div>
+        <p id="passEditorSt" style="font-size:.68rem;color:var(--V-c);margin-top:10px;min-height:1.2em;"></p>
+      </div>
+
       <!-- COPY TAB -->
       <div id="aCopy" style="display:none">
         <div style="font-size:.78rem;color:var(--mu);margin-bottom:14px;">კვირის განრიგის კოპირება ახალ კვირაზე</div>
@@ -907,7 +919,62 @@ html.light input:focus-visible,html.light select:focus-visible{
 ══════════════════════════════ */
 const SB  = 'https://bbroknpeebjuilycutjd.supabase.co';
 const KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJicm9rbnBlZWJqdWlseWN1dGpkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzM4NTk0NjksImV4cCI6MjA4OTQzNTQ2OX0.7rlaolshlMLtFObv6ViaifiSNkiYofiCRm8q2SiJns8';
-const PASS = '151515';
+const DEFAULT_ADMIN_PASS = '151515';
+const SETTINGS_ADMIN_PASS_KEY = 'admin_password';
+let _adminPassOverride = null;
+function getAdminPass(){
+  if(_adminPassOverride !== null && String(_adminPassOverride).length >= 4) return String(_adminPassOverride);
+  try{
+    const local = localStorage.getItem('adminPass');
+    if(local && local.length >= 4) return local;
+  }catch(_){}
+  return DEFAULT_ADMIN_PASS;
+}
+async function loadAdminPasswordFromSupabase(){
+  try{
+    const v = await fetchAppSetting(SETTINGS_ADMIN_PASS_KEY);
+    if(v !== null && typeof v === 'string' && v.length >= 4){
+      _adminPassOverride = v;
+      localStorage.setItem('adminPass', v);
+      return;
+    }
+    const local = localStorage.getItem('adminPass');
+    if(local && local.length >= 4){
+      await upsertAppSetting(SETTINGS_ADMIN_PASS_KEY, local);
+      _adminPassOverride = local;
+    }
+  }catch(e){ console.warn('admin pass load', e); }
+}
+async function saveAdminPassword(){
+  const cur = document.getElementById('passCur')?.value || '';
+  const neu = document.getElementById('passNew')?.value || '';
+  const conf = document.getElementById('passConf')?.value || '';
+  const st = document.getElementById('passEditorSt');
+  if(cur !== getAdminPass()){
+    if(st) st.textContent = 'მიმდინარე პაროლი არასწორია.';
+    return;
+  }
+  if(neu.length < 4){
+    if(st) st.textContent = 'ახალი პაროლი — მინიმუმ 4 სიმბოლო.';
+    return;
+  }
+  if(neu !== conf){
+    if(st) st.textContent = 'გამეორება არ ემთხვევა.';
+    return;
+  }
+  if(st) st.textContent = 'ინახება Supabase-ში...';
+  try{
+    await upsertAppSetting(SETTINGS_ADMIN_PASS_KEY, neu);
+    _adminPassOverride = neu;
+    localStorage.setItem('adminPass', neu);
+    document.getElementById('passCur').value = '';
+    document.getElementById('passNew').value = '';
+    document.getElementById('passConf').value = '';
+    if(st) st.textContent = '✓ პაროლი შენახულია. ყველა განრიგზე ერთი პაროლი.';
+  }catch(e){
+    if(st) st.textContent = 'შეცდომა: '+e.message.slice(0,50);
+  }
+}
 
 const KD  = ['კვ','ორ','სამ','ოთხ','ხუთ','პარ','შაბ'];
 const MKA = ['იანვარი','თებერვალი','მარტი','აპრილი','მაისი','ივნისი',
@@ -1233,6 +1300,7 @@ async function upsertAppSetting(key, value){
 }
 async function loadUiSettingsFromSupabase(){
   try{
+    await loadAdminPasswordFromSupabase();
     const shiftV = await fetchAppSetting(SETTINGS_SHIFT_KEY);
     if(shiftV !== null && Array.isArray(shiftV)){
       _shiftOptsOverride = normalizeShiftLines(shiftV);
@@ -1506,7 +1574,7 @@ function openAdmin(){
   setTimeout(()=>document.getElementById('passInp').focus(),150);
 }
 function doLogin(){
-  if(document.getElementById('passInp').value===PASS){
+  if(document.getElementById('passInp').value===getAdminPass()){
     sessionStorage.setItem('aokCleaning','1');
     cov('loginOv'); openAdminPanel();
   }else{
@@ -1541,6 +1609,12 @@ function aTab(tab,btn){
   document.getElementById('aNotif').style.display=tab==='notif'?'block':'none';
   document.getElementById('aShifts').style.display=tab==='shifts'?'block':'none';
   document.getElementById('aPositions').style.display=tab==='positions'?'block':'none';
+  document.getElementById('aPassword').style.display=tab==='password'?'block':'none';
+  if(tab==='password'){
+    const st=document.getElementById('passEditorSt');
+    if(st) st.textContent='';
+    ['passCur','passNew','passConf'].forEach(id=>{ const el=document.getElementById(id); if(el) el.value=''; });
+  }
   if(tab==='cleaning') renderCleanersList();
   if(tab==='copy') updateCopyLabels();
   if(tab==='stats') renderStats();
