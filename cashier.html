@@ -928,11 +928,22 @@ async function sbq(path,opts={}){
   return t?JSON.parse(t):null;
 }
 
+async function fetchAllPositionRows(queryBase){
+  const PAGE=1000;
+  const all=[];
+  for(let offset=0;;offset+=PAGE){
+    const chunk=await sbq(queryBase+'&order=shift_date.asc&limit='+PAGE+'&offset='+offset);
+    if(!chunk?.length) break;
+    all.push(...chunk);
+    if(chunk.length<PAGE) break;
+  }
+  return all;
+}
 async function loadDB(){
   setSS('spin','ჩატვირთვა...');
   try{
     await loadCashiers();
-    const rows=await sbq('cashier_positions?select=cashier_name,shift_date,shift_time,position,notes');
+    const rows=await fetchAllPositionRows('cashier_positions?select=cashier_name,shift_date,shift_time,position,notes');
     DB={};
     (rows||[]).forEach(r=>{
       DB[pk(r.cashier_name,r.shift_date)]={
