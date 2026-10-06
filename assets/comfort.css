@@ -1,16 +1,36 @@
 /* საერთო პროფესიონალური ფენა განრიგის გვერდებისთვის */
 
-:root { --kb: 0px; }
+:root {
+  --kb: 0px;
+  --ac: #2dd4bf;
+  --ac2: #14b8a6;
+  --on-ac: #042f2e;
+}
+html.light {
+  --ac: #0d9488;
+  --ac2: #0f766e;
+  --on-ac: #f0fdfa;
+}
 html { touch-action: manipulation; }
-body {
+body,
+body.app-cleaning {
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
   min-height: 100vh;
   min-height: 100dvh;
   -webkit-tap-highlight-color: transparent;
   background:
-    radial-gradient(ellipse 90% 42% at 50% -12%, color-mix(in srgb, var(--ac) 16%, transparent), transparent 58%),
+    radial-gradient(ellipse 90% 42% at 50% -12%, color-mix(in srgb, var(--ac) 22%, transparent), transparent 58%),
+    radial-gradient(ellipse 55% 40% at 100% 0%, color-mix(in srgb, var(--ac2) 16%, transparent), transparent 50%),
     var(--bg);
+}
+.vbtn.active,
+.btn-p,
+.atab.active { color: var(--on-ac) !important; }
+.cc.active-c { background: color-mix(in srgb, var(--ac) 18%, transparent); }
+.dblk-hdr.is-today {
+  background: color-mix(in srgb, var(--ac) 16%, transparent) !important;
+  border-bottom: 1px solid color-mix(in srgb, var(--ac) 40%, transparent) !important;
 }
 
 .hdr {
@@ -97,10 +117,9 @@ html.light .hdr { box-shadow: 0 1px 0 var(--br), 0 8px 24px rgba(45, 38, 32, .06
 }
 .dept-link.is-current {
   background: var(--ac);
-  color: #1a1208;
+  color: var(--on-ac);
   box-shadow: 0 1px 2px rgba(0, 0, 0, .16);
 }
-html.light .dept-link.is-current { color: #1a1410; }
 
 .today-board {
   margin: 0 0 12px;
@@ -140,11 +159,10 @@ html.light .dept-link.is-current { color: #1a1410; }
   justify-content: center;
   border-radius: 12px;
   background: var(--ac);
-  color: #1a1208;
+  color: var(--on-ac);
   font-size: .95rem;
   font-weight: 800;
 }
-html.light .today-count { color: #1a1410; }
 .today-list {
   display: grid;
   grid-template-columns: 1fr;
@@ -215,9 +233,8 @@ html.light .today-count { color: #1a1410; }
 .wk-today-btn.is-current {
   background: var(--ac);
   border-color: var(--ac);
-  color: #1a1208;
+  color: var(--on-ac);
 }
-html.light .wk-today-btn.is-current { color: #1a1410; }
 
 .wk-col {
   border-radius: 14px;
@@ -490,10 +507,9 @@ html.light .wk-today-btn.is-current { color: #1a1410; }
 #adminOv .atab.admin-item:hover { background: color-mix(in srgb, var(--ac) 12%, transparent); }
 #adminOv .atab.admin-item.active {
   background: var(--ac);
-  color: #1a1208;
+  color: var(--on-ac);
   border-color: transparent;
 }
-html.light #adminOv .atab.admin-item.active { color: #1a1410; }
 #adminOv .ag-nav,
 #adminOv .cal-nav,
 #adminOv .stat-month-nav {

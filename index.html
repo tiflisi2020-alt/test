@@ -8,7 +8,7 @@
 <title>რესტორნის განრიგები</title>
 <link rel="icon" href="icon-192.png" type="image/png">
 <link rel="manifest" href="manifest.json">
-<meta name="theme-color" content="#0c0a09">
+<meta name="theme-color" content="#0d9488">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="განრიგი">
@@ -19,7 +19,7 @@
     var t = localStorage.getItem('theme');
     if(t === 'light') document.documentElement.classList.add('light');
     var m = document.querySelector('meta[name="theme-color"]');
-    if(m) m.setAttribute('content', t === 'light' ? '#f6f0ea' : '#0c0a09');
+    if(m) m.setAttribute('content', t === 'light' ? '#f0fdfa' : '#0d9488');
   }catch(e){}
 })();
 </script>
@@ -31,19 +31,20 @@
   --sf:rgba(24,21,18,.78);
   --s2:#1a1614;
   --s3:#221c19;
-  --br:rgba(232,197,71,.14);
-  --br2:rgba(232,197,71,.22);
-  --ac:#e8c547;
-  --ac2:#d97757;
+  --br:rgba(45,212,191,.18);
+  --br2:rgba(45,212,191,.28);
+  --ac:#2dd4bf;
+  --ac2:#14b8a6;
+  --on-ac:#042f2e;
   --tx:#f7f2ec;
   --mu:#9c9188;
-  --glow-gold:rgba(232,197,71,.12);
+  --glow-gold:rgba(45,212,191,.16);
   --radius-xl:22px;
   --radius-lg:16px;
   --radius-md:12px;
   --shadow-sm:0 2px 12px rgba(0,0,0,.2);
   --shadow-md:0 8px 32px rgba(0,0,0,.35);
-  --shadow-glow:0 0 0 1px rgba(232,197,71,.08), 0 12px 40px rgba(0,0,0,.4);
+  --shadow-glow:0 0 0 1px rgba(45,212,191,.12), 0 12px 40px rgba(0,0,0,.4);
 }
 html.light{
   --bg:#f6f0ea;
@@ -53,11 +54,12 @@ html.light{
   --s3:#e8dfd6;
   --br:rgba(45,38,32,.1);
   --br2:rgba(45,38,32,.16);
-  --ac:#8a6a18;
-  --ac2:#9c3d2e;
+  --ac:#0d9488;
+  --ac2:#0f766e;
+  --on-ac:#f0fdfa;
   --tx:#1a1410;
   --mu:#6b5f56;
-  --glow-gold:rgba(138,106,24,.08);
+  --glow-gold:rgba(13,148,136,.12);
   --shadow-sm:0 2px 14px rgba(45,38,32,.06);
   --shadow-md:0 12px 40px rgba(45,38,32,.1);
   --shadow-glow:0 0 0 1px rgba(45,38,32,.06), 0 16px 48px rgba(45,38,32,.08);
@@ -88,15 +90,15 @@ body::before{
   position:fixed;inset:0;z-index:-2;
   background:
     radial-gradient(ellipse 90% 70% at 15% -10%, var(--glow-gold), transparent 52%),
-    radial-gradient(ellipse 70% 55% at 100% 5%, rgba(217,119,87,.1), transparent 48%),
+    radial-gradient(ellipse 70% 55% at 100% 5%, rgba(20,184,166,.14), transparent 48%),
     radial-gradient(ellipse 60% 45% at 50% 110%, rgba(100,80,200,.06), transparent 45%),
     linear-gradient(180deg, var(--bg2) 0%, var(--bg) 38%, var(--bg) 100%);
   pointer-events:none;
 }
 html.light body::before{
   background:
-    radial-gradient(ellipse 85% 65% at 20% -5%, rgba(138,106,24,.14), transparent 50%),
-    radial-gradient(ellipse 70% 50% at 100% 10%, rgba(156,61,46,.08), transparent 48%),
+    radial-gradient(ellipse 85% 65% at 20% -5%, rgba(13,148,136,.16), transparent 50%),
+    radial-gradient(ellipse 70% 50% at 100% 10%, rgba(15,118,110,.1), transparent 48%),
     linear-gradient(180deg, #faf6f2 0%, var(--bg) 45%, var(--bg) 100%);
 }
 .shell{
@@ -166,12 +168,12 @@ html.light .logo-wrap canvas{filter:drop-shadow(0 3px 16px rgba(60,45,35,.12));}
   font-size:1.38rem;font-weight:900;letter-spacing:-.4px;line-height:1.22;
 }
 .hero h1 span{
-  background:linear-gradient(120deg,var(--ac) 0%,#f0d878 45%,var(--ac2) 100%);
+  background:linear-gradient(120deg,#5eead4 0%,var(--ac) 48%,var(--ac2) 100%);
   -webkit-background-clip:text;background-clip:text;
   color:transparent;
 }
 html.light .hero h1 span{
-  background:linear-gradient(120deg,#6b5420 0%,var(--ac) 50%,var(--ac2) 100%);
+  background:linear-gradient(120deg,#115e59 0%,var(--ac) 52%,var(--ac2) 100%);
   -webkit-background-clip:text;background-clip:text;
   color:transparent;
 }
@@ -356,11 +358,11 @@ html.light .chat-msgs{background:color-mix(in srgb,var(--bg) 25%,#fff);}
   min-height:48px;padding:12px 22px;border-radius:999px;cursor:pointer;
   border:none;
   background:var(--ac);
-  color:#1a1208;
+  color:var(--on-ac);
   box-shadow:none;
   transition:filter .15s, transform .12s;
 }
-html.light .chat-send{color:#1a1410;}
+html.light .chat-send{color:var(--on-ac);}
 .chat-send:hover{filter:brightness(1.06);}
 .chat-send:active{transform:scale(.98);}
 .chat-send:disabled{opacity:.5;cursor:not-allowed;filter:none;}
@@ -519,11 +521,11 @@ html.light .chat-err{color:#b91c1c;}
     if(light){
       root.classList.add('light');
       setThemeIco(true);
-      setMetaTheme('#f6f0ea');
+      setMetaTheme('#f0fdfa');
     } else {
       root.classList.remove('light');
       setThemeIco(false);
-      setMetaTheme('#0c0a09');
+      setMetaTheme('#0d9488');
     }
   }
   window.toggleTheme = function(){
@@ -531,7 +533,7 @@ html.light .chat-err{color:#b91c1c;}
     const th = light ? 'light' : 'dark';
     localStorage.setItem('theme', th);
     setThemeIco(light);
-    setMetaTheme(light ? '#f6f0ea' : '#0c0a09');
+    setMetaTheme(light ? '#f0fdfa' : '#0d9488');
     pushThemeToSupabase(th);
   };
   applyThemeFromStorage();

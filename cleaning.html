@@ -20,7 +20,7 @@
     if(t === 'light'){
       document.documentElement.classList.add('light');
       var m = document.querySelector('meta[name="theme-color"]');
-      if(m) m.setAttribute('content', '#faf4ee');
+      if(m) m.setAttribute('content', '#f0fdfa');
     }
   }catch(e){}
 })();
@@ -1500,7 +1500,7 @@ function renderDayViewByWeek(days){
     const isToday2 = cdkv===todayDk();
     const b=document.createElement('div');
     b.className='dblk'+(isToday2?' dblk-today':'');
-    b.innerHTML=`<div class="dblk-hdr" ${isToday2?'style="background:rgba(212,175,55,0.12);border-bottom:1px solid rgba(212,175,55,0.3)"':''}>
+    b.innerHTML=`<div class="dblk-hdr${isToday2?' is-today':''}">
       <div class="dbig ${iW(c.wd)?'wknd':''}" ${isToday2?'style="color:var(--ac)"':''}>${c.d}</div>
       <div class="dmeta"><div class="dn">${KD[c.wd]}</div><div class="dm">${MKA[c.m-1]}</div></div>
       ${isToday2?`<div style="margin-left:auto;background:var(--ac);color:var(--on-ac);font-size:.65rem;font-weight:800;padding:3px 8px;border-radius:20px;">დღეს · ${nowTimeStr()}</div>`:`<div class="dcnt">${workers.length} წევრი</div>`}

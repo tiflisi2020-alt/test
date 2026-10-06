@@ -403,6 +403,15 @@
     vv.addEventListener('scroll', fitKeyboard);
     fitKeyboard();
   }
+  function syncThemeColor() {
+    var m = document.querySelector('meta[name="theme-color"]');
+    if (!m) return;
+    var light = document.documentElement.classList.contains('light');
+    m.setAttribute('content', light ? '#f0fdfa' : '#0d9488');
+  }
+  syncThemeColor();
+  new MutationObserver(syncThemeColor).observe(document.documentElement, { attributes: true, attributeFilter: ['class'] });
+
   document.addEventListener('focusin', function (e) {
     var el = e.target;
     if (!el || !el.matches || !el.matches('input, textarea, select')) return;
