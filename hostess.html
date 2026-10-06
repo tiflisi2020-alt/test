@@ -555,7 +555,7 @@ body{background:var(--bg);color:var(--tx);font-family:'Noto Sans Georgian',sans-
       <!-- HOSTESSES TAB -->
       <div id="aHostesses" style="display:none">
         <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
-          <span style="font-size:.8rem;font-weight:800;">ჰოსტესების სია (სულ 2)</span>
+          <span style="font-size:.8rem;font-weight:800;">ჰოსტესების სია</span>
           <button class="sbtn" style="padding:7px 14px;font-size:.72rem;" onclick="showAddHostess()">+ დამატება</button>
         </div>
         <div id="hostessesList"></div>
@@ -1897,10 +1897,6 @@ async function migrateHostessPositions(oldName, newName){
 }
 
 function showAddHostess(){
-  if(DYNAMIC_HOSTESSES.length >= 2){
-    alert('ჰოსტესების მაქსიმუმი 2 ადამიანია.');
-    return;
-  }
   document.getElementById('editHostessForm').style.display='none';
   document.getElementById('addHostessForm').style.display='block';
   document.getElementById('newHostessName').focus();
@@ -1957,10 +1953,6 @@ async function saveEditHostess(){
 }
 
 async function addHostess(){
-  if(DYNAMIC_HOSTESSES.length >= 2){
-    alert('ჰოსტესების მაქსიმუმი 2 ადამიანია.');
-    return;
-  }
   const name = document.getElementById('newHostessName').value.trim();
   const phone = document.getElementById('newHostessPhone').value.trim();
   if(!name){ alert('სახელი სავალდებულოა'); return; }

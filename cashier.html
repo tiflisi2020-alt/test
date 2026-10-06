@@ -556,7 +556,7 @@ body{background:var(--bg);color:var(--tx);font-family:'Noto Sans Georgian',sans-
       <!-- CASHIERS TAB -->
       <div id="aCashiers" style="display:none">
         <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
-          <span style="font-size:.8rem;font-weight:800;">მოლარეების სია (სულ 3)</span>
+          <span style="font-size:.8rem;font-weight:800;">მოლარეების სია</span>
           <button class="sbtn" style="padding:7px 14px;font-size:.72rem;" onclick="showAddCashier()">+ დამატება</button>
         </div>
         <div id="cashiersList"></div>
@@ -1894,10 +1894,6 @@ async function migrateCashierPositions(oldName, newName){
 }
 
 function showAddCashier(){
-  if(DYNAMIC_CASHIERS.length >= 3){
-    alert('მოლარეების მაქსიმუმი 3 ადამიანია.');
-    return;
-  }
   document.getElementById('editCashierForm').style.display='none';
   document.getElementById('addCashierForm').style.display='block';
   document.getElementById('newCashName').focus();
@@ -1956,10 +1952,6 @@ async function saveEditCashier(){
 }
 
 async function addCashier(){
-  if(DYNAMIC_CASHIERS.length >= 3){
-    alert('მოლარეების მაქსიმუმი 3 ადამიანია.');
-    return;
-  }
   const name = document.getElementById('newCashName').value.trim();
   const phone = document.getElementById('newCashPhone').value.trim();
   if(!name){ alert('სახელი სავალდებულოა'); return; }
