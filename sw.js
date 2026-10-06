@@ -1,4 +1,4 @@
-const CACHE = 'schedule-v29';
+const CACHE = 'schedule-v33';
 const BASE = self.location.pathname.replace(/\/sw\.js$/i, '') || '';
 const asset = (p) => (BASE + (p.startsWith('/') ? p : '/' + p)).replace(/\/\/+/g, '/');
 
@@ -13,7 +13,9 @@ const ASSETS = [
   asset('/manifest.json'),
   asset('/icon-192.png'),
   asset('/icon-512.png'),
-  asset('/assets/logo-tiflisi.pdf')
+  asset('/assets/logo-tiflisi.pdf'),
+  asset('/assets/comfort.css'),
+  asset('/assets/comfort.js')
 ];
 
 self.addEventListener('install', e => {
