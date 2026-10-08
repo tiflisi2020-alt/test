@@ -563,8 +563,11 @@ body{background:var(--bg);color:var(--tx);font-family:'Noto Sans Georgian',sans-
       <!-- WAITERS TAB -->
       <div id="aWaiters" style="display:none">
         <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
-          <span style="font-size:.8rem;font-weight:800;">მიმტანების სია</span>
-          <button class="sbtn" style="padding:7px 14px;font-size:.72rem;" onclick="showAddWaiter()">+ დამატება</button>
+          <div>
+            <span style="font-size:.8rem;font-weight:800;">მიმტანების სია</span>
+            <div style="font-size:.66rem;color:var(--mu);font-weight:600;margin-top:2px;">გადამრთველით ჩართე ან გამორთე — გამორთული განრიგში არ ჩანს</div>
+          </div>
+          <button class="sbtn" style="padding:7px 14px;font-size:.72rem;flex:0 0 auto;" onclick="showAddWaiter()">+ დამატება</button>
         </div>
         <div id="waitersList"></div>
         <div id="addWaiterForm" style="display:none;margin-top:14px;background:var(--s2);border-radius:10px;padding:14px;">
@@ -755,6 +758,7 @@ const SETTINGS_SHIFT_KEY = 'shifts_waiters';
 const SETTINGS_NOTIF_KEY = 'notif_waiters';
 const SETTINGS_THEME_KEY = 'ui_theme';
 const SETTINGS_POS_KEY = 'positions_waiters';
+const SETTINGS_ACTIVE_KEY = 'active_waiters';
 let _shiftOptsOverride = null;
 let _positionOptsOverride = null;
 const DEFAULT_POSITIONS = [
@@ -1174,7 +1178,7 @@ function renderWeek(){
     const col=document.createElement('div');
     col.className='wk-col'+(isT?' today':'');
 
-    const workers=DYNAMIC_WAITERS.filter(w=>getShift(w.name,c.y,c.m,c.d)!=='OFF');
+    const workers=activeWaiters().filter(w=>getShift(w.name,c.y,c.m,c.d)!=='OFF');
     const entries=workers.map(w=>{
       const s=getShift(w.name,c.y,c.m,c.d);
       const p=getPos(w.name,c.y,c.m,c.d);
@@ -1207,7 +1211,7 @@ function renderCardsByWeek(days){
   const vw=document.getElementById('vw');
   const opens=new Set([...vw.querySelectorAll('.wcard.open')].map(c=>c.dataset.n));
   vw.innerHTML='';
-  DYNAMIC_WAITERS.forEach(w=>{
+  activeWaiters().forEach(w=>{
     const cnt = {};
     getShiftsOpt().forEach(s=>{ if(s!=='OFF') cnt[s]=0; });
     days.forEach(c=>{
@@ -1254,7 +1258,7 @@ function renderDayView(){
 function renderDayViewByWeek(days){
   const vd=document.getElementById('vd'); vd.innerHTML='';
   days.forEach((c)=>{
-    const workers=DYNAMIC_WAITERS.filter(w=>getShift(w.name,c.y,c.m,c.d)!=='OFF');
+    const workers=activeWaiters().filter(w=>getShift(w.name,c.y,c.m,c.d)!=='OFF');
     const rows=workers.map(w=>{
       const s=getShift(w.name,c.y,c.m,c.d);
       const p=getPos(w.name,c.y,c.m,c.d);
@@ -1299,7 +1303,7 @@ function renderTable(){
     hr.appendChild(th);
   });
   dth.appendChild(hr);
-  DYNAMIC_WAITERS.forEach(w=>{
+  activeWaiters().forEach(w=>{
     const tr=document.createElement('tr');
     const td0=document.createElement('td');
     td0.innerHTML=`<div class="tn">${escHtml(w.name)}</div><div class="tph">${escHtml(w.phone)}</div>`;
@@ -1320,7 +1324,7 @@ function renderTable(){
   const sc0=document.createElement('div'); sc0.className='scl'; sc0.innerHTML='<span>სულ</span>';
   sd0.appendChild(sc0); sr.appendChild(sd0);
   days.forEach(c=>{
-    const n=DYNAMIC_WAITERS.filter(w=>getShift(w.name,c.y,c.m,c.d)!=='OFF').length;
+    const n=activeWaiters().filter(w=>getShift(w.name,c.y,c.m,c.d)!=='OFF').length;
     const td=document.createElement('td');
     const d=document.createElement('div'); d.className='scl';
     d.innerHTML=`<span class="sc">${n}</span><span>მიმტ.</span>`;
@@ -1448,7 +1452,7 @@ function renderAdminGrid(){
 
   // tbody
   const tbody=document.createElement('tbody');
-  DYNAMIC_WAITERS.forEach(w=>{
+  activeWaiters().forEach(w=>{
     const tr=document.createElement('tr');
     const td0=document.createElement('td');
     td0.innerHTML=`<div class="cn2">${escHtml(w.name)}</div><div class="cp2">${escHtml(w.phone)}</div>`;
@@ -1682,7 +1686,7 @@ async function savePosEditor(){
 function initFilter(){
   const sel = document.getElementById('fltWaiter');
   sel.innerHTML = '<option value="">ყველა</option>';
-  DYNAMIC_WAITERS.forEach(w=>{
+  activeWaiters().forEach(w=>{
     const o = document.createElement('option');
     o.value = w.name; o.textContent = w.name;
     sel.appendChild(o);
@@ -1835,7 +1839,7 @@ function showCalDay(y,m,d){
   const dkv=dk(y,m,d);
   const det=document.getElementById('calDetail');
   const wd=new Date(y,m-1,d).getDay();
-  const workers=DYNAMIC_WAITERS.map(w=>({...w,s:getShift(w.name,y,m,d),p:getPos(w.name,y,m,d),n:getNote(w.name,y,m,d)}))
+  const workers=activeWaiters().map(w=>({...w,s:getShift(w.name,y,m,d),p:getPos(w.name,y,m,d),n:getNote(w.name,y,m,d)}))
     .filter(w=>w.s!=='OFF');
 
   if(!workers.length){
@@ -1864,10 +1868,33 @@ function showCalDay(y,m,d){
 ══════════════════════════════ */
 // Dynamic waiters list (starts from WAITERS, can be extended)
 let DYNAMIC_WAITERS = [...WAITERS];
+let waiterActiveMap = {};
+let waiterActiveRev = 0;
+
+function waiterActiveKey(w){
+  return (w && w.id != null && w.id !== '') ? ('id:'+w.id) : ('name:'+(w ? w.name : ''));
+}
+function isWaiterActive(w){
+  if(!w) return true;
+  const k = waiterActiveKey(w);
+  if(Object.prototype.hasOwnProperty.call(waiterActiveMap, k)) return waiterActiveMap[k] !== false;
+  return w.active !== false;
+}
+function activeWaiters(){
+  return DYNAMIC_WAITERS.filter(w => w.active !== false);
+}
+function applyWaiterActiveFlags(){
+  DYNAMIC_WAITERS.forEach(w => { w.active = isWaiterActive(w); });
+}
 
 async function loadWaiters(){
+  const rev = waiterActiveRev;
   try{
-    const rows = await sbq('waiters?select=id,name,phone&order=position_order');
+    const [rows, activeV] = await Promise.all([
+      sbq('waiters?select=id,name,phone&order=position_order'),
+      fetchAppSetting(SETTINGS_ACTIVE_KEY).catch(() => null)
+    ]);
+    if(rev === waiterActiveRev && activeV && typeof activeV === 'object' && !Array.isArray(activeV)) waiterActiveMap = activeV;
     if(rows && rows.length > 0){
       DYNAMIC_WAITERS = rows.map(r=>({id:r.id, name:r.name, phone:r.phone, shifts:[]}));
     } else {
@@ -1876,24 +1903,46 @@ async function loadWaiters(){
   }catch(e){
     DYNAMIC_WAITERS = [...WAITERS];
   }
+  applyWaiterActiveFlags();
 }
 
 function renderWaitersList(){
   const list = document.getElementById('waitersList');
   list.innerHTML = '';
   DYNAMIC_WAITERS.forEach((w,i)=>{
+    const on = w.active !== false;
     const row = document.createElement('div');
+    row.className = on ? '' : 'is-off';
     row.style.cssText='display:flex;align-items:center;padding:9px 0;border-bottom:1px solid var(--br);gap:10px;';
     row.innerHTML=`
-      <div style="flex:1;">
+      <div style="flex:1;min-width:0;">
         <div style="font-size:.82rem;font-weight:700;">${escHtml(w.name)}</div>
         <div style="font-size:.68rem;color:var(--mu);">${escHtml(w.phone)}</div>
+        ${on ? '' : '<div style="font-size:.62rem;font-weight:800;color:#b45309;margin-top:2px;">გამორთული</div>'}
       </div>
+      <button type="button" class="staff-switch${on ? ' is-on' : ''}" aria-pressed="${on ? 'true' : 'false'}" aria-label="${on ? 'გამორთვა' : 'ჩართვა'}" title="${on ? 'გამორთვა' : 'ჩართვა'}" onclick="toggleWaiterActive(${i})"><span></span></button>
       <a href="tel:${String(w.phone).replace(/\s/g,'').replace(/[^0-9+]/g,'')}" style="background:var(--V-b);color:var(--V-c);border:none;border-radius:7px;padding:5px 10px;font-size:.7rem;font-weight:700;text-decoration:none;">📞</a>
       <button type="button" onclick="showEditWaiter(${i})" style="background:var(--s3);color:var(--tx);border:1px solid var(--br);border-radius:7px;padding:5px 10px;font-size:.7rem;font-weight:700;cursor:pointer;">✎</button>
       <button type="button" onclick="removeWaiter(${i})" style="background:rgba(248,113,113,.15);color:#f87171;border:none;border-radius:7px;padding:5px 10px;font-size:.7rem;font-weight:700;cursor:pointer;">✕</button>`;
     list.appendChild(row);
   });
+}
+
+async function toggleWaiterActive(i){
+  const w = DYNAMIC_WAITERS[i];
+  if(!w) return;
+  const next = w.active === false;
+  waiterActiveRev++;
+  w.active = next;
+  waiterActiveMap[waiterActiveKey(w)] = next;
+  renderWaitersList();
+  renderAdminGrid();
+  renderAll();
+  try{
+    await upsertAppSetting(SETTINGS_ACTIVE_KEY, waiterActiveMap);
+  }catch(e){
+    alert('შეცდომა: '+e.message);
+  }
 }
 
 function rekeyWaiterCache(oldName, newName){
@@ -1966,7 +2015,7 @@ async function saveEditWaiter(){
     if(serverOk){
       await loadWaiters();
     } else {
-      DYNAMIC_WAITERS[i] = {id:w.id, name:newName, phone:newPhone, shifts:[]};
+      DYNAMIC_WAITERS[i] = {id:w.id, name:newName, phone:newPhone, shifts:[], active:w.active};
     }
     hideEditWaiter();
     renderWaitersList();
@@ -1988,7 +2037,7 @@ async function addWaiter(){
       body: JSON.stringify({name, phone, position_order: DYNAMIC_WAITERS.length+1})
     });
     const newW = res && res[0] ? res[0] : {name, phone};
-    DYNAMIC_WAITERS.push({id:newW.id, name:newW.name||name, phone:newW.phone||phone, shifts:[]});
+    DYNAMIC_WAITERS.push({id:newW.id, name:newW.name||name, phone:newW.phone||phone, shifts:[], active:true});
     document.getElementById('newWName').value='';
     document.getElementById('newWPhone').value='';
     document.getElementById('addWaiterForm').style.display='none';
@@ -2045,7 +2094,7 @@ async function doCopyWeek(){
   status.textContent = '⏳ კოპირება...';
 
   const rows = [];
-  DYNAMIC_WAITERS.forEach(w=>{
+  activeWaiters().forEach(w=>{
     fromDays.forEach((fd,i)=>{
       const td = toDays[i];
       const s  = getShift(w.name, fd.y, fd.m, fd.d);
@@ -2086,7 +2135,7 @@ let notifTimer = null;
 function getTodayWorkers(){
   const t = new Date();
   const y=t.getFullYear(), m=t.getMonth()+1, d=t.getDate();
-  return DYNAMIC_WAITERS
+  return activeWaiters()
     .map(w=>({...w, s:getShift(w.name,y,m,d), p:getPos(w.name,y,m,d)}))
     .filter(w=>w.s!=='OFF');
 }
