@@ -555,8 +555,11 @@ body{background:var(--bg);color:var(--tx);font-family:'Noto Sans Georgian',sans-
       <!-- HOSTESSES TAB -->
       <div id="aHostesses" style="display:none">
         <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
-          <span style="font-size:.8rem;font-weight:800;">ჰოსტესების სია</span>
-          <button class="sbtn" style="padding:7px 14px;font-size:.72rem;" onclick="showAddHostess()">+ დამატება</button>
+          <div>
+            <span style="font-size:.8rem;font-weight:800;">ჰოსტესების სია</span>
+            <div style="font-size:.66rem;color:var(--mu);font-weight:600;margin-top:2px;">გადამრთველით ჩართე ან გამორთე — გამორთული განრიგში არ ჩანს</div>
+          </div>
+          <button class="sbtn" style="padding:7px 14px;font-size:.72rem;flex:0 0 auto;" onclick="showAddHostess()">+ დამატება</button>
         </div>
         <div id="hostessesList"></div>
         <div id="addHostessForm" style="display:none;margin-top:14px;background:var(--s2);border-radius:10px;padding:14px;">
@@ -755,6 +758,7 @@ const SETTINGS_SHIFT_KEY = 'shifts_hostess';
 const SETTINGS_NOTIF_KEY = 'notif_hostess';
 const SETTINGS_THEME_KEY = 'ui_theme';
 const SETTINGS_POS_KEY = 'positions_hostess';
+const SETTINGS_ACTIVE_KEY = 'active_hostesses';
 const NOTIF_EN_LS = 'notifEnabled_hostess';
 const NOTIF_TIME_LS = 'notifTime_hostess';
 let _shiftOptsOverride = null;
@@ -1165,7 +1169,7 @@ function renderWeek(){
     const col=document.createElement('div');
     col.className='wk-col'+(isT?' today':'');
 
-    const workers=DYNAMIC_HOSTESSES.filter(w=>getShift(w.name,c.y,c.m,c.d)!=='OFF');
+    const workers=activeHostesses().filter(w=>getShift(w.name,c.y,c.m,c.d)!=='OFF');
     const entries=workers.map(w=>{
       const s=getShift(w.name,c.y,c.m,c.d);
       const p=getPos(w.name,c.y,c.m,c.d);
@@ -1198,7 +1202,7 @@ function renderCardsByWeek(days){
   const vw=document.getElementById('vw');
   const opens=new Set([...vw.querySelectorAll('.wcard.open')].map(c=>c.dataset.n));
   vw.innerHTML='';
-  DYNAMIC_HOSTESSES.forEach(w=>{
+  activeHostesses().forEach(w=>{
     const cnt = {};
     getShiftsOpt().forEach(s=>{ if(s!=='OFF') cnt[s]=0; });
     days.forEach(c=>{
@@ -1245,7 +1249,7 @@ function renderDayView(){
 function renderDayViewByWeek(days){
   const vd=document.getElementById('vd'); vd.innerHTML='';
   days.forEach((c)=>{
-    const workers=DYNAMIC_HOSTESSES.filter(w=>getShift(w.name,c.y,c.m,c.d)!=='OFF');
+    const workers=activeHostesses().filter(w=>getShift(w.name,c.y,c.m,c.d)!=='OFF');
     const rows=workers.map(w=>{
       const s=getShift(w.name,c.y,c.m,c.d);
       const p=getPos(w.name,c.y,c.m,c.d);
@@ -1290,7 +1294,7 @@ function renderTable(){
     hr.appendChild(th);
   });
   dth.appendChild(hr);
-  DYNAMIC_HOSTESSES.forEach(w=>{
+  activeHostesses().forEach(w=>{
     const tr=document.createElement('tr');
     const td0=document.createElement('td');
     td0.innerHTML=`<div class="tn">${escHtml(w.name)}</div><div class="tph">${escHtml(w.phone)}</div>`;
@@ -1311,7 +1315,7 @@ function renderTable(){
   const sc0=document.createElement('div'); sc0.className='scl'; sc0.innerHTML='<span>სულ</span>';
   sd0.appendChild(sc0); sr.appendChild(sd0);
   days.forEach(c=>{
-    const n=DYNAMIC_HOSTESSES.filter(w=>getShift(w.name,c.y,c.m,c.d)!=='OFF').length;
+    const n=activeHostesses().filter(w=>getShift(w.name,c.y,c.m,c.d)!=='OFF').length;
     const td=document.createElement('td');
     const d=document.createElement('div'); d.className='scl';
     d.innerHTML=`<span class="sc">${n}</span><span>ჰოსტესი</span>`;
@@ -1439,7 +1443,7 @@ function renderAdminGrid(){
 
   // tbody
   const tbody=document.createElement('tbody');
-  DYNAMIC_HOSTESSES.forEach(w=>{
+  activeHostesses().forEach(w=>{
     const tr=document.createElement('tr');
     const td0=document.createElement('td');
     td0.innerHTML=`<div class="cn2">${escHtml(w.name)}</div><div class="cp2">${escHtml(w.phone)}</div>`;
@@ -1675,7 +1679,7 @@ async function savePosEditor(){
 function initFilter(){
   const sel = document.getElementById('fltHostess');
   sel.innerHTML = '<option value="">ყველა</option>';
-  DYNAMIC_HOSTESSES.forEach(w=>{
+  activeHostesses().forEach(w=>{
     const o = document.createElement('option');
     o.value = w.name; o.textContent = w.name;
     sel.appendChild(o);
@@ -1811,7 +1815,7 @@ function showCalDay(y,m,d){
   const dkv=dk(y,m,d);
   const det=document.getElementById('calDetail');
   const wd=new Date(y,m-1,d).getDay();
-  const workers=DYNAMIC_HOSTESSES.map(w=>({...w,s:getShift(w.name,y,m,d),p:getPos(w.name,y,m,d),n:getNote(w.name,y,m,d)}))
+  const workers=activeHostesses().map(w=>({...w,s:getShift(w.name,y,m,d),p:getPos(w.name,y,m,d),n:getNote(w.name,y,m,d)}))
     .filter(w=>w.s!=='OFF');
 
   if(!workers.length){
@@ -1839,10 +1843,33 @@ function showCalDay(y,m,d){
    HOSTESSES (ჰოსტესები)
 ══════════════════════════════ */
 let DYNAMIC_HOSTESSES = [...HOSTESSES];
+let hostessActiveMap = {};
+let hostessActiveRev = 0;
+
+function hostessActiveKey(w){
+  return (w && w.id != null && w.id !== '') ? ('id:'+w.id) : ('name:'+(w ? w.name : ''));
+}
+function isHostessActive(w){
+  if(!w) return true;
+  const k = hostessActiveKey(w);
+  if(Object.prototype.hasOwnProperty.call(hostessActiveMap, k)) return hostessActiveMap[k] !== false;
+  return w.active !== false;
+}
+function activeHostesses(){
+  return DYNAMIC_HOSTESSES.filter(w => w.active !== false);
+}
+function applyHostessActiveFlags(){
+  DYNAMIC_HOSTESSES.forEach(w => { w.active = isHostessActive(w); });
+}
 
 async function loadHostesses(){
+  const rev = hostessActiveRev;
   try{
-    const rows = await sbq('hostesses?select=id,name,phone&order=position_order');
+    const [rows, activeV] = await Promise.all([
+      sbq('hostesses?select=id,name,phone&order=position_order'),
+      fetchAppSetting(SETTINGS_ACTIVE_KEY).catch(() => null)
+    ]);
+    if(rev === hostessActiveRev && activeV && typeof activeV === 'object' && !Array.isArray(activeV)) hostessActiveMap = activeV;
     if(rows && rows.length > 0){
       DYNAMIC_HOSTESSES = rows.map(r=>({id:r.id, name:r.name, phone:r.phone, shifts:[]}));
     } else {
@@ -1851,24 +1878,46 @@ async function loadHostesses(){
   }catch(e){
     DYNAMIC_HOSTESSES = [...HOSTESSES];
   }
+  applyHostessActiveFlags();
 }
 
 function renderHostessesList(){
   const list = document.getElementById('hostessesList');
   list.innerHTML = '';
   DYNAMIC_HOSTESSES.forEach((w,i)=>{
+    const on = w.active !== false;
     const row = document.createElement('div');
+    row.className = on ? '' : 'is-off';
     row.style.cssText='display:flex;align-items:center;padding:9px 0;border-bottom:1px solid var(--br);gap:10px;';
     row.innerHTML=`
-      <div style="flex:1;">
+      <div style="flex:1;min-width:0;">
         <div style="font-size:.82rem;font-weight:700;">${escHtml(w.name)}</div>
         <div style="font-size:.68rem;color:var(--mu);">${escHtml(w.phone)}</div>
+        ${on ? '' : '<div style="font-size:.62rem;font-weight:800;color:#b45309;margin-top:2px;">გამორთული</div>'}
       </div>
+      <button type="button" class="staff-switch${on ? ' is-on' : ''}" aria-pressed="${on ? 'true' : 'false'}" aria-label="${on ? 'გამორთვა' : 'ჩართვა'}" title="${on ? 'გამორთვა' : 'ჩართვა'}" onclick="toggleHostessActive(${i})"><span></span></button>
       <a href="tel:${String(w.phone).replace(/\s/g,'').replace(/[^0-9+]/g,'')}" style="background:var(--V-b);color:var(--V-c);border:none;border-radius:7px;padding:5px 10px;font-size:.7rem;font-weight:700;text-decoration:none;">📞</a>
       <button type="button" onclick="showEditHostess(${i})" style="background:var(--s3);color:var(--tx);border:1px solid var(--br);border-radius:7px;padding:5px 10px;font-size:.7rem;font-weight:700;cursor:pointer;">✎</button>
       <button type="button" onclick="removeHostess(${i})" style="background:rgba(248,113,113,.15);color:#f87171;border:none;border-radius:7px;padding:5px 10px;font-size:.7rem;font-weight:700;cursor:pointer;">✕</button>`;
     list.appendChild(row);
   });
+}
+
+async function toggleHostessActive(i){
+  const w = DYNAMIC_HOSTESSES[i];
+  if(!w) return;
+  const next = w.active === false;
+  hostessActiveRev++;
+  w.active = next;
+  hostessActiveMap[hostessActiveKey(w)] = next;
+  renderHostessesList();
+  renderAdminGrid();
+  renderAll();
+  try{
+    await upsertAppSetting(SETTINGS_ACTIVE_KEY, hostessActiveMap);
+  }catch(e){
+    alert('შეცდომა: '+e.message);
+  }
 }
 
 function rekeyHostessCache(oldName, newName){
@@ -1940,7 +1989,7 @@ async function saveEditHostess(){
     if(serverOk){
       await loadHostesses();
     } else {
-      DYNAMIC_HOSTESSES[i] = {id:w.id, name:newName, phone:newPhone, shifts:[]};
+      DYNAMIC_HOSTESSES[i] = {id:w.id, name:newName, phone:newPhone, shifts:[], active:w.active};
     }
     hideEditHostess();
     renderHostessesList();
@@ -1962,7 +2011,7 @@ async function addHostess(){
       body: JSON.stringify({name, phone, position_order: DYNAMIC_HOSTESSES.length+1})
     });
     const newW = res && res[0] ? res[0] : {name, phone};
-    DYNAMIC_HOSTESSES.push({id:newW.id, name:newW.name||name, phone:newW.phone||phone, shifts:[]});
+    DYNAMIC_HOSTESSES.push({id:newW.id, name:newW.name||name, phone:newW.phone||phone, shifts:[], active:true});
     document.getElementById('newHostessName').value='';
     document.getElementById('newHostessPhone').value='';
     document.getElementById('addHostessForm').style.display='none';
@@ -2019,7 +2068,7 @@ async function doCopyWeek(){
   status.textContent = '⏳ კოპირება...';
 
   const rows = [];
-  DYNAMIC_HOSTESSES.forEach(w=>{
+  activeHostesses().forEach(w=>{
     fromDays.forEach((fd,i)=>{
       const td = toDays[i];
       const s  = getShift(w.name, fd.y, fd.m, fd.d);
@@ -2058,7 +2107,7 @@ let notifTimer = null;
 function getTodayWorkers(){
   const t = new Date();
   const y=t.getFullYear(), m=t.getMonth()+1, d=t.getDate();
-  return DYNAMIC_HOSTESSES
+  return activeHostesses()
     .map(w=>({...w, s:getShift(w.name,y,m,d), p:getPos(w.name,y,m,d)}))
     .filter(w=>w.s!=='OFF');
 }
