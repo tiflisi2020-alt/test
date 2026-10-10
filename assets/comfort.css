@@ -407,10 +407,9 @@ html.light .hdr { box-shadow: 0 1px 0 var(--br), 0 8px 24px rgba(45, 38, 32, .06
   .call-btn {
     min-height: 44px;
   }
-  .inp, .flt-inp, .flt-sel, .gsel, textarea, input[type="date"], input[type="time"], input[type="password"], input[type="text"] {
+  .inp, .flt-inp, .flt-sel, textarea, input[type="date"], input[type="time"], input[type="password"], input[type="text"] {
     font-size: 16px;
   }
-  .gsel { min-height: 44px; }
   #adminOv.ov {
     padding:
       calc(8px + env(safe-area-inset-top, 0px))
@@ -672,6 +671,95 @@ html.light .hdr { box-shadow: 0 1px 0 var(--br), 0 8px 24px rgba(45, 38, 32, .06
   body.app-cleaning .hdr button.abtn[onclick*="doPrint"] {
     width: 40px !important;
     padding: 0 !important;
+  }
+}
+
+@media (max-width: 719px) {
+  #adminOv .ag-wrap {
+    max-height: min(34dvh, 300px) !important;
+    overflow: auto;
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior: contain;
+    touch-action: pan-x pan-y;
+  }
+  #aGrid #agTable {
+    table-layout: fixed;
+    width: 638px;
+    min-width: 638px;
+    border-collapse: separate;
+    border-spacing: 0;
+  }
+  #aGrid #agTable thead th {
+    padding: 5px 3px;
+    font-size: .52rem;
+    letter-spacing: 0;
+    position: sticky;
+    top: 0;
+  }
+  #aGrid #agTable thead th:first-child,
+  #aGrid #agTable tbody td:first-child {
+    position: sticky;
+    left: 0;
+    min-width: 74px;
+    max-width: 84px;
+    width: 78px;
+    padding-left: 6px;
+    padding-right: 4px;
+    background: var(--s2);
+    box-shadow: 6px 0 10px rgba(0, 0, 0, .16);
+  }
+  #aGrid #agTable thead th:first-child { z-index: 6; }
+  #aGrid #agTable tbody td:first-child { z-index: 2; }
+  #aGrid #agTable thead th:not(:first-child),
+  #aGrid #agTable tbody td:not(:first-child) {
+    width: 80px;
+    max-width: 80px;
+    padding: 3px 2px;
+  }
+  #aGrid #agTable .gsel,
+  #aGrid #agTable .ginp {
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
+  }
+  #aGrid #agTable .th-d { font-size: .72rem; }
+  #aGrid #agTable .th-w { font-size: .48rem; }
+  #aGrid #agTable .cn2 {
+    font-size: .62rem;
+    line-height: 1.2;
+    white-space: normal;
+    overflow-wrap: anywhere;
+  }
+  #aGrid #agTable .cp2 {
+    margin-top: 1px;
+    font-size: .5rem;
+    line-height: 1.2;
+    overflow-wrap: anywhere;
+  }
+  #aGrid #agTable .gcell { gap: 2px; padding: 0; }
+  #aGrid #agTable .gsel,
+  #aGrid #agTable .ginp {
+    min-height: 0;
+    padding: 3px 2px;
+    border-width: 1px;
+    border-radius: 5px;
+    font-size: 10px;
+    font-weight: 700;
+    line-height: 1.15;
+  }
+  #aGrid #agTable .ginp {
+    font-size: 9px;
+    font-weight: 500;
+    padding: 2px;
+  }
+  #aGrid .flt-wrap { padding: 8px; gap: 6px; }
+  #aGrid .flt-label { font-size: .55rem; }
+  #aGrid .flt-chip { font-size: .62rem; padding: 3px 7px; }
+  #aGrid .save-row { margin-top: 8px; }
+  #aGrid #saveBtn {
+    min-height: 40px;
+    padding: 8px 14px;
+    font-size: .78rem;
   }
 }
 
